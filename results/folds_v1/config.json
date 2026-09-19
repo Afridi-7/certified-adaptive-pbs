@@ -1,0 +1,12 @@
+{
+ "data": "data/ku_optofil",
+ "k": 5,
+ "seed": 20260919,
+ "out": "results/folds_v1",
+ "n_metadata": 31484,
+ "excluded_unknown": 3204,
+ "n_cells": 28280,
+ "n_patients": 275,
+ "n_blast_patients": 11,
+ "note": "unknown-patient cells excluded; 4 '- Copy' duplicate files ignored (not in metadata)"
+}
