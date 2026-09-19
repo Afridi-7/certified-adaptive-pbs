@@ -1,0 +1,38 @@
+# Environments
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Data: never commit (download from source; see data/README.md)
+data/**
+!data/**/
+!data/README.md
+!data/**/.gitkeep
+!data/**/CHECKSUMS.txt
+
+# Papers: copyrighted PDFs stay local
+papers/*
+!papers/.gitkeep
+
+# Results: commit only small summaries + configs
+results/**
+!results/**/
+!results/.gitkeep
+!results/**/config.json
+!results/**/summary.csv
+!results/**/*.md
+
+# Models / large artefacts
+*.pt
+*.pth
+*.ckpt
+*.npy
+*.npz
+*.zip
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/settings.json
