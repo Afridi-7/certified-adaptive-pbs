@@ -16,7 +16,8 @@ Evidence: `results/inspect_ku_optofil.txt`, `results/dups_ku_optofil.txt`, `resu
 2. **Blasts are concentrated in very few patients.** Only 12 IDs have any blast: 11 identified patients (489 blasts) and `unknown` (325).
    - The provided test split has only **3 blast patients (86 blasts)**, and validation has **none**.
    - Evaluating critical evidence on the provided split would therefore reuse blasts from three patients in every episode. **Methodological vulnerability:** the episodes would not be independent at the source level.
-3. **`unknown` (3,204 cells, train split only)** has filename prefixes EO_, VLY_, BA_, BL_, ERB_, MY_, ERC_, MMY_, BNE_, … These cells can't be grouped by patient. *Suspicion, not verified:* the naming scheme resembles the Barcelona PBC datasets (Acevedo et al.), i.e. a second source. This needs checking against the data descriptor (Yarıkan et al., Sci. Data 2026). Until then they are **excluded**.
+3. **`unknown` (3,204 cells, train split only)** has filename prefixes EO_ (1,289), VLY_ (634), BA_ (353), BL_ (325), ERB_ (150), MY_ (146), ERC_ (128), MMY_ (75), BNE_ (72), LY_, SNE_, UI_, MO_, PMY_. These cells cannot be grouped by patient, so they are **excluded** from the folds.
+   *Checked against PBC_dataset_normal_DIB (Acevedo et al., Data in Brief 2020; 17,092 crops, 8 classes, 360x363 px), 2026-09-21:* only **3 of 3,204** filenames collide, and all three are different images (different bytes and dimensions). So these cells are **not** from that release. They share the Barcelona lab's naming convention and are uniformly 368x368 like the rest of KU-Optofil. The VLY_ (variant lymphocyte), BL_ (blast), ERC_ and UI_ prefixes do not exist in the normal release at all, which points to a different, abnormal-cell source. **Source still unverified**; check the data descriptor (Yarıkan et al., Sci. Data 2026) before making any claim about it.
 4. **Exact duplicates:** the only exact-content duplicates found are the 4 `- Copy` files plus their originals, which are ignored because they are not in the metadata. Near-duplicates (perceptually similar crops) have **not** been checked.
 
 ## Decision (Gate A): patient-grouped 5-fold cross-fitting
@@ -32,6 +33,9 @@ Evidence: `results/inspect_ku_optofil.txt`, `results/dups_ku_optofil.txt`, `resu
 | 4 | 55 | 5,741 | 65 | 2 |
 
 This deviates from the provided split and is logged in `DEVIATIONS.md`. The provided split is kept in `cells.csv` for a sensitivity analysis.
+
+## Other data on hand
+**PBC_dataset_normal_DIB** (`data/PBC_dataset_normal_DIB/`): 17,092 single-cell crops, 8 classes (basophil 1,218; eosinophil 3,117; erythroblast 1,551; ig 2,895; lymphocyte 1,214; monocyte 1,420; neutrophil 3,329; platelet 2,348), mostly 360x363 px, CC BY 4.0. **No blasts and no whole fields**, so it cannot support RQ4 (spatial dependence, stain drift) and cannot supply critical evidence. Its one defensible use is as an **acquisition-shift probe** (timeline W17-20): the shared classes were imaged in a different laboratory, so the cross-fitted classifier can be evaluated on them to measure how much classifier error moves under a change of source. That speaks to the error-model assumption behind prediction-powered inference. It is a secondary analysis and must not be pooled with KU-Optofil for the primary experiments.
 
 ## Implications for the design
 - **External validity (vulnerability):** critical evidence comes from 11 patients. The morphological diversity of blasts is bounded by those 11 sources. Episode-level CIs must therefore be complemented by a **patient-clustered** analysis: a cluster bootstrap over source patients, and results reported per source patient.
