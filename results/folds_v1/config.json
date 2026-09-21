@@ -3,6 +3,7 @@
  "k": 5,
  "seed": 20260919,
  "out": "results/folds_v1",
+ "dataset_root": "dataset/dataset",
  "n_metadata": 31484,
  "excluded_unknown": 3204,
  "n_cells": 28280,

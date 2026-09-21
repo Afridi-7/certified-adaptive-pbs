@@ -13,6 +13,9 @@ Exclusions (logged):
 The folder train/val/test split is NOT patient-level (265/276 patients span folders) and is never used.
 
 Output: data/ku_optofil/cells.csv  (image_name, rel_path, patient_id, cell_type, is_blast, fold, provided_split)
+        rel_path is relative to the DATASET ROOT (the directory that directly contains train/ val/ test/),
+        e.g. "train/Blast/1604468629_006.jpg". The root itself is detected and logged, so the table stays
+        valid whether the zip was extracted to <data>/dataset or <data>/dataset/dataset.
         results/folds_v1/config.json, summary.csv
 """
 import os, json, argparse
@@ -27,12 +30,20 @@ a = ap.parse_args()
 rng = np.random.default_rng(a.seed)
 
 m = pd.read_csv(os.path.join(a.data, "metadata_with_patient_level_splits.csv"), dtype={"patient_id": str})
-# map image_name -> relative path on disk
+# locate the dataset root: the directory that directly contains the class folders
+def find_root(base):
+    cands = [d for d, subs, _ in os.walk(base) if {"train", "test", "val"} <= set(subs)]
+    if not cands: raise SystemExit(f"could not find a directory containing train/ val/ test/ under {base}")
+    return min(cands, key=len)
+ROOT = find_root(os.path.join(a.data, "dataset"))
+print("dataset root:", ROOT)
+
+# map image_name -> path relative to ROOT
 disk = {}
-for r, _, fs in os.walk(os.path.join(a.data, "dataset")):
+for r, _, fs in os.walk(ROOT):
     for f in fs:
         if f.endswith(".jpg"):
-            disk[f] = os.path.relpath(os.path.join(r, f), a.data).replace("\\", "/")
+            disk[f] = os.path.relpath(os.path.join(r, f), ROOT).replace("\\", "/")
 m["rel_path"] = m.image_name.map(disk)
 assert m.rel_path.notna().all(), "metadata file missing on disk"
 n0 = len(m)
@@ -60,7 +71,7 @@ s = m.groupby("fold").agg(patients=("patient_id", "nunique"), cells=("is_blast",
 s.to_csv(os.path.join(a.out, "summary.csv"))
 bp = m[m.is_blast == 1].groupby(["fold", "patient_id"]).size().rename("blasts").reset_index()
 bp.to_csv(os.path.join(a.out, "blast_patients.csv"), index=False)
-cfg = dict(vars(a), n_metadata=n0, excluded_unknown=excl_unknown, n_cells=len(m), n_patients=int(m.patient_id.nunique()),
+cfg = dict(vars(a), dataset_root=os.path.relpath(ROOT, a.data).replace("\\", "/"), n_metadata=n0, excluded_unknown=excl_unknown, n_cells=len(m), n_patients=int(m.patient_id.nunique()),
            n_blast_patients=len(pos), note="unknown-patient cells excluded; 4 '- Copy' duplicate files ignored (not in metadata)")
 json.dump(cfg, open(os.path.join(a.out, "config.json"), "w"), indent=1)
 print(json.dumps(cfg, indent=1)); print(s.to_string()); print(bp.to_string(index=False))
