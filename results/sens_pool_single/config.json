@@ -1,0 +1,29 @@
+{
+ "emb": "results/embeddings_v1",
+ "out": "results/sens_pool_single",
+ "N": 200,
+ "k_list": [
+  1,
+  5
+ ],
+ "m_list": [
+  1,
+  10,
+  20
+ ],
+ "folds": [
+  0,
+  1,
+  2,
+  3,
+  4
+ ],
+ "episodes": 100,
+ "pool": "pool",
+ "pooling": "single",
+ "target_frac": 0.163,
+ "n_calib": 8,
+ "tau_conf": 0.9,
+ "m_conf": 30,
+ "seed": 20260919
+}
