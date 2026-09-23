@@ -1,0 +1,18 @@
+{
+ "emb": "results/embeddings_v1",
+ "out": "results/cert_smoke",
+ "N": 100,
+ "m": 5,
+ "theta": 0.1,
+ "p_list": [
+  0.08,
+  0.15
+ ],
+ "folds": [
+  0
+ ],
+ "episodes": 20,
+ "alpha": 0.05,
+ "lam": 0.5,
+ "seed": 20260401
+}

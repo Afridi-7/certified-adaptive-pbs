@@ -76,3 +76,24 @@ def make_specimen(bank, fold, N, k, m, rng, pool="pool", pooling="mean", blasts_
     return dict(F=F, crit=crit, cells=cells, n_blast=nb, teacher=teacher,
                 blast_fraction=float(nb.sum() / (N * m)), fold=fold, N=N, k=k, m=m,
                 pool=pool, pooling=pooling)
+
+
+def make_proportion_specimen(bank, fold, N, m, p_true, rng, pool="pool"):
+    """Specimen with a PRESCRIBED blast proportion p_true over its M = N*m cells (Part III).
+    Blast cells are drawn without replacement when the fold has enough of them, otherwise with replacement;
+    the reuse factor is returned so that pseudo-replication can be reported."""
+    M = N * m
+    n_blast = int(round(p_true * M))
+    avail = bank.blast_idx[fold]
+    replace = n_blast > len(avail)
+    bl = rng.choice(avail, n_blast, replace=replace) if n_blast else np.array([], int)
+    src = bank.bg_idx[fold]
+    bg = rng.choice(src, M - n_blast, replace=(M - n_blast) > len(src))
+    cells = np.concatenate([bl, bg]); rng.shuffle(cells)
+    cells = cells.reshape(N, m)
+    Xc = bank.X[cells]
+    F = Xc.mean(1); F /= np.linalg.norm(F, axis=1, keepdims=True)
+    is_b = bank.is_blast[cells]
+    return dict(F=F, cells=cells, n_blast_per_field=is_b.sum(1), blast_fraction=float(is_b.sum() / M),
+                p_target=p_true, teacher=bank.p[cells].mean(1), teacher_max=bank.p[cells].max(1),
+                N=N, m=m, M=M, fold=fold, blast_reuse=float(n_blast / max(1, len(avail))), replaced=bool(replace))

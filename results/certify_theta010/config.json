@@ -1,0 +1,26 @@
+{
+ "emb": "results/embeddings_v1",
+ "out": "results/certify_theta010",
+ "N": 100,
+ "m": 5,
+ "theta": 0.1,
+ "p_list": [
+  0.05,
+  0.08,
+  0.1,
+  0.12,
+  0.15,
+  0.2
+ ],
+ "folds": [
+  0,
+  1,
+  2,
+  3,
+  4
+ ],
+ "episodes": 100,
+ "alpha": 0.05,
+ "lam": 0.5,
+ "seed": 20260401
+}
