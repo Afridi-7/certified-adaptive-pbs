@@ -83,4 +83,5 @@ stain drift are outside its scope; critical evidence comes from 11 patients, bou
 are conditional on one frozen encoder (DINOv2 ViT-S/14) and on mean-pooled field representation.
 
 ---
-Frozen: ______________ (date, `git tag prereg-v1`)   Supervisor informed: ______________
+Frozen: 2026-09-26 (git tag prereg-v1)
+Supervisor informed: 2026-09-23 
