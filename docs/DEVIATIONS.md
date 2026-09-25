@@ -11,3 +11,8 @@
 | 2026-09-21 | Field representation | not applicable (the paper's units are image patches) | a field is the mean of its cells' embeddings | composites have to define a field-level representation | mean pooling causes the dilution effect; max/single pooling are implemented for sensitivity |
 | 2026-09-21 | Raster-scan baseline | spatial raster over a slide | fixed index order over composite fields | composites carry no geometry | reported as `fixed_order`, not as a spatial baseline |
 | 2026-09-25 | Part III weighted test | Shekhar et al. (arXiv:2305.06884) Sec. 2 | v1 used an invalid HT-into-ALPHA construction; **withdrawn** and replaced by a transcription of Shekhar et al.'s importance-weighted betting martingale (`weighted_betting.py`) | error found on reading the paper | v1 finding 3 ("adaptivity did not help") is withdrawn; v2 shows a 35–58% cost reduction with valid size |
+
+## Erratum (2026-09-25): date in PREREG.md Amendment 2 header
+The Amendment 2 header reads "2026-09-27"; the correct date is 2026-09-25. This is a typing error in the frozen text and is
+left unedited so that the text still matches tag `prereg-v2`. The authoritative freeze time is the timestamp of the `prereg-v2`
+commit, which precedes the creation of `results/part3_theta010`, `results/part3_theta020` and `results/external_v1/decisions.json`.

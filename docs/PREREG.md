@@ -187,4 +187,4 @@ Exploratory Part III results (`certification_v1.md`, `certification_v2.md`) and 
   - Seed 20260521. Implemented in `scripts/16_external_analysis.py`, frozen with this amendment.
   - H4a/H4b are directional expectations of acquisition shift; either outcome is reported. PBC-DIB is dropped from the plan.
 
-Amendment 2 frozen: ______________ (git tag prereg-v2)
+Amendment 2 frozen: 2026-09-26 (git tag prereg-v2)
