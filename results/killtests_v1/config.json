@@ -16,16 +16,19 @@
   20
  ],
  "folds": [
+  0,
+  1,
   2,
   3,
   4
  ],
- "episodes": 200,
+ "episodes": 100,
  "pool": "pool",
  "pooling": "mean",
  "target_frac": 0.163,
  "n_calib": 8,
  "tau_conf": 0.9,
  "m_conf": 30,
- "seed": 20260919
+ "seed": 20260919,
+ "cell_episodes": []
 }

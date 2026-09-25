@@ -40,6 +40,7 @@ ap.add_argument("--n_calib", type=int, default=8)
 ap.add_argument("--tau_conf", type=float, default=0.9)        # confidence-stopping threshold
 ap.add_argument("--m_conf", type=int, default=30)             # consecutive confident-negative fields
 ap.add_argument("--seed", type=int, default=20260919)
+ap.add_argument("--cell_episodes", nargs="*", default=[], help="overrides as m:k:episodes_per_fold, e.g. 10:1:400 (PREREG amendment 1, A3)")
 a = ap.parse_args()
 os.makedirs(a.out, exist_ok=True)
 
@@ -68,6 +69,7 @@ def calibrate(fold, m, rng):
     return calibrate_tau(cal, base_cfg, a.target_frac, rng=rng)
 
 
+OVR = {(int(x.split(":")[0]), int(x.split(":")[1])): int(x.split(":")[2]) for x in a.cell_episodes}
 rows_all = []
 for fold in a.folds:
     for m in a.m_list:
@@ -79,7 +81,7 @@ for fold in a.folds:
         cfg = InfoDPPConfig(**{**base_cfg.__dict__, "tau": tau})
         rows = []
         for k in a.k_list:
-            for ep in range(a.episodes):
+            for ep in range(OVR.get((m, k), a.episodes)):
                 s = make_specimen(bank, fold, a.N, k, m, rng, a.pool, a.pooling)
                 res = run_infodpp(s["F"], s["teacher"], cfg, np.random.default_rng(rng.integers(1 << 30)))
                 n_info = res["k_star"]; crit = s["crit"]; ci = np.flatnonzero(crit)
@@ -105,8 +107,13 @@ for fold in a.folds:
         d = pd.DataFrame(rows); d.to_csv(path, index=False); rows_all.append(d)
         print(f"fold {fold} m {m}: tau={tau:.3f} {len(d)} episodes in {time.time()-t0:.0f}s", flush=True)
 
-if rows_all:
-    all_df = pd.concat(rows_all, ignore_index=True)
+# Combine ALL per-(fold, m) files present in the output directory, not only this invocation's rows.
+# (Bug fixed 2026-09-26: running the grid in several invocations previously overwrote episodes.csv with the
+#  last invocation's folds only; see docs/killtests_v1.md correction note.)
+import glob
+parts = sorted(glob.glob(f"{a.out}/episodes_fold*_m*.csv"))
+if parts:
+    all_df = pd.concat([pd.read_csv(f) for f in parts], ignore_index=True)
     all_df.to_csv(f"{a.out}/episodes.csv", index=False)
     json.dump(vars(a), open(f"{a.out}/config.json", "w"), indent=1)
-    print("total episodes:", len(all_df))
+    print("total episodes (all folds in directory):", len(all_df), "| folds:", sorted(all_df.fold.unique()))

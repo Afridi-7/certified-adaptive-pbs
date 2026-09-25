@@ -9,16 +9,16 @@ Runs: `results/sens_pool_max`, `results/sens_pool_single`, `results/sens_tau_*` 
 
 | pooling | m | k | cost | InfoDPP-PAC | uniform @ cost | difference | AUC(info gain) |
 |---|---|---|---|---|---|---|---|
-| mean (primary) | 10 | 1 | 33 | 0.805 | 0.798 | **+0.007** | 0.534 |
+| mean (primary) | 10 | 1 | 33 | 0.784 | 0.811 | **−0.027** | 0.543 |
 | max | 10 | 1 | 32 | 0.730 | 0.820 | −0.090 | 0.579 |
 | single cell | 10 | 1 | 33 | 0.824 | 0.822 | +0.002 | 0.513 |
-| mean | 20 | 1 | 33 | 0.817 | 0.833 | −0.017 | 0.522 |
+| mean | 20 | 1 | 33 | 0.795 | 0.818 | −0.023 | 0.527 |
 | max | 20 | 1 | 33 | 0.764 | 0.814 | −0.050 | 0.567 |
 | single cell | 20 | 1 | 33 | 0.814 | 0.804 | +0.010 | 0.512 |
 | any | 1 | 1 | 33 | 0.344–0.397 | 0.850–0.855 | ≈ −0.5 | 0.75–0.80 |
 
 **Conclusion: the finding is not an artefact of mean pooling.** Max pooling, which preserves the most signal of
-the three, recovers only part of the advantage (difference −0.09 instead of +0.007 at m = 10) and still leaves a
+the three, recovers only part of the advantage (difference −0.09 instead of −0.027 at m = 10) and still leaves a
 **73% miss rate** on specimens with one critical field. Single-cell representation behaves like the mean. The
 information-gain AUC stays in 0.51–0.58 under every representation at m ≥ 10, against 0.75–0.80 at m = 1.
 
@@ -28,14 +28,14 @@ information-gain AUC stays in 0.51–0.58 under every representation at m ≥ 10
 |---|---|---|---|---|---|
 | 5% | 10 | 0.922 | 0.940 | −0.018 | 0.950 |
 | 10% | 20 | 0.866 | 0.892 | −0.026 | 0.900 |
-| 16.3% (paper) | 33 | 0.805 | 0.798 | +0.007 | 0.835 |
+| 16.3% (paper) | 33 | 0.784 | 0.811 | −0.027 | 0.835 |
 | 30% | 59 | 0.610 | 0.690 | −0.080 | 0.705 |
 | 50% | 100 | 0.384 | 0.480 | −0.096 | 0.500 |
 
 **Conclusion: the finding is not an artefact of the calibration point.** Across a tenfold range of examination
 cost the difference never exceeds 0.1, while the absolute miss rate is governed almost entirely by how much of
 the specimen was examined. Uniform's miss rate tracks the finite-population prediction 1 − n/N at every operating
-point (0.940 vs 0.950, 0.892 vs 0.900, 0.798 vs 0.835, 0.690 vs 0.705, 0.480 vs 0.500), an independent
+point (0.940 vs 0.950, 0.892 vs 0.900, 0.811 vs 0.835, 0.690 vs 0.705, 0.480 vs 0.500), an independent
 confirmation of the Part II derivation at five different budgets (H1d).
 
 ## 3. Implication for the thesis
@@ -47,3 +47,6 @@ detection to certification of a proportion.
 
 Caveat: still exploratory (`PREREG.md` is not yet frozen); episode counts here are 500 per cell rather than the
 1,000 pre-registered for the confirmatory run.
+
+
+**Note (2026-09-26):** primary rows updated to the corrected 5-fold run; sensitivity runs reused the main run's random streams per (fold, m), so their deviations from 1 − n/N are correlated, not independent replicates.

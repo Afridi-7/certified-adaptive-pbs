@@ -37,7 +37,7 @@ ap.add_argument("--folds", type=int, nargs="+", default=[0, 1, 2, 3, 4])
 ap.add_argument("--episodes", type=int, default=100)
 ap.add_argument("--alpha", type=float, default=0.05)
 ap.add_argument("--lam", type=float, default=0.5)
-ap.add_argument("--seed", type=int, default=20260401)
+ap.add_argument("--seed", type=int, default=20260501)   # Part III seed family (disjoint from Part I confirmatory 20260401)
 a = ap.parse_args()
 os.makedirs(a.out, exist_ok=True)
 

@@ -1,5 +1,12 @@
 # Kill-tests 1 and 2 on composite specimens — exploratory run v1 (2026-09-21)
 
+> **CORRECTION (2026-09-26).** The grid was run in two batches (folds 0–1, then 2–4) and the second batch
+> overwrote the combined `episodes.csv`, so every number below originally came from **folds 2–4 only (12,000 of
+> 20,000 episodes)**. The script now combines all per-fold files, and the tables below are recomputed from all
+> **20,000 episodes (5 folds, 1,000 per cell)**. The qualitative conclusions are unchanged; the main numeric
+> changes are in the KT2 table (e.g. m = 10, k = 1: 0.784 vs 0.811, difference −0.027, p = 0.15; previously
+> 0.805 vs 0.798) and the KT1 AUCs (0.775 / 0.589 / 0.543 / 0.527).
+
 **Status: EXPLORATORY.** `PREREG.md` is not yet frozen, so these results inform the pre-registration; they are
 not the confirmatory analysis. The confirmatory run must use fresh seeds under the frozen protocol and be
 reported separately.
@@ -9,7 +16,7 @@ Code: `src/cadpbs/infodpp.py` (faithful Eqs. 3–7 of arXiv:2608.23574), `src/ca
 
 **Setup.** N = 200 fields per specimen; rarity k ∈ {1,2,5,10,20} critical fields; dilution m ∈ {1,5,10,20} cells
 per field; mean-pooled field embeddings; background cells from the blast-free patients of the evaluation fold;
-blasts from that fold's blast patients; 5 folds × 200 episodes per cell = **12,000 episodes**. τ is calibrated on
+blasts from that fold's blast patients; 5 folds × 200 episodes per cell = **20,000 episodes**. τ is calibrated on
 blast-free specimens from *other* folds to the paper's operating point (~16.3% of the budget); all other
 InfoDPP-PAC hyperparameters are the paper's tuned values, except those the paper does not report (see DEVIATIONS).
 Baselines are evaluated at the **same cost** as InfoDPP-PAC in the same episode (paired, exact McNemar).
@@ -25,10 +32,10 @@ AUC for critical vs non-critical fields, mean over 3,000 episodes per m:
 
 | m | information gain (Eq. 5, before any selection) | teacher relevance (Eq. 3) | corr(info, relevance) |
 |---|---|---|---|
-| 1 | 0.746 | 0.972 | 0.077 |
-| 5 | 0.574 | 0.936 | 0.023 |
-| 10 | 0.534 | 0.918 | 0.013 |
-| 20 | 0.522 | 0.891 | 0.008 |
+| 1 | 0.775 | 0.977 | 0.085 |
+| 5 | 0.589 | 0.941 | 0.025 |
+| 10 | 0.543 | 0.919 | 0.015 |
+| 20 | 0.527 | 0.894 | 0.010 |
 
 Information gain and relevance are **nearly orthogonal** (r ≤ 0.08), and the information signal falls to chance
 (0.52) at m = 20 while relevance stays high (0.89). **Kill-test 1 passes**: the signal the certificate is built on
@@ -38,18 +45,18 @@ carries almost no information about critical evidence once the observation unit 
 
 | m | k | InfoDPP-PAC miss [95% CI] | uniform @ same cost | difference | McNemar b/c | p |
 |---|---|---|---|---|---|---|
-| 1 | 1 | 0.397 [0.358, 0.436] | 0.855 [0.825, 0.881] | −0.458 | 25/300 | 5e-61 |
-| 1 | 5 | 0.010 [0.005, 0.022] | 0.427 [0.388, 0.467] | −0.417 | 3/253 | 5e-71 |
-| 5 | 1 | 0.717 [0.679, 0.751] | 0.838 [0.807, 0.866] | −0.122 | 76/149 | 1e-06 |
-| 10 | 1 | 0.805 [0.771, 0.835] | 0.798 [0.764, 0.828] | **+0.007** | 94/90 | 0.83 |
-| 20 | 1 | 0.817 [0.784, 0.846] | 0.833 [0.801, 0.861] | −0.017 | 79/89 | 0.49 |
-| 20 | 2 | 0.645 [0.606, 0.682] | 0.695 [0.657, 0.731] | −0.050 | 121/151 | 0.08 |
+| 1 | 1 | 0.323 [0.295, 0.353] | 0.838 [0.814, 0.860] | −0.515 | 42/557 | 8e-116 |
+| 1 | 5 | 0.008 [0.004, 0.016] | 0.421 [0.391, 0.452] | −0.413 | 5/418 | 1e-116 |
+| 5 | 1 | 0.691 [0.662, 0.719] | 0.841 [0.817, 0.862] | −0.150 | 112/262 | 6e-15 |
+| 10 | 1 | 0.784 [0.757, 0.808] | 0.811 [0.786, 0.834] | **−0.027** | 146/173 | 0.15 |
+| 20 | 1 | 0.795 [0.769, 0.819] | 0.818 [0.793, 0.841] | −0.023 | 142/165 | 0.21 |
+| 20 | 2 | 0.615 [0.584, 0.645] | 0.693 [0.664, 0.721] | −0.078 | 194/272 | 3e-04 |
 
 **Findings.**
 1. **The apparent advantage of information-saturation selection is an artefact of the observation unit.** At m = 1
    (a "field" is a single cell) InfoDPP-PAC misses far less than matched-cost uniform sampling, because a blast is
    then a genuine embedding-space outlier and the diversity term seeks outliers. At m ≥ 10 the advantage is
-   **gone** (m = 10, k = 1: 0.805 vs 0.798, p = 0.83).
+   reduced to a few points and no longer significant (m = 10, k = 1: 0.784 vs 0.811, p = 0.15; m = 20: 0.795 vs 0.818, p = 0.21).
 2. **Neither method protects against rare evidence.** At m ≥ 10 and k = 1, both miss ~80% of positive specimens
    while examining 16.5% of the fields — which is exactly the finite-population prediction 1 − n/N = 0.835 of
    Part II. The empirical uniform miss rates (0.798–0.855 at k = 1) match that bound across all m, an independent
