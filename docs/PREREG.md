@@ -136,3 +136,55 @@ python scripts/09_confirmatory_analysis.py --dir results/confirm_v1
 ```
 
 Amendment frozen: 2026-09-26 (git tag prereg-v1.1)
+
+---
+# Amendment 2 (v2) — Part III (RQ3) and RQ4, 2026-09-27, BEFORE their confirmatory data exist
+No episode with the seeds below has been generated, and no RV-PBS embedding exists, at the time of writing.
+Exploratory Part III results (`certification_v1.md`, `certification_v2.md`) and the KU-Optofil RQ4 analyses
+(`rq4_v1.md`) motivated these hypotheses.
+
+## Part III — certified threshold decisions (RQ3)
+- **Population**: one specimen = N = 100 fields × m = 5 cells = M = 500 cells. **Estimand**: blast proportion p over
+  those 500 cells. **Assertion**: p > θ. **Thresholds, run and reported separately, never merged**: θ = 0.10 (ICC 2022,
+  MDS/AML boundary) and θ = 0.20 (WHO 5th ed. 2022, AML in most contexts). The study certifies statements about finite
+  populations of cells; it establishes nothing about diagnostic validity.
+- **p grid**: θ = 0.10 → {0.05, 0.08, 0.10, 0.12, 0.15, 0.20}; θ = 0.20 → {0.15, 0.18, 0.20, 0.22, 0.25, 0.30}.
+  **1,000 episodes per (θ, p)**.
+- **Change from exploratory runs**: blasts are drawn **without replacement from all 489 KU-Optofil blasts** and background
+  without replacement from all blast-free patients (no within-fold restriction). Valid because every cell's score is
+  cross-fitted; removes the blast reuse of the exploratory runs.
+- **Designs, all run on the same specimen (paired)**: `alpha_uniform` (ALPHA, uniform without replacement);
+  `bet_uniform`, `bet_prop` (classifier-driven, prop-MS), `bet_prop_cv` (+ control variate) — Shekhar et al.
+  (arXiv:2305.06884) importance-weighted betting test; `naive` (classifier-prioritised order, analysed as if uniform —
+  deliberately invalid); conventional 100- and 200-cell counts. α = 0.05. Labels come only from verification of sampled fields.
+- **Seeds**: θ = 0.10 → 20260511; θ = 0.20 → 20260512 (per p: seed + round(1000·p)).
+- **Hypotheses and decision rules** (implemented in `scripts/13_part3_analysis.py`, frozen with this amendment):
+  - **H3a (validity)**: for each of the four valid designs, the false-certification rate at p = θ is ≤ 0.05 **and** a
+    one-sided exact binomial test of H0: rate ≤ 0.05 is not rejected at 0.05. Supported if all four pass.
+  - **H3b (uncorrected adaptive selection is invalid)**: at p = θ the `naive` rate's 95% Clopper–Pearson lower bound > 0.05.
+  - **H3c (classifier-driven sampling is cheaper)**: at every p > θ, cells to certify under `bet_prop` < `alpha_uniform`,
+    paired one-sided Wilcoxon signed-rank, Holm-corrected at 0.05 across the p values above θ. Supported if all reject.
+  - **H3d (cost governed by the margin)**: median `alpha_uniform` cells strictly decrease as p increases above θ.
+  - Descriptive only: `bet_prop_cv` vs `bet_prop`; rate at which conventional counts call "above" at each p.
+- Commands (run once, after tagging prereg-v2):
+  `python scripts/12_certify_confirm.py --out results/part3_theta010 --theta 0.10 --p_list 0.05 0.08 0.10 0.12 0.15 0.20 --episodes 1000 --seed 20260511`
+  `python scripts/12_certify_confirm.py --out results/part3_theta020 --theta 0.20 --p_list 0.15 0.18 0.20 0.22 0.25 0.30 --episodes 1000 --seed 20260512`
+  `python scripts/13_part3_analysis.py --dirs results/part3_theta010 results/part3_theta020`
+
+## RQ4 — where do the assumptions break?
+- **KU-Optofil error-structure analyses** (`rq4_v1.md`) were run on the complete data and cannot be re-run on fresh data;
+  they are reported as **exploratory/descriptive**, not confirmatory.
+- **External source (RV-PBS)**, not yet embedded: 752 annotated cell crops (153 blasts) from 583 images, cropped by
+  `scripts/14_crop_rvpbs.py` (square crop, 1.5× the polygon's longer bounding-box side, resized to 368 px — a CHOICE,
+  since KU-Optofil's cropping rule is undocumented; differences in cropping are a confound of any shift estimate).
+  Embedded with the identical encoder and preprocessing (`notebooks/15_external_embeddings_colab.ipynb`).
+  Classifier: logistic probe trained on all KU-Optofil cells, threshold fixed at the KU cross-fitted 95%-specificity
+  threshold t = 0.03104 (KU pooled blast recall 0.906, false-positive rate 0.050 at t). CIs by bootstrap over source image.
+  - **H4a**: blast recall on RV-PBS is lower than on KU-Optofil: upper 95% CI bound < 0.906.
+  - **H4b**: false-positive rate on RV-PBS non-blast cells is higher: lower 95% CI bound > 0.050.
+  - **H4c (validity under shifted side information)**: specimens of 500 RV-PBS cells, θ = 0.10, classifier-driven
+    betting test; false certification at p = θ (1,000 episodes) satisfies the H3a rule. Cost at p = 0.15, 0.20 descriptive.
+  - Seed 20260521. Implemented in `scripts/16_external_analysis.py`, frozen with this amendment.
+  - H4a/H4b are directional expectations of acquisition shift; either outcome is reported. PBC-DIB is dropped from the plan.
+
+Amendment 2 frozen: ______________ (git tag prereg-v2)
