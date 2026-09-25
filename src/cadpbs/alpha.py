@@ -23,12 +23,12 @@ UNITS. We sample FIELDS, and an expert verifies every cell in a sampled field, s
 mean of the cell assorters, which is bounded by the same u. With equal-size fields the population mean over
 fields equals the cell-level proportion.
 
-ADAPTIVE SELECTION. Uniform sampling without replacement satisfies ALPHA's conditions directly. For
-classifier-prioritised sampling we draw with known probabilities and use the Horvitz-Thompson-corrected
-assorter; boundedness is enforced by mixing the selection distribution with the uniform one (floor lambda).
-**This weighted variant is our construction and is validated empirically here, not proven.** The literature to
-check it against is Shekhar, Xu, Lipton, Liang & Ramdas (UAI 2023, arXiv:2305.06884) on risk-limiting audits
-via weighted sampling, and Spertus, Sridhar & Stark (arXiv:2409.06680) on sequential stratified inference.
+ADAPTIVE SELECTION. Uniform sampling without replacement satisfies ALPHA's conditions directly. For adaptive
+(classifier-driven) sampling use cadpbs.weighted_betting, which transcribes Shekhar et al. (arXiv:2305.06884).
+WITHDRAWN (2026-09-25): an earlier `ht_assorter` construction fed importance-weighted draws into ALPHA's
+UNWEIGHTED null-mean update mu_j = (M*mu0 - sum X)/(M - j + 1). That is not a valid supermartingale
+construction; its results (docs/certification_v1.md, finding 3) are withdrawn. `sample_prioritised` is kept
+only to build the deliberately invalid "naive" design.
 """
 import numpy as np
 
@@ -89,9 +89,4 @@ def sample_prioritised(N, score, rng, lam=0.5):
     return np.array(order), np.array(probs)
 
 
-def ht_assorter(a_field, probs, N, u, lam):
-    """Horvitz-Thompson-style correction for unequal selection probabilities, rescaled to keep the null mean
-    at mu0 and the values bounded. With the uniform floor lam, the first-draw probability is at least lam/N,
-    so the weight 1/(N*p) is at most 1/lam: values stay in [0, u/lam]."""
-    w = 1.0 / (N * np.asarray(probs, float))
-    return np.asarray(a_field, float) * w, u / lam
+# ht_assorter removed: see WITHDRAWN note in the module docstring.

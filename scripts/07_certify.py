@@ -8,8 +8,11 @@ diagnostic validity, and the two classification systems are never merged.
 
 Sampling designs (fields are the sampling unit; an expert verifies every cell of a sampled field):
   uniform   : SRSWOR, pi_t = 1/(N-t+1)                                   -> ALPHA applies directly
-  prio_ht   : classifier-prioritised without replacement, probabilities recorded, HT-corrected assorter
-              (our construction, mixed with uniform at rate lam so weights stay bounded)
+  bet_*     : Shekhar et al. (2023) importance-weighted betting test, valid for ANY predictable sampling rule:
+              bet_uniform (uniform q), bet_prop (q proportional to the classifier's predicted blast content,
+              their prop-MS), bet_prop_cv (prop-MS plus their control variate).
+              [An earlier 'prio_ht' design was WITHDRAWN: it fed importance-weighted draws into ALPHA's
+               unweighted null-mean update, which is not a valid construction. See docs/certification_v1.md.]
   prio_naive: the same prioritised order, but the assorter used AS IF the sample were uniform
               (the error we want to measure: adaptive selection without probability correction)
 
@@ -20,7 +23,8 @@ import argparse, json, os, sys, time
 import numpy as np, pandas as pd
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 from cadpbs.composites import CellBank, make_proportion_specimen
-from cadpbs.alpha import assorter_bound, alpha_martingale, sample_uniform, sample_prioritised, ht_assorter
+from cadpbs.alpha import assorter_bound, alpha_martingale, sample_uniform, sample_prioritised
+from cadpbs.weighted_betting import betting_test, sampler_uniform, sampler_prop_side
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--emb", default="results/embeddings_v1")
@@ -56,11 +60,14 @@ for fold in a.folds:
             order, _ = sample_uniform(a.N, rng)
             _, stop = alpha_martingale(a_field[order], u, 0.5, a.N, alpha=a.alpha)
             r["uniform_cert"] = int(stop > 0); r["uniform_cells"] = (stop if stop > 0 else a.N) * a.m
-            # --- prioritised, HT-corrected ---
+            # --- Shekhar et al. (2023) betting test: uniform, classifier-driven prop-MS, and prop-MS + control variate ---
+            S = s["teacher"] / (2 * a.theta)          # side information: classifier-predicted field assorter
+            for nm, smp, cv in [("bet_uniform", sampler_uniform(a.N), False),
+                                ("bet_prop", sampler_prop_side(S), False),
+                                ("bet_prop_cv", sampler_prop_side(S), True)]:
+                res = betting_test(a_field, S, smp, 0.5, alpha=a.alpha, use_cv=cv, rng=rng)
+                r[f"{nm}_cert"] = int(res["stop"] > 0); r[f"{nm}_cells"] = (res["stop"] if res["stop"] > 0 else a.N) * a.m
             o2, pr = sample_prioritised(a.N, s["teacher_max"], rng, a.lam)
-            xw, uw = ht_assorter(a_field[o2], pr, a.N, u, a.lam)
-            _, stop2 = alpha_martingale(xw, uw, 0.5, a.N, alpha=a.alpha)
-            r["prio_ht_cert"] = int(stop2 > 0); r["prio_ht_cells"] = (stop2 if stop2 > 0 else a.N) * a.m
             # --- prioritised, NO correction (deliberately invalid) ---
             _, stop3 = alpha_martingale(a_field[o2], u, 0.5, a.N, alpha=a.alpha)
             r["prio_naive_cert"] = int(stop3 > 0); r["prio_naive_cells"] = (stop3 if stop3 > 0 else a.N) * a.m
