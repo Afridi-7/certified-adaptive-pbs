@@ -16,3 +16,12 @@
 The Amendment 2 header reads "2026-09-27"; the correct date is 2026-09-25. This is a typing error in the frozen text and is
 left unedited so that the text still matches tag `prereg-v2`. The authoritative freeze time is the timestamp of the `prereg-v2`
 commit, which precedes the creation of `results/part3_theta010`, `results/part3_theta020` and `results/external_v1/decisions.json`.
+
+## Additions (2026-09-25)
+| Date | Component | Proposal / source | What we did | Why | Consequence |
+|---|---|---|---|---|---|
+| 2026-09-25 | Part III side information | Proposal lists prediction-powered e-values (Csillag, Struchiner & Goedert; arXiv identifier to be verified) | **Not implemented.** Side information enters only through Shekhar et al.'s prop-MS sampling and control variate | one valid weighted-sampling framework covers the adaptive design; prediction-powered e-values were not needed to test H3a–H3d | the thesis reports no comparison with prediction-powered e-values; this must be stated as a limitation, not implied as covered |
+| 2026-09-25 | Expert verification | a haematologist verifies the sampled fields | verification is simulated by the dataset's expert labels (verifier error β = 0) | no haematologist annotation available | certificates hold for a perfect verifier; `part2_proof.md` Remark 4 shows that verifier error sets a floor |
+
+**Erratum addendum.** The freeze line of Amendment 2 reads "2026-09-26". The tag was created on 2026-09-25, and the
+`prereg-v2` tag timestamp is authoritative.

@@ -188,3 +188,94 @@ Exploratory Part III results (`certification_v1.md`, `certification_v2.md`) and 
   - H4a/H4b are directional expectations of acquisition shift; either outcome is reported. PBC-DIB is dropped from the plan.
 
 Amendment 2 frozen: 2026-09-26 (git tag prereg-v2)
+
+# Amendment 3 (v3) — spatial clustering and a defensive mixture (RQ4, RQ3), 2026-09-25, BEFORE their data exist
+No episode with the seeds below has been generated at the time of writing. The scripts were smoke-tested on
+**synthetic** stand-in data only; they have not been run on KU-Optofil or RV-PBS cells.
+
+**Motivation.**
+- **E3.1.** Sensitivity to spatial arrangement is a stated project requirement, and it is untested. RV-PBS cannot
+  test it: it has 752 annotated cells over 583 images, about 1.3 per image.
+- **E3.2.** The exploratory cost reversal under shift (`confirmatory_v2.md`: classifier-driven sampling needed a
+  median of 190 cells vs 110 for uniform sampling at p = 0.20 on RV-PBS) was not a pre-registered hypothesis. E3.2
+  tests whether it replicates on fresh episodes, and whether a standard safeguard removes it.
+
+## E3.1 — blasts clustered across fields (RQ4: exchangeability and spatial dependence)
+- **Population, estimand, assertion**: as in Amendment 2 (N = 100 fields × m = 5 cells = 500 cells; blast
+  proportion p; assertion p > θ). θ = 0.10 (ICC 2022) and θ = 0.20 (WHO 5th ed. 2022) are run and reported
+  separately. Blasts come from all 489 KU-Optofil blasts and background from blast-free patients, all sampled
+  without replacement. Scores are cross-fitted.
+- **Arrangements**:
+  - `scattered`: the B = round(pM) blasts occupy B cells chosen uniformly at random (the Part III arrangement).
+  - `hot0.6` and `hot1.0`: n_hot = min(N, ⌈B/(m·h)⌉) fields, chosen uniformly at random, receive all B blasts,
+    placed uniformly at random among their cells. h ∈ {0.6, 1.0} is the nominal blast density of a hot field.
+  - These are **stress models**, not estimates. No available data establish how blasts are distributed across
+    fields in real smears.
+- **Designs (paired on the same specimen)**:
+  - `alpha_field`: ALPHA, uniform field sampling.
+  - `bet_field`: Shekhar et al. test, uniform field sampling.
+  - `prop_field`: Shekhar et al. test, classifier-driven field sampling (prop-MS).
+  - `naive_cell`: the same uniform field order as `alpha_field`, with the cells flattened and analysed by
+    cell-level ALPHA (M = 500) as if each cell had been sampled individually.
+  - `conv100`: first 100 cells of that order; calls "above" if their blast fraction exceeds θ.
+- **p grid**: θ = 0.10 → {0.08, 0.10, 0.12, 0.15, 0.20}; θ = 0.20 → {0.18, 0.20, 0.22, 0.25, 0.30}.
+  1,000 episodes at p = θ, 500 otherwise, for each arrangement.
+- **Expectation from theory, stated in advance**:
+  - The three field-level designs are valid for **any** arrangement, because the sampling unit is the analysis
+    unit.
+  - `naive_cell` is valid only if the cell sequence is exchangeable. That holds under `scattered` (the flattened
+    sequence is then a uniformly random permutation of cells) and not under clustering.
+  - E3.1 therefore tests *how large* the failure is under clustering, not whether field-level validity holds in
+    theory.
+- **Hypotheses and decision rules** (in `scripts/20_amend3_analysis.py`, frozen with this amendment):
+  - **H5a (field-level validity under clustering).** For `alpha_field`, `bet_field` and `prop_field`, in every
+    arrangement, at p = θ and p = θ − 0.02, for both θ, the Amendment 2 H3a rule holds (rate ≤ 0.05 and the
+    one-sided exact binomial test of rate ≤ 0.05 is not rejected at 0.05). Supported if all 36 cells pass.
+    Because of the multiplicity, the rule is conservative, and any failing cell will be examined individually.
+  - **H5b (mismatched analysis unit breaks validity under clustering).** At p = θ, for both θ: `naive_cell`
+    passes the H3a rule under `scattered`, **and** its 95% Clopper–Pearson lower bound exceeds 0.05 under
+    `hot1.0`. `hot0.6` is descriptive.
+  - **H5c (clustering raises the cost of valid certification).** At p = θ + 0.05, for both θ: the median
+    `alpha_field` cells are strictly ordered scattered < hot0.6 < hot1.0, **and** scattered < hot1.0 by a
+    one-sided Mann–Whitney test at 0.05 (different specimens, so the test is unpaired).
+  - Descriptive: `prop_field` cost by arrangement; `conv100` "above" rates at every p.
+- **Seeds**: θ = 0.10 → 20260611; θ = 0.20 → 20260612. Per-episode RNG
+  `default_rng([seed, arrangement index, round(1000 p), episode])`.
+
+## E3.2 — defensive mixture under side-information shift (RQ4)
+- **Sampler**: q_t(i) = (1 − λ)·S(i)/Σ_remaining S + λ/n_remaining. **λ = 0.50 is primary**; λ = 0.25 is
+  descriptive. This is valid under Shekhar et al. Theorem 1 (any predictable q_t that is positive on every
+  remaining unit).
+- **Sources**:
+  - `rvpbs`: RV-PBS crops; probe trained on all KU-Optofil cells, as in `scripts/16`.
+  - `ku`: KU-Optofil; cross-fitted scores.
+- **Specimen and assertion**: N = 100 × m = 5, cells shuffled (scattered); θ = 0.10 (ICC 2022) only.
+- **Designs (paired)**: `uniform`, `prop`, `mix25`, `mix50`, all using the Shekhar et al. betting test.
+- **p grid**: rvpbs → {0.10, 0.15, 0.20}; ku → {0.10, 0.12, 0.15, 0.20}. 1,000 episodes at p = 0.10, 500
+  otherwise.
+- **Hypotheses and decision rules**:
+  - **H6a (validity).** `mix25` and `mix50` pass the H3a rule at p = 0.10 on both sources.
+  - **H6d (the reversal replicates).** RV-PBS, p = 0.20: `prop` needs more cells than `uniform`, by a paired
+    one-sided Wilcoxon signed-rank test at 0.05. This turns the exploratory observation into a confirmatory
+    test on fresh episodes.
+  - **H6b (the mixture caps the loss under shift).** RV-PBS, at p = 0.15 **and** p = 0.20: the upper 95%
+    bootstrap bound (2,000 paired episode resamples, seed 20260631) of median(`mix50`)/median(`uniform`) is
+    < 1.20.
+  - **H6c (the mixture keeps most of the gain in distribution).** KU-Optofil, at p ∈ {0.12, 0.15, 0.20}: the
+    retained saving (med_uniform − med_mix50)/(med_uniform − med_prop) is ≥ 0.5, **and** `mix50` < `uniform` by
+    a paired one-sided Wilcoxon test, with Holm correction over the three p at 0.05. All three p must pass.
+  - H6b and H6c pull in opposite directions (safety vs efficiency). Either may fail, and both outcomes are
+    reported.
+- **Seeds**: rvpbs → 20260621; ku → 20260622. Per-episode RNG
+  `default_rng([seed, source index, round(1000 p), episode])`.
+
+## Commands (run once, after tagging prereg-v3; the scripts resume if interrupted)
+```
+python scripts/18_spatial_confirm.py --out results/a3_spatial_theta010 --theta 0.10 --p_list 0.08 0.10 0.12 0.15 0.20 --seed 20260611
+python scripts/18_spatial_confirm.py --out results/a3_spatial_theta020 --theta 0.20 --p_list 0.18 0.20 0.22 0.25 0.30 --seed 20260612
+python scripts/19_mixture_confirm.py --out results/a3_mixture_rvpbs --source rvpbs --p_list 0.10 0.15 0.20 --seed 20260621
+python scripts/19_mixture_confirm.py --out results/a3_mixture_ku --source ku --p_list 0.10 0.12 0.15 0.20 --seed 20260622
+python scripts/20_amend3_analysis.py --spatial results/a3_spatial_theta010 results/a3_spatial_theta020 --mixture results/a3_mixture_rvpbs results/a3_mixture_ku --out results/a3_decisions.json
+```
+
+Amendment 3 frozen: 2026-09-25 (git tag prereg-v3)
