@@ -279,3 +279,81 @@ python scripts/20_amend3_analysis.py --spatial results/a3_spatial_theta010 resul
 ```
 
 Amendment 3 frozen: 2026-09-25 (git tag prereg-v3)
+
+# Amendment 4 (v4) — real-specimen spatial structure (RQ4, bridge to RQ3), 2026-09-30, BEFORE the analyses are run
+**Data.** BoneMarrowWSI-PediatricLeukemia (Höfener et al.; NCI Imaging Data Commons collection
+`bonemarrowwsi_pediatricleukemia`; source DOI 10.5281/zenodo.14933087; CC BY 4.0). Only the annotation series were
+downloaded (`notebooks/21_bmwsi_annotations_colab.ipynb`; `data/bmwsi/bmwsi_ann.zip`, SHA-256 c8446c59…aadc6d) and parsed by
+`scripts/22_parse_bmwsi.py`.
+
+The dataset documentation states that in 228 ROIs of 2048 × 2048 px (40×, 0.11 µm/px, about 225 µm), **every
+haematological structure was boxed and consensus-labelled** by at least two of three or more experts. The ROIs were
+placed by the annotators in the evaluable monolayer.
+
+**Scope change, stated openly.** These are pediatric **bone-marrow aspirate** smears, not peripheral blood. WHO 5th ed.
+(2022) and ICC (2022) blast criteria refer to blood or marrow. This amendment measures spatial structure in real smears;
+it does not transfer any cost number to peripheral blood.
+
+**What was inspected before writing this amendment.** The following design facts, and nothing about spatial
+arrangement:
+- 113 patients with labelled ROIs (112 with 2 ROIs, 1 with 1).
+- Nucleated cells per ROI: median 68 (IQR 37–109). Total 17,003 nucleated cells, 6,660 blasts.
+- Per-patient blast proportion: 46 patients ≤ 0.05, 1 in (0.05, 0.10], 2 in (0.10, 0.20], 8 in (0.20, 0.50],
+  56 > 0.50.
+- Consensus label frequencies.
+
+Because almost no patient lies near either threshold, real-proportion certification near the boundary cannot be
+tested on these data. Hence the design below: measure the clustering on real data, then carry it into a
+pre-specified simulation.
+
+## A4.1 — is blast status spatially clustered within real specimens? (`scripts/23_bmwsi_clustering.py`)
+**Definitions** (as in the script header):
+- **Blast** = {lymphocytic_blast, myelocytic_blast, monocytic_blast, unknown_blast}.
+- **Nucleated** = all consensus labels except artefacts, damaged/smudge cells, unfit, platelets and aggregates,
+  erythrocytes, spicules, NETs, no-consensus, megakaryocytic cells, mitoses, phagocytosis, pseudo-Gaucher cells and
+  macrophages.
+- **Eligible ROI**: 1500–3000 px sides, ≥ 20 nucleated cells, ≥ 1 blast and ≥ 1 non-blast.
+
+**Scales:**
+- **S1 (primary)**: 2 × 2 quadrants within an ROI (about 113 µm).
+- **S2**: 4 × 4 within an ROI (about 56 µm).
+- **S3**: between the ROIs of a patient.
+
+**Method:**
+- **Estimator**: pooled ANOVA intraclass correlation for binary data, with subfields nested in their parent unit.
+- **Uncertainty**: patient bootstrap, 2,000 resamples. Seed 20260701.
+- **H7a (clustering exists at the field scale)**: the S1 ICC exceeds its permutation null. Blast labels are permuted
+  among the cells of each ROI with positions fixed; 2,000 permutations; one-sided p < 0.05.
+- **Estimation, no binary hypothesis**: S1/S2/S3 ICC with 95% CIs; k = 5 nearest-neighbour blast enrichment against
+  its permutation null.
+- **Sensitivity analyses**: promonocytes counted as blasts; damaged and smudge cells kept as non-blast nucleated cells.
+
+## A4.2 — what does the measured clustering imply for validity? (`scripts/24_bmwsi_bridge_sim.py`; model-based)
+- **Specimens**: N = 30 fields × m = 17 cells. Field propensities follow a Beta distribution with mean θ and ICC ρ,
+  with the blast total fixed so that p = θ exactly.
+- **ρ values**: {0, S1 lower CI bound, S1 estimate, S1 upper CI bound}, floored at 0, taken from A4.1.
+- **Designs**: `alpha_field` and `naive_cell`, as in E3.1.
+- **Runs**: θ = 0.10 (ICC 2022) and θ = 0.20 (WHO 5th ed.); 1,000 episodes per (θ, ρ); seed 20260711.
+- **E3.1 placement**: the ICC of the E3.1 arrangements, computed with the same estimator. Seed 20260712.
+- **Pre-specified reading rule**:
+  - If `naive_cell` false certification at the S1 **upper** CI bound exceeds 0.05 at either θ, we report that the
+    H5b failure is plausible at the clustering level observed in real smears.
+  - If it is ≤ 0.05 at both θ, we report that the clustering observed in these monolayer ROIs is too weak to break
+    the cell-level analysis at this field size.
+  - In either case the statement is model-based. It is not an observed false-certification rate.
+
+## Known limits, stated before the results
+- ROIs were chosen by annotators in the evenly dispersed monolayer. This selection may bias measured clustering
+  downward relative to the whole smear.
+- Two labelled ROIs per patient; spatial scale ≤ 225 µm within an ROI.
+- Pediatric bone marrow only.
+- Smudge and damaged cells may hide blasts (sensitivity analysis above).
+- The simulation's Beta-binomial field model is an assumption.
+
+## Commands (run once, after tagging prereg-v4)
+```
+python scripts/23_bmwsi_clustering.py --out results/a4_bmwsi/clustering.json
+python scripts/24_bmwsi_bridge_sim.py --clustering results/a4_bmwsi/clustering.json --out results/a4_bmwsi/bridge.json
+```
+
+Amendment 4 frozen: 2026-09-30 (git tag prereg-v4)
