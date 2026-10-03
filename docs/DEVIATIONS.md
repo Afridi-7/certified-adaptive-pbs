@@ -25,3 +25,9 @@ commit, which precedes the creation of `results/part3_theta010`, `results/part3_
 
 **Erratum addendum.** The freeze line of Amendment 2 reads "2026-09-26". The tag was created on 2026-09-25, and the
 `prereg-v2` tag timestamp is authoritative.
+
+## Note on document dates (2026-10-03)
+Several documents carry dates of 2026-09-26 or 2026-09-27: the PREREG v1/v1.1/v2 headers and freeze lines, confirmatory_v1, rq4_v1, and the killtests_v1 and sensitivity_v1 notes. These were typed by hand and may not match when the files were actually written. The **git commit and tag timestamps are authoritative**. The pre-registration claim rests on the ordering of the tags relative to the result commits, not on the typed dates.
+
+## Correction (2026-10-03): RV-PBS citation
+Earlier documents attributed RV-PBS to "Sen et al." and "Vergara-Lluri et al."; both attributions were wrong. The correct citation is J. B. Pal, A. Bhattacharyea, D. Banerjee, T. Maharaj, *Expert Systems with Applications* 249:123660 (2024), doi:10.1016/j.eswa.2024.123660. This was checked against the dataset's GitHub README. `data_audit_rv_pbs.md` and `runbook.md` are corrected.

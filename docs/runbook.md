@@ -39,7 +39,7 @@ Extract it with `Expand-Archive data\ku_optofil\dataset.zip data\ku_optofil\data
    - Spertus, Sridhar & Stark (arXiv:2409.06680)
    - Csillag et al. (arXiv:2502.04294)
    - Stark ALPHA (AOAS 2023)
-   - the RV-PBS paper (Vergara-Lluri et al. 2024) plus the RV-PBS dataset link
+   - the RV-PBS paper (Pal et al., ESWA 2024, doi 10.1016/j.eswa.2024.123660) plus the RV-PBS dataset link
 3. **Decision gate A:** Is the blast count per patient large enough for composites at the rarity levels k ∈ {1, 2, 5, 10, 25, 50} per 500 fields, *using test-split patients only*? If not, we reduce N or the rarity grid, and we document the change.
 
 ## Phase 2: Pre-registration (W1–2)

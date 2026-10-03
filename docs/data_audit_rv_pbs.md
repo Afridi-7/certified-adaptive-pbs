@@ -1,6 +1,6 @@
 # RV-PBS audit (2026-09-21) — consequences for RQ4 and Part III
 
-Source: RV-PBS (Ramakrishna Vivekananda Peripheral Blood Smear), the dataset of Sen et al., *Expert Systems with Applications* (2024), doi 10.1016/j.eswa.2024.123660 (GitHub `Jimut123/RV-PBS`; a Figshare mirror exists). Leishman stain, 1000× oil immersion, photographed with an iPhone XR. Local copy: `data/rv_pbs/`.
+Source: RV-PBS (Ramakrishna Vivekananda Peripheral Blood Smear), the dataset of Pal, Bhattacharyea, Banerjee & Maharaj, *Expert Systems with Applications* 249:123660 (2024), doi 10.1016/j.eswa.2024.123660 (GitHub `Jimut123/RV-PBS`; a Figshare mirror exists). Leishman stain, 1000× oil immersion, photographed with an iPhone XR. Local copy: `data/rv_pbs/`.
 
 ## What is actually in it
 | Property | Value |
