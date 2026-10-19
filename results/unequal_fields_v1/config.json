@@ -1,0 +1,8 @@
+{
+ "out": "results/unequal_fields_v1",
+ "seed": 20261020,
+ "N": 60,
+ "n_null": 1000,
+ "n_alt": 300,
+ "n_boot": 2000
+}

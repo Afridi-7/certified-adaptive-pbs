@@ -1,0 +1,54 @@
+{
+ "H4a_recall_drops": {
+  "rv_recall": 0.33986928104575165,
+  "ci95": [
+   0.25,
+   0.4214925818978392
+  ],
+  "ku_recall": 0.9059,
+  "supported": true
+ },
+ "H4b_fp_rises": {
+  "rv_fp": 0.05843071786310518,
+  "ci95": [
+   0.03666304347826087,
+   0.08116883116883117
+  ],
+  "ku_fp": 0.05,
+  "supported": false
+ },
+ "descriptive": {
+  "auc": 0.7855794515914323,
+  "fp_by_label": {
+   "band cell": 0.0,
+   "basophil": 0.143,
+   "eosinophil": 0.043,
+   "lymphocyte": 0.145,
+   "metamyelocyte": 0.0,
+   "monocyte": 0.037,
+   "myelocyte": 0.063,
+   "neutrophil": 0.0,
+   "promyelocyte": 0.179
+  },
+  "n": 752,
+  "n_blast": 153,
+  "n_images": 583
+ },
+ "H4c_validity_under_shift": {
+  "false_cert": 3,
+  "n": 1000,
+  "rate": 0.003,
+  "p_excess": 1.0,
+  "supported": true
+ },
+ "H4c_cost_descriptive": {
+  "0.15": {
+   "uniform": 265.0,
+   "prop": 265.0
+  },
+  "0.2": {
+   "uniform": 110.0,
+   "prop": 190.0
+  }
+ }
+}

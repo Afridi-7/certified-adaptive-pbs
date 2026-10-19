@@ -1,0 +1,13 @@
+{
+ "out": "results/smoke_p3",
+ "theta": 0.1,
+ "p_list": [
+  0.1,
+  0.15
+ ],
+ "episodes": 30,
+ "seed": 99,
+ "N": 100,
+ "m": 5,
+ "alpha": 0.05
+}

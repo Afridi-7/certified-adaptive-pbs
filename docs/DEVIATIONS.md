@@ -29,5 +29,27 @@ commit, which precedes the creation of `results/part3_theta010`, `results/part3_
 ## Note on document dates (2026-10-03)
 Several documents carry dates of 2026-09-26 or 2026-09-27: the PREREG v1/v1.1/v2 headers and freeze lines, confirmatory_v1, rq4_v1, and the killtests_v1 and sensitivity_v1 notes. These were typed by hand and may not match when the files were actually written. The **git commit and tag timestamps are authoritative**. The pre-registration claim rests on the ordering of the tags relative to the result commits, not on the typed dates.
 
+## Audit trail and episode counts (2026-10-19)
+`docs/PREREG_AUDIT.md` tabulates, for every tag, the commit time, the GitHub push time and the first confirmatory output.
+The output always follows the push, by 43 s to 18 min. It also lists the typed dates that are wrong, and content hashes
+of the outputs.
+
+Episode counts reported in `confirmatory_v3.md` and in the paper draft of 2026-10-03 were wrong. The files contain the
+counts that Amendment 3 specifies:
+- **E3.1: 18,000 episodes.** That is 3 arrangements × 2 θ × (1,000 at p = θ + 4 × 500), against the 15,000 written.
+- **E3.2: 4,500 episodes.** RV-PBS has 1,000 + 2 × 500 and KU-Optofil has 1,000 + 3 × 500, against the 5,000 written.
+
+No analysis changes; only the reported totals change.
+
+## Pre-registered sensitivity analyses run late (2026-10-19)
+PREREG §6 and Amendment 1 (A4) fix four sensitivity analyses: max pooling (seed 20260402), single-cell pooling (20260403), a
+τ sweep (20260404) and a single-host background (20260405). They had not been run with these seeds; the paper cited the
+exploratory `sensitivity_v1` runs instead (500 episodes per cell, reusing the main run's random streams). They were run on
+2026-10-19 with the frozen `05_killtests.py`, unchanged, and 200 episodes per (fold, m, k).
+- **τ sweep scope.** The sweep was restricted to k = 1, the H1c cell, because §6 does not state its grid.
+- **Patient-level bootstrap.** §6.4 could not be done from the frozen outputs, because they do not record which blast
+  patient supplied each critical field. Fold-level intervals are reported instead. The Kill-test 1 re-analysis of
+  2026-10-19 records patients.
+
 ## Correction (2026-10-03): RV-PBS citation
 Earlier documents attributed RV-PBS to "Sen et al." and "Vergara-Lluri et al."; both attributions were wrong. The correct citation is J. B. Pal, A. Bhattacharyea, D. Banerjee, T. Maharaj, *Expert Systems with Applications* 249:123660 (2024), doi:10.1016/j.eswa.2024.123660. This was checked against the dataset's GitHub README. `data_audit_rv_pbs.md` and `runbook.md` are corrected.

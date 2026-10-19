@@ -1,0 +1,34 @@
+{
+ "emb": "results/embeddings_v1",
+ "out": "results/sensconf_pool_host",
+ "N": 200,
+ "k_list": [
+  1,
+  2,
+  5,
+  10,
+  20
+ ],
+ "m_list": [
+  1,
+  5,
+  10,
+  20
+ ],
+ "folds": [
+  0,
+  1,
+  2,
+  3,
+  4
+ ],
+ "episodes": 200,
+ "pool": "host",
+ "pooling": "mean",
+ "target_frac": 0.163,
+ "n_calib": 8,
+ "tau_conf": 0.9,
+ "m_conf": 30,
+ "seed": 20260405,
+ "cell_episodes": []
+}
