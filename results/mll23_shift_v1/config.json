@@ -1,0 +1,6 @@
+{
+ "mll": "data/mll23",
+ "out": "results/mll23_shift_v1",
+ "seed": 20261029,
+ "n_boot": 2000
+}

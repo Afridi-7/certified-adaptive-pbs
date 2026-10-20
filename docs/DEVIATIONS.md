@@ -53,3 +53,40 @@ exploratory `sensitivity_v1` runs instead (500 episodes per cell, reusing the ma
 
 ## Correction (2026-10-03): RV-PBS citation
 Earlier documents attributed RV-PBS to "Sen et al." and "Vergara-Lluri et al."; both attributions were wrong. The correct citation is J. B. Pal, A. Bhattacharyea, D. Banerjee, T. Maharaj, *Expert Systems with Applications* 249:123660 (2024), doi:10.1016/j.eswa.2024.123660. This was checked against the dataset's GitHub README. `data_audit_rv_pbs.md` and `runbook.md` are corrected.
+
+## InfoDPP-PAC review corrections (2026-10-19, second pass)
+- **Operating point misdescribed.** Earlier drafts called 16.3% the share of the slide that InfoDPP-PAC examines. In the
+  paper it is 16.3% of a 300-patch budget (mean k⋆ = 48.9), about 2.4% of a slide's 2,075 patches. The confirmatory
+  calibration (16.3% of all fields) is unchanged and favours InfoDPP-PAC about 7-fold. An exploratory run at 2.4% is in
+  `results/sens_op_paperpool` (seed 20261022).
+- **Notation.** The paper defines K_S through the posterior kernel (Eq. 3) but κ_ii through the prior kernel (Sec. 3). Our
+  implementation uses the posterior kernel throughout; this is our reading, logged as an interpretation.
+- **Pure information-gain rule** (`scripts/31_stopping_class.py`): λ2 = 0 gives 0·(−∞) = nan in the blended gain (chosen
+  fields are masked with −∞), so the run uses λ2 = 1e-9. A first run with λ2 = 0 was discarded (it re-selected chosen
+  fields).
+- **ALPHA prior guess.** Every ALPHA run used the default η0 = (μ0 + u)/2 of `src/cadpbs/alpha.py`. This was never
+  pre-registered as a choice. `scripts/39_alpha_prior.py` shows it is the best of three fixed guesses for field-level
+  draws; for individually sampled cells (`scripts/32`) a guess of θ ± 0.05 is used and the default is reported alongside.
+
+## Real-tile Part I (2026-10-20, exploratory)
+- Specimens of 16–32 tiles are too small for the seed rule m0 ≈ 0.01n with our floor of 5; `scripts/36` uses m0_min = 2.
+- k-center coverage stopping is not cost-matched; it is compared with uniform sampling at its own cost, h(N, k, n_kc).
+- Raster = row by row within a region (tile index i*4 + j, i = column), regions in random order.
+- Notebook 35 was revised before its first successful run (2026-10-20) only to rebuild missing input tables; the tables it
+  produced match the repo tables (fingerprints 23d6a9d242d1e4a1 / e73ccda91a271f29).
+
+## Background includes non-leukocytes (found 2026-10-20)
+All Part I and Part III composites draw background cells from every non-blast KU-Optofil image of blast-free patients,
+including giant platelets (2,725), platelet clusters (57) and erythroblasts (17): 10.3% of the pool. A leukocyte
+differential would not count them, so the composites' p is the blast share of imaged objects, not of leukocytes. This was
+never stated. `scripts/41_leukocyte_background.py` (seed 20261032) re-runs the Part III designs with a leukocyte-only
+background: false certification ≤ 0.030; median cells 395/160 (ALPHA, θ = 0.10, p = 0.12/0.15), 225/75 (classifier-driven),
+445/235 and 335/140 at θ = 0.20 — within 15 cells of the share-0 condition of `scripts/33` (largest gap: uniform betting at p = 0.15, 267.5 vs 252.5). The paper now states the composition.
+- MLL23 (`scripts/38`): the 2026-10-19 exclusion matched "atypical_promyelocyte", but the release's class is
+  "promyelocyte_atypical", so atypical promyelocytes would have entered the background. Fixed before any MLL23 run;
+  smudge cells and normoblasts are now also excluded, and notebook 37 does not download those three classes.
+
+## MLL23 (2026-10-20, exploratory)
+- No patient identifiers in the release: recall/FP intervals bootstrap images, as for RV-PBS, and understate uncertainty.
+- Cost comparisons use the Shekhar et al. betting test with uniform sampling as the reference (as in H6d), not ALPHA.
+- Specimens: 100 fields × 5 cells, θ = 0.10 only (as RV-PBS H4c); the WHO 20% threshold was not run on MLL23.

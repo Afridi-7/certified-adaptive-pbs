@@ -1,0 +1,7 @@
+theta,p,n,alpha_uniform_false_cert,alpha_uniform_p_excess,bet_uniform_false_cert,bet_uniform_p_excess,bet_prop_false_cert,bet_prop_p_excess,alpha_uniform_median_cells,bet_uniform_median_cells,bet_prop_median_cells
+0.1,0.1,1000,0.03,0.9992808027197848,0.012,0.9999999999864329,0.001,1.0,,,
+0.1,0.12,400,,,,,,,395.0,420.0,225.0
+0.1,0.15,400,,,,,,,160.0,267.5,75.0
+0.2,0.2,1000,0.022,0.9999980602879706,0.016,0.9999999966608045,0.002,1.0,,,
+0.2,0.22,400,,,,,,,445.0,455.0,335.0
+0.2,0.25,400,,,,,,,235.0,350.0,140.0

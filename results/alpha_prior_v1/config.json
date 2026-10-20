@@ -1,0 +1,6 @@
+{
+ "out": "results/alpha_prior_v1",
+ "seed": 20261030,
+ "n_null": 1000,
+ "n_alt": 400
+}

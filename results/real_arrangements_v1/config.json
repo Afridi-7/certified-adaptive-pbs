@@ -1,0 +1,7 @@
+{
+ "out": "results/real_arrangements_v1",
+ "seed": 20261023,
+ "n_orders": 400,
+ "grid": 4,
+ "alpha": 0.05
+}

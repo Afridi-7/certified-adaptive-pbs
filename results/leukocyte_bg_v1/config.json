@@ -1,0 +1,27 @@
+{
+ "out": "results/leukocyte_bg_v1",
+ "seed": 20261032,
+ "n_null": 1000,
+ "n_alt": 400,
+ "bg_all": 27143,
+ "bg_leuko": 24344,
+ "nonleuko_share_of_bg": 0.1031205098920532,
+ "bg_composition_all": {
+  "segmented_neutrophil": 15993,
+  "lymphocyte": 5653,
+  "giant_platelet": 2725,
+  "monocyte": 1356,
+  "eosinophil": 568,
+  "reactive_lymphocyte": 379,
+  "basophil": 184,
+  "band_neutrophil": 102,
+  "myelocyte": 66,
+  "platelet_cluster": 57,
+  "metamyelocyte": 43,
+  "erythroblast": 17
+ },
+ "mean_score_bg_all": 0.014878822394709786,
+ "mean_score_bg_leuko": 0.016422184664334965,
+ "fp_rate_bg_all_at_0p031": 0.04951552886563755,
+ "fp_rate_bg_leuko_at_0p031": 0.054304962208347025
+}

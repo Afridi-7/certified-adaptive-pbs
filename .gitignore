@@ -36,3 +36,8 @@ results/**
 Thumbs.db
 .vscode/*
 !.vscode/settings.json
+
+# small JSON summaries of results (added 2026-10-20)
+!results/**/summary.json
+!results/**/analysis.json
+!results/**/icc_excess.json

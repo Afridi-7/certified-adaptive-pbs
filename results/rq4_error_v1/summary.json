@@ -1,0 +1,157 @@
+{
+ "threshold_95spec": 0.0310392350137264,
+ "blast_recall_by_patient": {
+  "1604252990": {
+   "blasts": 6,
+   "recall": 0.833
+  },
+  "1604265212": {
+   "blasts": 1,
+   "recall": 1.0
+  },
+  "1604306748": {
+   "blasts": 88,
+   "recall": 0.83
+  },
+  "1604360003": {
+   "blasts": 36,
+   "recall": 0.972
+  },
+  "1604366477": {
+   "blasts": 70,
+   "recall": 0.929
+  },
+  "1604367661": {
+   "blasts": 59,
+   "recall": 0.864
+  },
+  "1604394691": {
+   "blasts": 13,
+   "recall": 0.385
+  },
+  "1604413745": {
+   "blasts": 75,
+   "recall": 0.947
+  },
+  "1604459155": {
+   "blasts": 27,
+   "recall": 1.0
+  },
+  "1604468629": {
+   "blasts": 77,
+   "recall": 0.948
+  },
+  "1604469727": {
+   "blasts": 37,
+   "recall": 1.0
+  }
+ },
+ "blast_recall_homogeneity": {
+  "chi2": 61.13738132129669,
+  "dof": 10,
+  "p_asymptotic": 2.2065912812542344e-09,
+  "p_montecarlo": 0.0001999600079984003
+ },
+ "fp_rate_by_patient": {
+  "patients": 237,
+  "pooled_rate": 0.04896974197141266,
+  "min": 0.0,
+  "max": 0.3541666666666667,
+  "q90": 0.12200000000000003,
+  "dispersion_ratio": 6.59676665875934
+ },
+ "fp_rate_by_class": {
+  "metamyelocyte": {
+   "rate": 0.3333,
+   "n": 66
+  },
+  "myelocyte": {
+   "rate": 0.2647,
+   "n": 68
+  },
+  "reactive_lymphocyte": {
+   "rate": 0.2,
+   "n": 390
+  },
+  "basophil": {
+   "rate": 0.1907,
+   "n": 194
+  },
+  "lymphocyte": {
+   "rate": 0.1664,
+   "n": 5762
+  },
+  "monocyte": {
+   "rate": 0.1434,
+   "n": 1381
+  },
+  "erythroblast": {
+   "rate": 0.0323,
+   "n": 93
+  },
+  "eosinophil": {
+   "rate": 0.0244,
+   "n": 573
+  },
+  "band_neutrophil": {
+   "rate": 0.0177,
+   "n": 113
+  },
+  "platelet_cluster": {
+   "rate": 0.0167,
+   "n": 60
+  },
+  "giant_platelet": {
+   "rate": 0.0085,
+   "n": 2835
+  },
+  "segmented_neutrophil": {
+   "rate": 0.0021,
+   "n": 16256
+  }
+ },
+ "quality_within_class_logodds_per_sd": {
+  "q_brightness": 0.781,
+  "q_contrast": 0.827,
+  "q_blur_lapvar": 0.206,
+  "q_r": -0.778,
+  "q_g": 1.635,
+  "q_b": -0.978,
+  "q_sat": 0.049,
+  "q_hue": 0.093
+ },
+ "quality_within_class_ci95": {
+  "q_brightness": [
+   0.307,
+   1.027
+  ],
+  "q_contrast": [
+   0.463,
+   1.305
+  ],
+  "q_blur_lapvar": [
+   0.094,
+   0.301
+  ],
+  "q_r": [
+   -1.577,
+   0.292
+  ],
+  "q_g": [
+   0.452,
+   2.367
+  ],
+  "q_b": [
+   -1.353,
+   -0.404
+  ],
+  "q_sat": [
+   -0.237,
+   0.377
+  ],
+  "q_hue": [
+   -0.162,
+   0.299
+  ]
+ }
+}

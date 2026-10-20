@@ -1,0 +1,70 @@
+{
+ "n_cells": 28280,
+ "n_blasts": 489,
+ "dim": 384,
+ "cellwise_auc_blast_vs_rest": {
+  "point": 0.978798214749166,
+  "ci95": [
+   0.9688009073279421,
+   0.9879062460624831
+  ],
+  "note": "cross-fitted logistic probe, patient-clustered bootstrap"
+ },
+ "threshold_at_95pct_specificity": 0.0310392350137264,
+ "per_patient_recall": {
+  "median": 0.9466666666666667,
+  "min": 0.38461538461538464,
+  "max": 1.0
+ },
+ "outlierness_auc_cell": {
+  "point": 0.9007810196456916,
+  "ci95": [
+   0.8624400687627473,
+   0.9388175469218136
+  ],
+  "note": "AUC of 10-NN distance to a background pool for blast vs rest; >0.5 means blasts sit further from the bulk, which HELPS a log-det/DPP selector find them"
+ },
+ "knn_dist_medians": {
+  "blast": 0.0448840856552124,
+  "other": 0.02723538875579834
+ },
+ "field_level": [
+  {
+   "m_cells_per_field": 1,
+   "outlierness_auc_field": 0.8905926666666667,
+   "median_knn_dist_neg": 0.02882644534111023,
+   "median_knn_dist_pos": 0.04681968688964844
+  },
+  {
+   "m_cells_per_field": 5,
+   "outlierness_auc_field": 0.6727738333333333,
+   "median_knn_dist_neg": 0.007100701332092285,
+   "median_knn_dist_pos": 0.007845193147659302
+  },
+  {
+   "m_cells_per_field": 10,
+   "outlierness_auc_field": 0.59175,
+   "median_knn_dist_neg": 0.0036392807960510254,
+   "median_knn_dist_pos": 0.003805100917816162
+  },
+  {
+   "m_cells_per_field": 20,
+   "outlierness_auc_field": 0.5548943333333334,
+   "median_knn_dist_neg": 0.0018582642078399658,
+   "median_knn_dist_pos": 0.0019043684005737305
+  }
+ ],
+ "blast_error_rate_by_patient": {
+  "1604252990": 0.16666666666666663,
+  "1604265212": 0.0,
+  "1604306748": 0.17045454545454541,
+  "1604360003": 0.02777777777777779,
+  "1604366477": 0.0714285714285714,
+  "1604367661": 0.13559322033898302,
+  "1604394691": 0.6153846153846154,
+  "1604413745": 0.053333333333333344,
+  "1604459155": 0.0,
+  "1604468629": 0.051948051948051965,
+  "1604469727": 0.0
+ }
+}

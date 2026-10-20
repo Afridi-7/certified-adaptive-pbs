@@ -1,0 +1,27 @@
+{
+ "n_tiles": 3040,
+ "n_patients": 99,
+ "teacher_auc": 0.9655327144740163,
+ "tile_cells_median": 5.0,
+ "crit_tile_fraction": 0.41677631578947366,
+ "all_positive": {
+  "infodpp": 0.2771,
+  "uniform": 0.2367,
+  "raster": 0.2226,
+  "ranked": 0.1794,
+  "kcenter": 0.236,
+  "h_uniform": 0.237,
+  "n": 5.3967,
+  "kcenter_n": 8.4628
+ },
+ "rare_k_over_N_le_0_25": {
+  "n_patients": 24,
+  "infodpp": 0.8,
+  "uniform": 0.695,
+  "raster": 0.6677,
+  "ranked": 0.5381,
+  "kcenter": 0.6683,
+  "h_uniform": 0.6986,
+  "n": 5.371
+ }
+}

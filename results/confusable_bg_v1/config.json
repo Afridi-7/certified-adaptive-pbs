@@ -1,0 +1,6 @@
+{
+ "out": "results/confusable_bg_v1",
+ "seed": 20261026,
+ "n_null": 1000,
+ "n_alt": 400
+}

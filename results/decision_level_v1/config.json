@@ -1,0 +1,12 @@
+{
+ "out": "results/decision_level_v1",
+ "seed": 20261025,
+ "M": 2000,
+ "episodes": 2000,
+ "budgets": [
+  100,
+  200,
+  500
+ ],
+ "alpha": 0.05
+}

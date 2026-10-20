@@ -1,0 +1,93 @@
+{
+ "n_patients": 75,
+ "n_orders": 400,
+ "grid": 4,
+ "m_max": 33,
+ "field_cells": {
+  "median": 5.0,
+  "max": 33
+ },
+ "cells_per_specimen": {
+  "median": 105.0
+ },
+ "fields_per_specimen": {
+  "median": 22.0
+ },
+ "p_s": {
+  "n_below_0_2": 23,
+  "n_0_2_to_0_5": 6,
+  "n_above_0_5": 46
+ },
+ "validity": {
+  "field_known": {
+   "pooled_rate": 0.0011333333333333334,
+   "cp95": [
+    0.0007849899978279938,
+    0.0015833630510358285
+   ],
+   "max_patient_rate": 0.01,
+   "median_patient_rate": 0.0,
+   "n_patients_rate_gt_alpha": 0,
+   "n_patients_signif_gt_alpha": 0
+  },
+  "field_assort": {
+   "pooled_rate": 0.0,
+   "cp95": [
+    0.0,
+    0.00012295508887385758
+   ],
+   "max_patient_rate": 0.0,
+   "median_patient_rate": 0.0,
+   "n_patients_rate_gt_alpha": 0,
+   "n_patients_signif_gt_alpha": 0
+  },
+  "cell_srs": {
+   "pooled_rate": 0.027166666666666665,
+   "cp95": [
+    0.025356294021999848,
+    0.029069361292403745
+   ],
+   "max_patient_rate": 0.055,
+   "median_patient_rate": 0.025,
+   "n_patients_rate_gt_alpha": 3,
+   "n_patients_signif_gt_alpha": 0
+  },
+  "naive_cell": {
+   "pooled_rate": 0.0512,
+   "cp95": [
+    0.048732814621147716,
+    0.053754544023177094
+   ],
+   "max_patient_rate": 0.335,
+   "median_patient_rate": 0.0375,
+   "n_patients_rate_gt_alpha": 27,
+   "n_patients_signif_gt_alpha": 21
+  },
+  "naive_fmean": {
+   "pooled_rate": 0.06246666666666666,
+   "cp95": [
+    0.059754016995865245,
+    0.06526441560138208
+   ],
+   "max_patient_rate": 1.0,
+   "median_patient_rate": 0.0,
+   "n_patients_rate_gt_alpha": 9,
+   "n_patients_signif_gt_alpha": 9
+  }
+ },
+ "cost_at_ps_minus_0.05": {
+  "n_patients": 52,
+  "field_known": {
+   "median_fraction": 0.9692307692307692,
+   "cert_rate": 1.0
+  },
+  "field_assort": {
+   "median_fraction": 1.0,
+   "cert_rate": 0.006538461538461538
+  },
+  "cell_srs": {
+   "median_fraction": 0.7563025210084033,
+   "cert_rate": 1.0
+  }
+ }
+}

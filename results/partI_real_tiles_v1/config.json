@@ -1,0 +1,8 @@
+{
+ "tiles": "data/bmwsi_tiles",
+ "cells": "data/bmwsi/cells.csv",
+ "out": "results/partI_real_tiles_v1",
+ "seed": 20261028,
+ "runs": 200,
+ "target_frac": 0.163
+}

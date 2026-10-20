@@ -1,0 +1,20 @@
+{
+ "emb": "results/embeddings_v1",
+ "out": "results/stopping_class_v1",
+ "N": 200,
+ "k_list": [
+  1,
+  5
+ ],
+ "m_list": [
+  1,
+  5,
+  10,
+  20
+ ],
+ "episodes": 100,
+ "n_train": 3000,
+ "target_frac": 0.163,
+ "n_calib": 8,
+ "seed": 20261024
+}
