@@ -1,0 +1,6 @@
+{
+ "shangrla": "<folder with a local copy of SHANGRLA shangrla/core/NonnegMean.py>",
+ "R": 2000,
+ "seed": 20261035,
+ "out": "results/crosscheck_shangrla_v1"
+}

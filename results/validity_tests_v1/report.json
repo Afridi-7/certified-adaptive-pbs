@@ -1,0 +1,147 @@
+{
+ "exitstatus": 0,
+ "alpha": 0.05,
+ "python": "3.13.16",
+ "numpy": "2.5.3",
+ "scipy": "1.18.1",
+ "results": [
+  {
+   "test": "ALPHA exact null theta=0.1 N=100 m=5 eta=default",
+   "false_certification_rate": 0.029,
+   "reps": 1000,
+   "allowed_max": 0.07067607312813534
+  },
+  {
+   "test": "ALPHA exact null theta=0.2 N=100 m=5 eta=default",
+   "false_certification_rate": 0.025,
+   "reps": 1000,
+   "allowed_max": 0.07067607312813534
+  },
+  {
+   "test": "ALPHA exact null theta=0.1 N=60 m=1 eta=default",
+   "false_certification_rate": 0.025,
+   "reps": 1000,
+   "allowed_max": 0.07067607312813534
+  },
+  {
+   "test": "ALPHA exact null theta=0.1 N=100 m=5 eta=aggressive",
+   "false_certification_rate": 0.028,
+   "reps": 1000,
+   "allowed_max": 0.07067607312813534
+  },
+  {
+   "test": "ALPHA exact null theta=0.2 N=50 m=10 eta=timid",
+   "false_certification_rate": 0.0,
+   "reps": 1000,
+   "allowed_max": 0.07067607312813534
+  },
+  {
+   "test": "Betting exact null sampler=uniform unequal=False",
+   "false_certification_rate": 0.01,
+   "reps": 500,
+   "allowed_max": 0.0792403830344269
+  },
+  {
+   "test": "Betting exact null sampler=prop_random_scores unequal=False",
+   "false_certification_rate": 0.002,
+   "reps": 500,
+   "allowed_max": 0.0792403830344269
+  },
+  {
+   "test": "Betting exact null sampler=prop_oracle unequal=False",
+   "false_certification_rate": 0.0,
+   "reps": 500,
+   "allowed_max": 0.0792403830344269
+  },
+  {
+   "test": "Betting exact null sampler=prop_antioracle unequal=False",
+   "false_certification_rate": 0.006,
+   "reps": 500,
+   "allowed_max": 0.0792403830344269
+  },
+  {
+   "test": "Betting exact null sampler=uniform unequal=True",
+   "false_certification_rate": 0.004,
+   "reps": 500,
+   "allowed_max": 0.0792403830344269
+  },
+  {
+   "test": "Betting exact null sampler=prop_random_scores unequal=True",
+   "false_certification_rate": 0.002,
+   "reps": 500,
+   "allowed_max": 0.0792403830344269
+  },
+  {
+   "test": "Betting exact null sampler=prop_oracle unequal=True",
+   "false_certification_rate": 0.0,
+   "reps": 500,
+   "allowed_max": 0.0792403830344269
+  },
+  {
+   "test": "Betting exact null sampler=prop_antioracle unequal=True",
+   "false_certification_rate": 0.002,
+   "reps": 500,
+   "allowed_max": 0.0792403830344269
+  },
+  {
+   "test": "Bounded assorter (Prop. 2b) exact null, size-dependent blasts",
+   "false_certification_rate": 0.0,
+   "reps": 1000,
+   "allowed_max": 0.07067607312813534
+  },
+  {
+   "test": "Verifier margin (Remark): corrected threshold",
+   "false_certification_rate": 0.006,
+   "reps": 1000,
+   "allowed_max": 0.07067607312813534
+  },
+  {
+   "test": "Verifier margin (Remark): naive threshold [negative control]",
+   "false_certification_rate": 1.0,
+   "reps": 1000,
+   "allowed_max": null
+  },
+  {
+   "test": "Uncorrected ranking [negative control]",
+   "false_certification_rate": 1.0,
+   "reps": 200,
+   "allowed_max": null
+  },
+  {
+   "test": "Mean of field proportions, small-field enrichment [negative control]",
+   "false_certification_rate": 1.0,
+   "reps": 200,
+   "allowed_max": null
+  },
+  {
+   "test": "Cells as independent draws, hot fields [negative control]",
+   "false_certification_rate": 0.355,
+   "reps": 200,
+   "allowed_max": null
+  },
+  {
+   "test": "Betting exact null, adaptive follow-the-blasts sampler, clustered, unequal=False",
+   "false_certification_rate": 0.0,
+   "reps": 500,
+   "allowed_max": 0.0792403830344269
+  },
+  {
+   "test": "Betting exact null, adaptive follow-the-blasts sampler, clustered, unequal=True",
+   "false_certification_rate": 0.0,
+   "reps": 500,
+   "allowed_max": 0.0792403830344269
+  },
+  {
+   "test": "Power sanity at p = 0.15, theta = 0.10: ALPHA",
+   "false_certification_rate": 1.0,
+   "reps": 200,
+   "allowed_max": null
+  },
+  {
+   "test": "Power sanity at p = 0.15, theta = 0.10: betting",
+   "false_certification_rate": 1.0,
+   "reps": 200,
+   "allowed_max": null
+  }
+ ]
+}

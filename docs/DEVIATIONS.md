@@ -99,3 +99,20 @@ background: false certification ≤ 0.030; median cells 395/160 (ALPHA, θ = 0.1
 - θ_s = consensus p_s (exact null for the truth); the plug-in β and the margins are estimated on the same 83 specimens.
 - The IDC v25 consensus series has 28,459 boxes (114 patients) vs 28,395 (113) in `data/bmwsi/cells.csv` from the
   2026-09-30 download; the analysis joins to the repo table, so the extra patient is not used.
+
+## Reference cross-check (2026-10-20)
+`scripts/44_crosscheck_shangrla.py` compared our code with SHANGRLA's `NonnegMean` (shangrla/core/NonnegMean.py, sha256
+1fb7cdce…; AGPL-3.0, not copied into this repository) on 2,000 random cases (seed 20261035):
+- ALPHA supermartingale given the same predictable eta: max |Δ log| 4.3e-14 over 233,765 draws.
+- Betting, equal weights, uniform sampling (bets reparametrised λ' = λ(N − t + 1)/N): max |Δ log| 2.3e-13 over 364,373 draws.
+- Full ALPHA procedure: same stopping draw in 1,860/2,000 cases; in all 140 others ours stops LATER, every one explained
+  by a rule our frozen `alpha.py` lacks: reject as soon as the verified sample total exceeds the null total (the null is
+  then false with certainty). Conservative, never a validity issue, cannot occur at p = θ.
+- Impact (`scripts/45_alpha_deterministic_rule.py`, seed 20261036): the rule binds in at most 7% of specimens, only at
+  M = 500 within 0.02 of θ (θ = 0.10, p = 0.12: 7.0%; θ = 0.20, p = 0.22: 6.5%; M = 1,000: 0.25%), and changes no median
+  cost in any cell. The frozen module is left unchanged; reported ALPHA costs stand.
+- `src/cadpbs/weighted_betting_w.py` (not frozen) gained an optional `return_path` output for this check; with the
+  default it behaves exactly as before (checked on 200 cases).
+- The paper's statement "the frozen scripts and src/ are unchanged since their tags" was imprecise (modules were added to
+  src/ later). It now says that the frozen scripts and the modules they import are unchanged (checked with `git diff`
+  against prereg-v4 for alpha.py, weighted_betting.py, infodpp.py and composites.py).

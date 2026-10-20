@@ -41,3 +41,4 @@ Thumbs.db
 !results/**/summary.json
 !results/**/analysis.json
 !results/**/icc_excess.json
+!results/**/report.json

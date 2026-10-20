@@ -1,0 +1,249 @@
+{
+ "reference": "SHANGRLA shangrla/core/NonnegMean.py",
+ "reference_sha256": "1fb7cdce04324b28f9093c9f8d79f12d2190190103667617ecddb41cfe9efde6",
+ "R": 2000,
+ "seed": 20261035,
+ "A_full_alpha": {
+  "cases": 2000,
+  "identical_stopping_draw": 1860,
+  "rate": 0.93,
+  "disagreements": [
+   {
+    "case": 64,
+    "ours": -1,
+    "ref": 220,
+    "n": 222,
+    "N": 222,
+    "deterministic_stop": 219,
+    "max_eta_diff": 9.999999346366195e-07,
+    "p_ours_at_ref_stop": 1.0,
+    "explained": true
+   },
+   {
+    "case": 71,
+    "ours": -1,
+    "ref": 156,
+    "n": 169,
+    "N": 169,
+    "deterministic_stop": 155,
+    "max_eta_diff": 0.0,
+    "p_ours_at_ref_stop": 1.0,
+    "explained": true
+   },
+   {
+    "case": 132,
+    "ours": -1,
+    "ref": 50,
+    "n": 50,
+    "N": 50,
+    "deterministic_stop": 50,
+    "max_eta_diff": 0.0,
+    "p_ours_at_ref_stop": 1.0,
+    "explained": true
+   },
+   {
+    "case": 135,
+    "ours": 62,
+    "ref": 60,
+    "n": 91,
+    "N": 91,
+    "deterministic_stop": 59,
+    "max_eta_diff": 0.0,
+    "p_ours_at_ref_stop": 1.0,
+    "explained": true
+   },
+   {
+    "case": 142,
+    "ours": 286,
+    "ref": 284,
+    "n": 314,
+    "N": 322,
+    "deterministic_stop": 283,
+    "max_eta_diff": 0.0,
+    "p_ours_at_ref_stop": 1.0,
+    "explained": true
+   },
+   {
+    "case": 148,
+    "ours": -1,
+    "ref": 378,
+    "n": 378,
+    "N": 378,
+    "deterministic_stop": 377,
+    "max_eta_diff": 9.99999949513608e-07,
+    "p_ours_at_ref_stop": 1.0,
+    "explained": true
+   },
+   {
+    "case": 195,
+    "ours": 96,
+    "ref": 95,
+    "n": 113,
+    "N": 113,
+    "deterministic_stop": 94,
+    "max_eta_diff": 0.0,
+    "p_ours_at_ref_stop": 1.0,
+    "explained": true
+   },
+   {
+    "case": 224,
+    "ours": 72,
+    "ref": 58,
+    "n": 87,
+    "N": 87,
+    "deterministic_stop": 57,
+    "max_eta_diff": 0.0,
+    "p_ours_at_ref_stop": 1.0,
+    "explained": true
+   },
+   {
+    "case": 226,
+    "ours": 64,
+    "ref": 63,
+    "n": 100,
+    "N": 100,
+    "deterministic_stop": 62,
+    "max_eta_diff": 0.0,
+    "p_ours_at_ref_stop": 1.0,
+    "explained": true
+   },
+   {
+    "case": 262,
+    "ours": -1,
+    "ref": 145,
+    "n": 145,
+    "N": 145,
+    "deterministic_stop": 145,
+    "max_eta_diff": 9.999999215359878e-07,
+    "p_ours_at_ref_stop": 1.0,
+    "explained": true
+   },
+   {
+    "case": 266,
+    "ours": 35,
+    "ref": 34,
+    "n": 44,
+    "N": 44,
+    "deterministic_stop": 33,
+    "max_eta_diff": 0.0,
+    "p_ours_at_ref_stop": 1.0,
+    "explained": true
+   },
+   {
+    "case": 304,
+    "ours": -1,
+    "ref": 74,
+    "n": 75,
+    "N": 75,
+    "deterministic_stop": 73,
+    "max_eta_diff": 0.0,
+    "p_ours_at_ref_stop": 1.0,
+    "explained": true
+   },
+   {
+    "case": 305,
+    "ours": 85,
+    "ref": 83,
+    "n": 88,
+    "N": 129,
+    "deterministic_stop": 82,
+    "max_eta_diff": 0.0,
+    "p_ours_at_ref_stop": 1.0,
+    "explained": true
+   },
+   {
+    "case": 315,
+    "ours": 57,
+    "ref": 55,
+    "n": 69,
+    "N": 69,
+    "deterministic_stop": 54,
+    "max_eta_diff": 0.0,
+    "p_ours_at_ref_stop": 1.0,
+    "explained": true
+   },
+   {
+    "case": 322,
+    "ours": 22,
+    "ref": 21,
+    "n": 25,
+    "N": 25,
+    "deterministic_stop": 20,
+    "max_eta_diff": 0.0,
+    "p_ours_at_ref_stop": 0.35488148175386497,
+    "explained": true
+   },
+   {
+    "case": 325,
+    "ours": -1,
+    "ref": 146,
+    "n": 146,
+    "N": 146,
+    "deterministic_stop": 145,
+    "max_eta_diff": 9.999999215359878e-07,
+    "p_ours_at_ref_stop": 1.0,
+    "explained": true
+   },
+   {
+    "case": 327,
+    "ours": 135,
+    "ref": 125,
+    "n": 268,
+    "N": 268,
+    "deterministic_stop": 124,
+    "max_eta_diff": 0.0,
+    "p_ours_at_ref_stop": 1.0,
+    "explained": true
+   },
+   {
+    "case": 329,
+    "ours": 60,
+    "ref": 56,
+    "n": 60,
+    "N": 60,
+    "deterministic_stop": 55,
+    "max_eta_diff": 0.0,
+    "p_ours_at_ref_stop": 1.0,
+    "explained": true
+   },
+   {
+    "case": 342,
+    "ours": -1,
+    "ref": 316,
+    "n": 316,
+    "N": 316,
+    "deterministic_stop": 316,
+    "max_eta_diff": 0.0,
+    "p_ours_at_ref_stop": 1.0,
+    "explained": true
+   },
+   {
+    "case": 344,
+    "ours": -1,
+    "ref": 77,
+    "n": 77,
+    "N": 77,
+    "deterministic_stop": 77,
+    "max_eta_diff": 9.999998975551705e-07,
+    "p_ours_at_ref_stop": 1.0,
+    "explained": true
+   }
+  ],
+  "n_disagreements": 140,
+  "n_explained_by_deterministic_rule": 140,
+  "unexplained": [],
+  "ours_later_in_all_disagreements": true
+ },
+ "B_alpha_martingale_same_eta": {
+  "cases": 2000,
+  "max_abs_log_diff": 4.263256414560601e-14,
+  "n_steps": 233765,
+  "special_steps": 18474
+ },
+ "C_betting_uniform_equal_weights": {
+  "cases": 2000,
+  "max_abs_log_diff": 2.3092638912203256e-13,
+  "n_steps": 364373,
+  "special_steps": 3977
+ }
+}

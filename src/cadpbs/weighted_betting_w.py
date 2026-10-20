@@ -35,16 +35,19 @@ def sampler_prop_w(pi, S, floor=1e-3):
     return q
 
 
-def betting_test_w(f, pi, S, sampler, m0, alpha=0.05, c=0.75, use_cv=False, rng=None, alphas=()):
+def betting_test_w(f, pi, S, sampler, m0, alpha=0.05, c=0.75, use_cv=False, rng=None, alphas=(), return_path=False):
     """f in [0,1]^N (revealed by verification), pi > 0 summing to 1, S side information.
     Returns dict(stop=first draw at which H0 is rejected at `alpha` or -1, stops={a: draw} for extra levels, cells
-    order). Extra levels in `alphas` reuse the same wealth path (the bets do not depend on alpha)."""
+    order). Extra levels in `alphas` reuse the same wealth path (the bets do not depend on alpha).
+    return_path=True (added 2026-10-20 for the reference cross-check; no effect on the test) also returns the per-step
+    bets `lam`, bracket values `Y`, sampling probabilities `q_drawn` and the log-wealth path `logW`."""
     rng = rng or np.random.default_rng()
     f = np.asarray(f, float); pi = np.asarray(pi, float); S = np.asarray(S, float); N = len(f)
     assert np.all(f >= -1e-12) and np.all(f <= 1 + 1e-12) and np.all(pi > 0) and abs(pi.sum() - 1) < 1e-9
     remaining = list(range(N)); sampled_mass = 0.0
     A = V = num_b = den_b = 0.0; logW = 0.0; order = []
     levels = sorted(set([alpha, *alphas])); stops = {lv: -1 for lv in levels}
+    path = dict(lam=[], Y=[], q_drawn=[], logW=[])
     for t in range(1, N + 1):
         rem = np.array(remaining); q = sampler(rem, t)
         ES = float(q @ S[rem]); mu = m0 - sampled_mass
@@ -57,6 +60,8 @@ def betting_test_w(f, pi, S, sampler, m0, alpha=0.05, c=0.75, use_cv=False, rng=
         else:
             cap = c / (-LB); lam = cap * 0.5 if V == 0 else float(np.clip(c * A / V, 0.0, cap))
         logW += np.log(max(1.0 + lam * Y, 1e-300))
+        if return_path:
+            path["lam"].append(lam); path["Y"].append(Y); path["q_drawn"].append(qi); path["logW"].append(logW)
         A += Y; V += Y * Y
         if use_cv:
             num_b += (Z - mu) * U; den_b += U * U
@@ -67,4 +72,7 @@ def betting_test_w(f, pi, S, sampler, m0, alpha=0.05, c=0.75, use_cv=False, rng=
                 stops[lv] = t
         if all(v > 0 for v in stops.values()):
             break
-    return dict(stop=stops[alpha], stops=stops, order=np.array(order))
+    out = dict(stop=stops[alpha], stops=stops, order=np.array(order))
+    if return_path:
+        out.update({k: np.array(v) for k, v in path.items()})
+    return out

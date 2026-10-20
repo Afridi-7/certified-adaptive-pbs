@@ -239,3 +239,16 @@ discussion and practical implications; limitations; four new deviation entries. 
   probably shortened (appendices and some exploratory analyses to a supplement that still counts, or cut).
 - **Repository URL:** github.com/Afridi-7/certified-adaptive-pbs; its visibility could not be checked from here. Make it
   public (or provide reviewer access) and archive a release on Zenodo for a DOI before submission.
+
+## Independent checks of the guarantees (2026-10-20; follow-up to an external review)
+1. **Reference implementation.** Our ALPHA and betting statistics agree with SHANGRLA's NonnegMean to within 3e-13 in
+   log scale (2,000 random cases). The full procedures disagree only through a conservative rule missing from our frozen
+   ALPHA, which changed no median cost (details in DEVIATIONS.md). `results/crosscheck_shangrla_v1`, `results/alpha_detrule_v1`.
+2. **Validity test suite** (`tests/`, run `python -m pytest -q tests`; 25 tests, about 30 s, fixed seeds). Exact-null
+   false certification for ALPHA (default, aggressive, timid priors) and for weighted betting with uniform, random-score,
+   oracle, anti-oracle and adaptive follow-the-blasts samplers, equal and unequal fields with size-dependent blasts; the
+   bounded assorter; the verifier-margin remark; identities for h(N, k, n) and the ranked-search formula; four negative
+   controls (uncorrected ranking, mean of proportions, cells as draws under clustering, naive threshold under verifier
+   error) that must be flagged; a power check. All pass; largest valid-procedure rate 0.029 (1,000 reps). Report:
+   `results/validity_tests_v1/report.json`.
+3. Still needed: a reading of the proofs and of these checks by a statistician who has not worked on the project.
