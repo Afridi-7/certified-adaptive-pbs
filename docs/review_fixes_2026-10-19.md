@@ -161,19 +161,22 @@ cells, max 33), θ_s = p_s (exact null), 400 sampling orders per specimen.
 - Mean of field proportions: 0.062 pooled, two specimens at 1.0.
 - Caveat: specimens are small (median 105 cells) and mostly high-blast (46/75 have p_s > 0.5; only 2 in 0.05–0.30).
 
-## P1-4 Verifier error from reader labels — data found 2026-10-20; prepared, not run
-The IDC index (v25) lists, besides the consensus, per-session label series for BoneMarrowWSI: Session 0 and 1 for 114
-patients, Session 2 (114), 3 (112), 4 (108), 5 (14). The conversion documentation (Zenodo 14933087) says each cell was
-labelled by at least three people in sequence until a majority was reached; "it is not possible to say which person did
-which label". So sessions are reading rounds, not fixed annotators: session 0 = first reader of every cell, session 1 =
-second reader.
-- `notebooks/42_bmwsi_sessions_colab.ipynb` (CPU, ~15 MB of annotation series, 2–5 min) → Drive
-  `bmwsi_sessions_v1/annotations_sessions.csv.gz` (small enough for the Drive connector).
-- `scripts/43_verifier_error.py` (tested on synthetic sessions): reader-0 vs reader-1 blast-call disagreement (unbiased by
-  the consensus construction), each reader vs consensus (biased towards agreement), and certification on real
-  arrangements with reader 0 as the verifier (truth = consensus; θ_s = p_s, both directions), plus a weakened test
-  θ' = θ + β0(1 − θ) (above) / θ(1 − β1) (below) that is valid when the verifier's false blast calls (missed blasts) are
-  at most β0 (β1) of the true non-blasts (blasts). Plug-in β from the reader-0 vs reader-1 table is an illustration only.
+## P1-4 Verifier error from reader labels — done 2026-10-20 (exploratory)
+Data: per-session label series of BoneMarrowWSI (IDC v25): Session 0 and 1 for 114 patients; later sessions only where
+readers disagreed. The conversion documentation (Zenodo 14933087) says each cell was read in sequence until a majority was
+reached and that which person read which cell is not recorded, so sessions are reading rounds, not fixed annotators.
+Notebook 42 run in Colab by the author on 2026-10-20: 92,222 labelled boxes (sha256 bcb248bc…). Session boxes match the
+consensus boxes (99.98% / 99.95%). Copied to `data/bmwsi_sessions/`.
+`scripts/43_verifier_error.py` (seed 20261034) → `results/verifier_error_v1/`.
+- Reader 0 vs reader 1 (both counted): second calls blast where first called non-blast 1.1% [0.7, 1.7]; non-blast where
+  first called blast 1.2% [0.8, 1.6]. Counted vs not counted (damaged, smudge, …) disagreement: 2.7% of boxes.
+- 83 real-arrangement specimens, reader 0 as verifier, truth = consensus, θ_s = p_s:
+  - |p_reader − p_s|: median 0.005, 90th percentile 0.033, max 0.075; mean bias −0.007 (reader 0 under-calls).
+  - False certification "p > θ_s" 0.28 (23 specimens > α); "p < θ_s" 0.63 (52 specimens).
+  - Remark-2 correction with plug-in β (inter-reader rates): 0.16 / 0.42 — not enough.
+  - Fixed margin: "above" valid from +0.03 (0.0003 pooled, max 0.013); "below" still 3 specimens > α at −0.05.
+- Paper: Remark 2 (imperfect verification of a threshold assertion), RQ4 paragraph, practical implication, limitation,
+  contribution 4, abstract clause. Margins chosen in-sample on small, mostly high-blast specimens.
 
 ## P1-5 Three-way decisions at fixed budgets (RQ3) — done
 `scripts/32_decision_level.py`, seed 20261025, M = 2,000, n ∈ {100, 200, 500}, 2,000 specimens per (θ, p). Paper Table 2.

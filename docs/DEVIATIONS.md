@@ -90,3 +90,12 @@ background: false certification ≤ 0.030; median cells 395/160 (ALPHA, θ = 0.1
 - No patient identifiers in the release: recall/FP intervals bootstrap images, as for RV-PBS, and understate uncertainty.
 - Cost comparisons use the Shekhar et al. betting test with uniform sampling as the reference (as in H6d), not ALPHA.
 - Specimens: 100 fields × 5 cells, θ = 0.10 only (as RV-PBS H4c); the WHO 20% threshold was not run on MLL23.
+
+## Verifier error (2026-10-20, exploratory)
+- Reader = reading round (session 0 = first reader of each cell), not an identified person; the release does not record
+  who read which cell.
+- A box counts for a reader if that reader's label is not in EXCL; reader counts can therefore differ from consensus counts
+  in the denominator as well as the numerator.
+- θ_s = consensus p_s (exact null for the truth); the plug-in β and the margins are estimated on the same 83 specimens.
+- The IDC v25 consensus series has 28,459 boxes (114 patients) vs 28,395 (113) in `data/bmwsi/cells.csv` from the
+  2026-09-30 download; the analysis joins to the repo table, so the extra patient is not used.

@@ -18,6 +18,8 @@ Truth : the consensus label. A box counts as a nucleated cell for a reader if th
     known counts, Prop. 2a, uniform field sampling) uses the reader's counts. theta_s = consensus p_s, so the specimen is
     an exact null of H0: p <= theta_s for the truth and every certification of "p > theta_s" is false; symmetrically
     for "p < theta_s". 400 sampling orders per specimen.
+(4) Fixed inflation. The same tests with the threshold moved by a margin d in {0.01, 0.02, 0.03, 0.05} against the
+    direction of the claim (certify p_reader > theta + d, or p_reader < theta - d): how much margin a single reader needs.
 (3) Weakened guarantee. If the verifier's false blast calls in the specimen number at most beta0 * (number of true
     non-blasts), then p_reader <= p + beta0 (1 - p), so testing p_reader > theta + beta0 (1 - theta) is valid for
     p > theta (missed blasts only make it conservative); symmetrically, testing p_reader < theta (1 - beta1) is valid for
@@ -37,6 +39,7 @@ ap.add_argument("--sessions", default="data/bmwsi_sessions/annotations_sessions.
 ap.add_argument("--out", default="results/verifier_error_v1"); ap.add_argument("--seed", type=int, default=20261034)
 ap.add_argument("--n_orders", type=int, default=400); ap.add_argument("--grid", type=int, default=4)
 ap.add_argument("--alpha", type=float, default=0.05); ap.add_argument("--n_boot", type=int, default=2000)
+ap.add_argument("--margins", type=float, nargs="+", default=[0.01, 0.02, 0.03, 0.05])   # (4) fixed inflation of the threshold
 a = ap.parse_args(); os.makedirs(a.out, exist_ok=True); t0 = time.time()
 EXCL = {"artifact", "damaged_cell", "smudge_cell", "technically_unfit", "thrombocyte", "thrombocyte_aggregate", "giant_platelet",
         "erythrocyte", "spicule", "neutrophil_extracellular_trap", "no_consensus_found", "megakaryocyte", "micromegakaryocyte",
@@ -112,7 +115,8 @@ for pat, P in Q[Q.s_session0.notna()].groupby("patient"):
     if mT.sum() < 20 or BT.sum() == 0 or BT.sum() == mT.sum(): continue
     p_s = BT.sum() / mT.sum(); p_r = BR.sum() / mR.sum(); N = len(mR); w = mR / mR.sum(); f = BR / mR
     tests = dict(above=(f, p_s), below=(1 - f, 1 - p_s),
-                 above_corr=(f, p_s + b0 * (1 - p_s)), below_corr=(1 - f, 1 - p_s * (1 - b1)))
+                 above_corr=(f, p_s + b0 * (1 - p_s)), below_corr=(1 - f, 1 - p_s * (1 - b1)),
+                 **{f"above_m{d:.2f}": (f, p_s + d) for d in a.margins}, **{f"below_m{d:.2f}": (1 - f, 1 - (p_s - d)) for d in a.margins})
     for o in range(a.n_orders):
         r = dict(patient=pat, p_s=p_s, p_reader=p_r, M=int(mT.sum()), N=N, order=o)
         for nm, (ff, th) in tests.items():
@@ -121,8 +125,9 @@ for pat, P in Q[Q.s_session0.notna()].groupby("patient"):
             r[f"{nm}_cert"] = int(ob["stop"] > 0)
         rows.append(r)
 D = pd.DataFrame(rows); D.to_csv(f"{a.out}/episodes.csv", index=False)
+TESTS = ["above", "below", "above_corr", "below_corr"] + [f"{d_}_m{m:.2f}" for d_ in ("above", "below") for m in a.margins]
 per = D.groupby("patient").agg(p_s=("p_s", "first"), p_reader=("p_reader", "first"), M=("M", "first"),
-                               **{f"{t}": (f"{t}_cert", "mean") for t in ["above", "below", "above_corr", "below_corr"]})
+                               **{f"{t}": (f"{t}_cert", "mean") for t in TESTS})
 per.to_csv(f"{a.out}/patient_summary.csv")
 
 
@@ -136,7 +141,8 @@ res = dict(sessions=sess, match_rate_to_consensus_boxes=match, consensus_label_a
                                                                   max_abs=float((per.p_reader - per.p_s).abs().max())),
            false_cert={t: dict(pooled=float(D[f"{t}_cert"].mean()), max_specimen=float(per[t].max()),
                                n_specimens_gt_alpha=int((per[t] > a.alpha).sum()), n_specimens_signif=sig(per[t]))
-                       for t in ["above", "below", "above_corr", "below_corr"]},
+                       for t in TESTS},
+           abs_reader_bias_quantiles={q: float(np.quantile((per.p_reader - per.p_s).abs(), q)) for q in (0.5, 0.75, 0.9, 0.95, 1.0)},
            seconds=round(time.time() - t0))
 json.dump(res, open(f"{a.out}/summary.json", "w"), indent=1); json.dump(vars(a), open(f"{a.out}/config.json", "w"), indent=1)
 print(json.dumps(res, indent=1))

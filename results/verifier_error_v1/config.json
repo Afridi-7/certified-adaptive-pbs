@@ -1,0 +1,15 @@
+{
+ "sessions": "data/bmwsi_sessions/annotations_sessions.csv.gz",
+ "out": "results/verifier_error_v1",
+ "seed": 20261034,
+ "n_orders": 400,
+ "grid": 4,
+ "alpha": 0.05,
+ "n_boot": 2000,
+ "margins": [
+  0.01,
+  0.02,
+  0.03,
+  0.05
+ ]
+}
