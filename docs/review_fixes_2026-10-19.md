@@ -251,4 +251,15 @@ discussion and practical implications; limitations; four new deviation entries. 
    controls (uncorrected ranking, mean of proportions, cells as draws under clustering, naive threshold under verifier
    error) that must be flagged; a power check. All pass; largest valid-procedure rate 0.029 (1,000 reps). Report:
    `results/validity_tests_v1/report.json`.
-3. Still needed: a reading of the proofs and of these checks by a statistician who has not worked on the project.
+3. **Reproducibility package.** `REPRODUCE.md` (three levels: data-free checks, re-runs from derived data, full
+   pipeline), `reproduce.py` (`list`, `check`, `run`, `verify`: re-runs a step into a temporary folder and compares its
+   summary with the stored one), `requirements-lock.txt`, `data/README.md` for all four sources and `data/CHECKSUMS.txt`
+   for the derived files. `verify` on part2, crosscheck, detrule, decisions, alpha_prior and benchmark reproduced the stored
+   values exactly. Each frozen confirmatory script and module was confirmed unchanged since its tag.
+4. **One benchmark table** (`scripts/46_benchmark_table.py`, `results/benchmark_v1`; main Table 3, compact Table IV):
+   four valid designs and four analyses without a design-based guarantee, against eight conditions (in distribution,
+   clustering, confusable background, unequal fields, RV-PBS, MLL23, real arrangements, single reader), giving false
+   certification at p = θ and the median cells at a margin of 0.05. Summary of stored results; no new simulation. Valid
+   designs ≤ 0.031 wherever their assumptions held; every unguaranteed analysis failed in at least one condition.
+5. Still needed: a reading of the proofs and of these checks by a statistician who has not worked on the project; a
+   public repository and a Zenodo DOI to replace the placeholder in both papers.

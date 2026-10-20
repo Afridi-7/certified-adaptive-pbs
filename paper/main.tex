@@ -389,6 +389,42 @@ These margins were chosen on the same 83 specimens, which are small and mostly h
 
 \paragraph{Unequal field sizes (exploratory).} Real fields differ in size: BoneMarrowWSI quadrants hold 12--29 nucleated cells (interquartile range; coefficient of variation 0.62). In real regions, the mean of quadrant proportions differed from the region's blast proportion by $-0.004$ on average $[-0.008,0.001]$ (patient bootstrap, 116 regions). Proportion and size were barely related (within-region Spearman correlation 0.04), but the difference exceeded 0.03 in absolute value in 10\% of regions. In simulated specimens with these field sizes (about 1,300 cells), averaging field proportions with ALPHA certified falsely in 0.38 $[0.35,0.41]$ ($\theta=0.10$) and 0.32 $[0.29,0.35]$ ($\theta=0.20$) of boundary specimens, even with blasts placed independently of size. With blasts enriched in small fields it certified falsely in every specimen. The reason is that the analysis tests the mean of proportions, which exceeds $\theta$ in about half of the specimens with $p=\theta$; the test is valid for that quantity, but it is the wrong quantity. Both constructions of Proposition~\ref{prop:unequal} stayed valid in every condition, with false certification at most 0.005. They differ in cost. With known counts, classifier-driven sampling certified $p=0.15$ against $\theta=0.10$ with a median of 297 cells (23\% of the specimen), and uniform sampling with 646. The bounded assorter with $m_{\max}=91$, the largest quadrant observed, needed 631 cells with betting and 1,031 with ALPHA, because the bound shrinks the margin by $\bar m/m_{\max}\approx0.24$. Recording each field's cell count, which needs a detector but not a classifier, is therefore worth a large saving.
 
+\paragraph{One benchmark across conditions.} Table~\ref{tab:bench} puts the designs and conditions of this section side by side, from the stored results. Two patterns hold in every column. First, wherever their assumptions held, the design-based tests kept false certification at or below 0.031; the single reader is the one condition in which an assumption of the guarantee itself failed, and there the test certified the reader's count, not the truth. Second, every analysis without a design-based guarantee failed in at least one condition, often while looking acceptable in another: treating the cells of fields as individual draws gave 0.041 in distribution and 0.051 pooled over the real arrangements, but 0.478 under strong clustering and 0.335 in one real specimen; averaging field proportions is exact with equal fields and gave 0.379 with unequal ones. Cost, by contrast, depended on the condition. Classifier-driven sampling was the cheapest design in distribution, under clustering and with a confusable background (55--105 cells against 160--345 for uniform ALPHA). It kept part of its advantage on MLL23 (215 vs.\ 283 cells for uniform betting), and on RV-PBS it was no cheaper than uniform betting at this margin (265 vs.\ 260) and dearer at $p=0.20$ (195 vs.\ 110). Validity transferred across conditions; efficiency did not.
+
+\begin{table}[t]
+\centering\footnotesize
+\setlength{\tabcolsep}{2.3pt}
+\caption{One benchmark across conditions (a summary of stored results, produced by \texttt{scripts/46\_benchmark\_table.py}; no new simulation). Top: share of specimens in which ``$p>\theta$'' was certified at the exact null $p=\theta$ ($\alpha=0.05$), the larger of the values at $\theta=0.10$ and $\theta=0.20$ where both were run (400--1,000 specimens each); for BoneMarrowWSI, the rate pooled over all runs with $\theta_s=p_s$ and, in brackets, the largest rate in any specimen (75 and 83 specimens, 400 sampling orders each). Bottom: median cells to certify $p=0.15$ against $\theta=0.10$ (300--1,000 specimens); a specimen that never certifies counts as all of its cells. Specimens have 500 cells (100 fields of 5), about 1,300 cells with unequal fields, and a median of 105 real cells in BoneMarrowWSI. ``Stressed'': the assumption the condition tests (unit: the sampled unit is the analysed unit; target: the cell-weighted $p$). C: from a confirmatory run; X: exploratory. ---: not run, or not applicable. $^a$With unequal fields and in BoneMarrowWSI, ALPHA uses the bounded assorter (Proposition~\ref{prop:unequal}b) and the betting designs use the known counts (Proposition~\ref{prop:unequal}a). $^b$With equal fields this analysis coincides with ALPHA; with blasts enriched in small fields it certified falsely in every specimen. In BoneMarrowWSI, uniform betting needed a median of 97\% of the cells at a margin of 0.05; with the single reader as verifier, a margin of 0.03 gave 0.0003 [0.013]. The in-distribution mixture comes from a separate confirmatory run, in which uniform and classifier-driven betting needed 260 and 75 cells.}\label{tab:bench}
+\vspace{3pt}
+\begin{tabular}{@{}l cccc cc cc@{}}
+\toprule
+ & \multicolumn{4}{c}{Composites of KU-Optofil cells} & \multicolumn{2}{c}{External cells} & \multicolumn{2}{c}{BoneMarrowWSI}\\
+\cmidrule(lr){2-5}\cmidrule(lr){6-7}\cmidrule(l){8-9}
+ & In distr. & Clustered & Confusable & Unequal & RV-PBS & MLL23 & Real & One\\
+ & & & backgr. & fields & & & arrangem. & reader\\
+\emph{Stressed} & --- & \emph{unit} & \emph{classifier} & \emph{target} & \multicolumn{2}{c}{\emph{classifier transfer}} & \emph{geometry} & \emph{verifier}\\
+\emph{Status} & C & C & X & X & C & X & X & X\\
+\midrule
+\multicolumn{9}{@{}l}{\emph{False certification of ``$p>\theta$'' at $p=\theta$}}\\
+ALPHA, uniform$^{a}$ & 0.022 & 0.025 & 0.031 & 0 & --- & --- & 0 [0] & ---\\
+Betting, uniform$^{a}$ & 0.011 & 0.005 & 0.011 & 0.005 & 0.011 & 0.011 & 0.001 [0.010] & 0.277 [1.00]\\
+Betting, classifier-driven & 0.005 & 0.003 & 0.007 & 0.001 & 0.001 & 0.001 & --- & ---\\
+Betting, 50\% mixture & 0.014 & --- & --- & --- & 0.003 & 0.004 & --- & ---\\
+\addlinespace
+Ranked, analysed as uniform & 0.993 & --- & --- & --- & --- & --- & --- & ---\\
+Cells of fields as draws & 0.041 & 0.478 & --- & --- & --- & --- & 0.051 [0.335] & ---\\
+Mean of field proportions$^{b}$ & --- & --- & --- & 0.379 & --- & --- & 0.062 [1.00] & ---\\
+100-cell count, ``above'' & 0.427 & 0.388 & --- & --- & --- & --- & --- & ---\\
+\midrule
+\multicolumn{9}{@{}l}{\emph{Median cells to certify $p=0.15$ against $\theta=0.10$}}\\
+ALPHA, uniform$^{a}$ & 165 & 345 & 160 & 1{,}031 & --- & --- & --- & ---\\
+Betting, uniform$^{a}$ & 270 & 355 & 265 & 646 & 260 & 283 & --- & ---\\
+Betting, classifier-driven & 75 & 55 & 105 & 297 & 265 & 215 & --- & ---\\
+Betting, 50\% mixture & 145 & --- & --- & --- & 285 & 220 & --- & ---\\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \begin{figure}[t]
 \centering\includegraphics[width=\linewidth]{figures/fig4_rq4.pdf}
 \caption{RQ4. (a) Median cells to certify $p>0.10$ in distribution (KU-Optofil, cross-fitted scores) and under acquisition shift (RV-PBS, KU-trained probe); 95\% bootstrap intervals. All designs keep false certification $\le0.014$. (b) False certification at $p=\theta$ when the cells of sampled fields are analysed as individual draws. Open markers: composites with scattered or hot-field arrangements (5 cells per field). Lines: model at the clustering measured in real bone-marrow regions (17 cells per field). Grey band: 95\% CI of the raw ICC, which is biased upward. ICC values of 0 are plotted at $10^{-3}$.}\label{fig:rq4}

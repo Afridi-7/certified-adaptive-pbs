@@ -1,0 +1,18 @@
+SHA-256 of the derived data files used in the paper (computed 2026-10-20). Raw datasets: see data/README.md.
+
+c8446c59027e01b522fb8743a900f9d2d7a2827d7d1f32dbea4a0e6153aadc6d  bmwsi/bmwsi_ann.zip            (notebook 21)
+9d71d9766b9fe787e497b96e4708f87c3ebd0c99f6b3a2f1305a8f7079de00be  bmwsi/cells.csv                (scripts/22)
+712324d70e4cab662eb41338ddf8c380ddefeb02160c62b4d878bd01a090ba70  bmwsi/rois.csv                 (scripts/22)
+d671b68fa48c22959b8ac0058bb0f575b2fbb33acb7aa70c0075cb851a94ed39  bmwsi/series_index.csv         (notebook 21)
+8b16bbe8b6eb7e1343f22c24aeabb2524a9bc83dbc53aab7da0fb15cf7218be7  bmwsi_tiles/tiles.csv          (notebook 35)
+f1b9c7bd14087193f4800e9b2bbab434bf9f52a5822c6312e13d82685e79801c  bmwsi_tiles/tiles_embeddings_dinov2_vits14.npy
+bcb248bc11dce24cfc9c51ea00a31dc56e2f3697bbd6a0395ddf44c714f5592f  bmwsi_sessions/annotations_sessions.csv.gz (notebook 42)
+4afdebfdeb150bdd8eeec1dbe0d58ab616bc13df72787b96c171fb2afd9c455f  bmwsi_sessions/series_index.csv
+437019f4230da0a05db54b95d890c9e7a721a4da2e6bbbaf31aa21cf70e907a2  mll23/mll23_cells.csv          (notebook 37)
+4d069e20a389a10e14faaf39d252ffe9766b4efe7e19f658ded64cd5d7a40b5f  mll23/mll23_embeddings_dinov2_vits14.npy
+
+KU-Optofil dataset.zip (as recorded by notebook 03 in results/embeddings_v1/config.json):
+97fc42d9cd0e15299e9a4091e286a3f390ce97483fe291d821a3bf2fb858b0ea  ku_optofil/dataset.zip
+RV-PBS crops zip (as recorded by notebook 15 in results/external_v1/config.json):
+42d195b1e5a49229b517bbe2780e72688f9b08fc09252e049866df6bcb749100  external_crops.zip
+MLL23 class archives: Zenodo MD5 checksums in data/mll23/config.json (verified by notebook 37 while downloading).

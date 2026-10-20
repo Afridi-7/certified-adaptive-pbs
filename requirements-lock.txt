@@ -1,0 +1,14 @@
+# Exact versions of the environment that produced the 2026-10-19/20 exploratory results and passed
+# `python reproduce.py check` (Python 3.13.16, Linux). The Colab notebooks record their own versions in config.json
+# (e.g. torch 2.11.0+cu130, timm 1.0.30, Python 3.13.15, Tesla T4).
+numpy==2.5.3
+scipy==1.18.1
+pandas==3.0.5
+scikit-learn==1.9.1
+matplotlib==3.11.2
+pillow==12.3.0
+pytest==9.1.1
+highdicom==0.28.2
+pydicom==3.0.2
+idc-index==0.13.1
+wsidicom==0.36.1

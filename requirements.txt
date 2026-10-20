@@ -1,9 +1,11 @@
+# Analysis (CPU). Versions used most recently are pinned in requirements-lock.txt.
 numpy>=1.26
 scipy>=1.11
 pandas>=2.1
-pillow>=10.0
 scikit-learn>=1.3
 matplotlib>=3.8
-tqdm>=4.66
-timm>=0.9
-# torch / torchvision: install separately to match your CUDA version, see README
+pillow>=10.0
+pytest>=8
+# Only for the BoneMarrowWSI annotation parser (scripts/22) and the Colab notebooks:
+# highdicom==0.28.2  pydicom>=3  idc-index  wsidicom
+# Embeddings (Colab notebooks install these themselves): torch, torchvision, timm
