@@ -140,3 +140,17 @@ background: false certification ≤ 0.030; median cells 395/160 (ALPHA, θ = 0.1
   described as exploratory and direction-specific; field counts in the verifier analysis stated (first reader's).
 - **Figures**: Fig. 2(b) of main.tex now plots the field-level teacher (exploratory); Fig. 4(b) foregrounds the
   bias-corrected ICC, with the raw estimate hatched as a comparison (`scripts/25_figures.py`, not frozen).
+
+## Further checks (2026-10-22; exploratory)
+- **InfoDPP-PAC settings not reported in the paper.** In addition to τ (calibrated) and ρ = 1 (fixed by us), the
+  reimplementation fixes the RBF length-scale (median heuristic), the observation-noise variance (0.01) and the seed
+  floor (m0 = 5). `scripts/48_infodpp_settings.py` varies each one at a time on 2,000 new specimens (seed 20261040),
+  recalibrating τ every time; the frozen module `src/cadpbs/infodpp.py` is unchanged (the length-scale is passed through
+  `InfoDPPConfig.length_scale`). Miss rate and difference from uniform sampling changed by at most 0.03, with no
+  significant paired change. Consequence: the Part I conclusions do not depend on these four choices; they may depend
+  on choices not varied (encoder, teacher).
+- **Number audit of the CMPB article** (`paper/audit_cmpb_numbers.py`). It found four statements that did not match
+  the stored results (Wald's approximation applied to all designs instead of uniform ALPHA; near-threshold cost said to
+  grow "towards" values it already exceeded; "up to a third" for 37%; "≤ 0.014 under shift" for 0.011). All are
+  corrected in the text; no analysis changed.
+

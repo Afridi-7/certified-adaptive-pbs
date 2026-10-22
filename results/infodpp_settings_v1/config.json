@@ -1,0 +1,23 @@
+{
+ "emb": "results/embeddings_v1",
+ "out": "results/infodpp_settings_v1",
+ "N": 200,
+ "m_list": [
+  1,
+  5,
+  10,
+  20
+ ],
+ "folds": [
+  0,
+  1,
+  2,
+  3,
+  4
+ ],
+ "episodes": 100,
+ "target_frac": 0.163,
+ "n_calib": 8,
+ "seed": 20261040,
+ "analyse_only": false
+}

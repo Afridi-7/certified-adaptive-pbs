@@ -62,9 +62,12 @@ changes a pre-registered verdict. Paper edits are in `paper/main.tex`. The previ
 ## P0-4 Population size (RQ3)
 `scripts/28_m_scaling.py`: M ∈ {500, 1,000, 2,000, 4,000}; 17,600 specimens; seed 20261021; α = 0.05 and 0.01.
 - **Validity.** Every design at every M: false certification ≤ 0.040 at α = 0.05 and ≤ 0.007 at α = 0.01.
-- **Cost depends on the margin, not on M.**
-  - At margins ≥ 0.05, M = 4,000 is within 20% of Wald's log(1/α)/KL(p‖θ).
-  - Within 0.02 of the threshold, cost grows towards about 1,400 cells (θ = 0.10) and 2,500 cells (θ = 0.20).
+- **Cost is governed mainly by the margin.**
+  - At margins ≥ 0.05, uniform ALPHA at M = 4,000 is within 20% of Wald's log(1/α)/KL(p‖θ) (classifier-driven
+    sampling needs far fewer cells than the approximation).
+  - Within 0.02 of the threshold, cost keeps growing with M: uniform ALPHA needs 1,583 cells (θ = 0.10) and 2,033 cells
+    (θ = 0.20) at M = 4,000, against approximations of about 1,400 and 2,500. (Corrected 2026-10-22: an earlier version
+    said cost grows "towards" these values, but at θ = 0.10 it already exceeds the approximation.)
   - "Near-census" is a small-specimen effect. Paper Table 1.
 - **Classifier-driven sampling** saved 36–65% at every M, except θ = 0.20, p = 0.22, where the saving was 19–23% at M ≤ 1,000
   and zero at M ≥ 2,000.
@@ -302,3 +305,31 @@ competing-interest and CRediT statements) are now met by:
 - `paper/cmpb_title_page.tex`, `paper/cmpb_cover_letter.tex`, `paper/cmpb_highlights.txt`, `paper/cmpb_submission/Figure_1-4.pdf`.
 Still open for the authors: telephone number, funding and ethics confirmation, acknowledgements, author list, the
 declarations tool in the submission system, and the generative-AI declaration required by the guide.
+
+## Further checks of the CMPB article (2026-10-22)
+- **InfoDPP-PAC settings the original paper does not report** (RQ1, exploratory). `scripts/48_infodpp_settings.py`
+  (seed 20261040; `results/infodpp_settings_v1`) varies ρ ∈ {0, 0.5, 2}, the kernel length-scale (×0.5, ×2), the noise
+  variance (0.001, 0.1) and the seed floor m0 (2, 10) one at a time, recalibrating τ to the 16.3% operating point each
+  time, on the same 2,000 new specimens (k = 1). Median stop 32–33 fields in every setting; miss rate and difference from
+  uniform sampling changed by at most 0.03; no paired change significant (exact McNemar, smallest Holm-adjusted p = 0.38
+  over 36 comparisons); the difference stayed −0.54 to −0.50 at m = 1 and −0.08 to −0.06 at m = 20, and the
+  information-gain AUC fell from 0.77–0.81 to 0.53–0.55. The main setting on these specimens gave −0.074 at m = 20
+  (confirmatory run: −0.023), so variation between specimen sets exceeds variation between settings. Reported in
+  main.tex (Section on RQ1 results and Limitations), the CMPB supplement (Section S2), one sentence in cmpb.tex
+  Section 3.1 and one in the compact version.
+- **Wording added to cmpb.tex.** Section 2.6: the InfoDPP-PAC baseline is a reimplementation, not a reproduction of
+  the authors' configuration or their PAC guarantee. Section 2.8: an episode is one simulated specimen whose cells are
+  resampled from the pool of 275 patients (blasts from 11); validity claims rest on design-based theorems that hold
+  for every specimen, whereas miss rates and costs are simulation estimates for this pool.
+- **Number audit.** `paper/audit_cmpb_numbers.py` recomputes 155 numbers of cmpb.tex (abstract, text, Tables 1–5 and
+  captions) from `results/` and writes `paper/audit_cmpb_numbers.md`; all pass. Corrections it led to:
+  - Wald's approximation: within 20% for uniform ALPHA only; near the threshold uniform ALPHA reaches 1,583 and 2,033
+    cells at M = 4,000, so "grows towards about 1,400 and 2,500" was wrong at θ = 0.10 (fixed in all three papers).
+  - Discussion: "wrong in up to a third of specimens" → "up to 37%".
+  - Table 5: validity under shift ≤ 0.011 (was ≤ 0.014, the in-distribution mixture value).
+  - RQ4 opening: "at or below 0.031" now restricted to the tabulated conditions (moderate clustering reached 0.042).
+  - Abstract: "kept false certification below 0.05" → "within 0.05, up to simulation error" (valid ALPHA on
+    individually sampled cells reached 0.055 in one real specimen, not significantly above 0.05); the 76% miss rate
+    now states its field size (ten-cell fields).
+- **Word counts.** cmpb.tex: abstract 348 words, main text about 3,640 words excluding floats.
+

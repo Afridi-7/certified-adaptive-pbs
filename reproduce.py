@@ -1,5 +1,5 @@
 """
-Reproduce the results of the paper (paper/main.tex and paper/jbhi_compact.tex).
+Reproduce the results of the paper (paper/main.tex, paper/cmpb.tex and paper/jbhi_compact.tex).
 
     python reproduce.py list [--group G] [--markdown]   what exists, which paper item it feeds, what it needs
     python reproduce.py check [--shangrla DIR]           data-free checks: validity tests, Part II exact checks,
@@ -82,6 +82,10 @@ STEPS = [
          needs=["results/embeddings_v1/embeddings_dinov2_vits14.npy"],
          cmds=[S("scripts/47_infodpp_seed_accounting.py", "--out", "{out}", "--seed", "20261022", "--episodes", "200",
                  "--k_list", "1", "2", "5", "--target_frac", "0.024")], out="results/infodpp_seed_v1", compare=["summary.json"]),
+    dict(id="partI_settings", group="partI", status="X", cost="M", paper="InfoDPP-PAC settings the paper does not report (rho, length-scale, noise, seed size)",
+         needs=["results/embeddings_v1/embeddings_dinov2_vits14.npy"],
+         cmds=[S("scripts/48_infodpp_settings.py", "--out", "{out}", "--seed", "20261040", "--episodes", "100")],
+         out="results/infodpp_settings_v1", compare=["summary.json"]),
     dict(id="review_stats", group="partI", status="X", cost="S", paper="Fold t intervals, effect sizes, sensitivity table",
          needs=["results/confirm_v1/episodes.csv", "results/kt1_field_teacher/episodes.csv"],
          cmds=[S("scripts/29_review_stats.py")], out=None, compare=[]),
@@ -165,6 +169,11 @@ STEPS = [
          needs=["results/confirm_v1", "results/part3_theta010", "results/a3_decisions.json", "results/a4_bmwsi/clustering.json",
                 "results/kt1_field_teacher/episodes.csv", "results/a4_bmwsi/icc_excess.json"],
          cmds=[S("scripts/25_figures.py")], out=None, compare=[]),
+    dict(id="audit_cmpb", group="paper", status="C", cost="S", paper="Numbers of the CMPB article checked against results/ (paper/audit_cmpb_numbers.md)",
+         needs=["results/confirm_v1/episodes.csv", "results/part3_decisions.json", "results/m_scaling_v1/summary.csv",
+                "results/decision_level_v1/summary.csv", "results/benchmark_v1", "results/a3_decisions.json",
+                "results/real_arrangements_v1/summary.json", "results/verifier_error_v1/summary.json"],
+         cmds=[S("paper/audit_cmpb_numbers.py")], out=None, compare=[]),
 ]
 BY_ID = {s["id"]: s for s in STEPS}
 

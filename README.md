@@ -33,9 +33,10 @@ four invalid analyses the paper warns against do not, and the Part II results. T
 ```
 paper/        main.tex (full preprint); cmpb.tex (Computer Methods and Programs in Biomedicine article) with
               cmpb_supplement.tex (built from main.tex by build_cmpb_supplement.py), title page, cover letter,
-              highlights and cmpb_submission/Figure_1-4; jbhi_compact.tex (8-page IEEE version); refs.bib
+              highlights and cmpb_submission/Figure_1-4; audit_cmpb_numbers.py (checks the article's numbers against
+              results/); jbhi_compact.tex (8-page IEEE version); refs.bib
 src/cadpbs/   package code: samplers, stopping rules (InfoDPP-PAC re-implementation), ALPHA, weighted betting
-scripts/      numbered analysis steps (01_ ... 45_); each writes results/<run>/ with config.json
+scripts/      numbered analysis steps (01_ ... 48_); each writes results/<run>/ with config.json
 notebooks/    Google Colab notebooks for the GPU and download steps (03, 15, 21, 35, 37, 42)
 tests/        validity test suite (pytest)
 verify/       numerical checks of the power analysis and the calibration budget

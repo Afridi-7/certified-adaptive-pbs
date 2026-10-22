@@ -87,6 +87,7 @@ version numbers some propositions and tables differently.
 | `partI_field_teacher` | X | M | Kill-test 1 with the field-level teacher | `python scripts/26_kt1_field_teacher.py --out results/kt1_field_teacher --seed 20261019` |
 | `partI_rules` | X | M | Other saturation rules; ranked search (Prop. 3) | `python scripts/31_stopping_class.py --out results/stopping_class_v1 --seed 20261024` |
 | `partI_seed` | X | S | InfoDPP-PAC seed accounting at the 2.4% operating point | `python scripts/47_infodpp_seed_accounting.py --out results/infodpp_seed_v1 --seed 20261022 --episodes 200 --k_list 1 2 5 --target_frac 0.024` |
+| `partI_settings` | X | M | InfoDPP-PAC settings the paper does not report (rho, length-scale, noise, seed size) | `python scripts/48_infodpp_settings.py --out results/infodpp_settings_v1 --seed 20261040 --episodes 100` |
 | `review_stats` | X | S | Fold t intervals, effect sizes, sensitivity table | `python scripts/29_review_stats.py` |
 | `tiles_embeddings` | D | GPU | Real BoneMarrowWSI tiles | Colab: `notebooks/35_bmwsi_tiles_colab.ipynb` |
 | `partI_tiles` | X | S | Part I on real tiles | `python scripts/36_partI_real_tiles.py --tiles data/bmwsi_tiles --out results/partI_real_tiles_v1 --seed 20261028`<br>`python scripts/40_partI_real_tiles_analysis.py` |
@@ -114,12 +115,16 @@ version numbers some propositions and tables differently.
 | `verifier` | X | M | Imperfect verification; Remark 2 | `python scripts/43_verifier_error.py --sessions data/bmwsi_sessions/annotations_sessions.csv.gz --out results/verifier_error_v1 --seed 20261034` |
 | `benchmark` | X | S | Benchmark table across conditions (main Table 3, compact Table IV) | `python scripts/46_benchmark_table.py --out results/benchmark_v1` |
 | `figures` | C | S | Figs. 1-4 (copy figures/*.pdf to paper/figures/) | `python scripts/25_figures.py` |
+| `audit_cmpb` | C | S | Numbers of the CMPB article checked against results/ (paper/audit_cmpb_numbers.md) | `python paper/audit_cmpb_numbers.py` |
 
 
 Figures: `python scripts/25_figures.py` writes `figures/fig1_partI.pdf` ... `fig4_rq4.pdf`; copy them to
 `paper/figures/`. Papers: `cd paper`, then `latexmk -pdf main.tex`, `latexmk -pdf cmpb.tex`, `python build_cmpb_supplement.py && latexmk -pdf cmpb_supplement.tex`
 (elsarticle class) and `latexmk -pdf jbhi_compact.tex`
 (the latter needs the IEEEtran class, included in TeX Live as `texlive-publishers`).
+Numbers in the CMPB article: `python paper/audit_cmpb_numbers.py` recomputes the numbers of `paper/cmpb.tex`
+(abstract, text, tables and captions) from `results/` and writes `paper/audit_cmpb_numbers.md`; it exits non-zero on
+any mismatch.
 
 ## 5. What is frozen
 
