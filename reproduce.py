@@ -78,6 +78,10 @@ STEPS = [
          needs=["results/embeddings_v1/cells_features.csv"],
          cmds=[S("scripts/31_stopping_class.py", "--out", "{out}", "--seed", "20261024")], out="results/stopping_class_v1",
          compare=["summary.json"]),
+    dict(id="partI_seed", group="partI", status="X", cost="S", paper="InfoDPP-PAC seed accounting at the 2.4% operating point",
+         needs=["results/embeddings_v1/embeddings_dinov2_vits14.npy"],
+         cmds=[S("scripts/47_infodpp_seed_accounting.py", "--out", "{out}", "--seed", "20261022", "--episodes", "200",
+                 "--k_list", "1", "2", "5", "--target_frac", "0.024")], out="results/infodpp_seed_v1", compare=["summary.json"]),
     dict(id="review_stats", group="partI", status="X", cost="S", paper="Fold t intervals, effect sizes, sensitivity table",
          needs=["results/confirm_v1/episodes.csv", "results/kt1_field_teacher/episodes.csv"],
          cmds=[S("scripts/29_review_stats.py")], out=None, compare=[]),
@@ -158,7 +162,8 @@ STEPS = [
                 "results/verifier_error_v1/episodes.csv"],
          cmds=[S("scripts/46_benchmark_table.py", "--out", "{out}")], out="results/benchmark_v1", compare=["summary.json"]),
     dict(id="figures", group="paper", status="C", cost="S", paper="Figs. 1-4 (copy figures/*.pdf to paper/figures/)",
-         needs=["results/confirm_v1", "results/part3_theta010", "results/a3_decisions.json", "results/a4_bmwsi/clustering.json"],
+         needs=["results/confirm_v1", "results/part3_theta010", "results/a3_decisions.json", "results/a4_bmwsi/clustering.json",
+                "results/kt1_field_teacher/episodes.csv", "results/a4_bmwsi/icc_excess.json"],
          cmds=[S("scripts/25_figures.py")], out=None, compare=[]),
 ]
 BY_ID = {s["id"]: s for s in STEPS}

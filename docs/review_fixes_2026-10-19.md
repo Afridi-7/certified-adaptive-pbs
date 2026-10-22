@@ -263,3 +263,28 @@ discussion and practical implications; limitations; four new deviation entries. 
    designs ≤ 0.031 wherever their assumptions held; every unguaranteed analysis failed in at least one condition.
 5. Still needed: a reading of the proofs and of these checks by a statistician who has not worked on the project; a
    public repository and a Zenodo DOI to replace the placeholder in both papers.
+
+# Supervisor review of 2026-10-22 (Dr. Harangi): what was changed
+Target journal changed to **Computer Methods and Programs in Biomedicine** (full article). `paper/cmpb.tex` is built
+from `main.tex` by `paper/build_cmpb.py` (elsarticle; structured abstract of 349 words; keywords; declarations;
+highlights in `paper/cmpb_highlights.txt`), so both carry identical numbers. The CMPB guide for authors could not be
+opened from here; check abstract, highlight and length rules against it before submission.
+1. **Content-blindness / relevance ranking.** H1a is now an empirical finding (type E, not V); abstract, contributions,
+   Section 7.1 and Table 4 reworded. Proposition 3 is described as an average-case result under an independence model;
+   it does not prove that only relevance ranking helps, and a ranked scan has no worst-case guarantee.
+2. **2.4% operating point.** Described as a ratio of reported averages. New exploratory check
+   (`scripts/47_infodpp_seed_accounting.py`, reproduces the 12,000 stored episodes exactly): after its 5-field random
+   seed, which is not counted as examined, InfoDPP-PAC made a median of 4–5 greedy selections (range 2–10) and never
+   reselected a seed field. Advantage over uniform: −0.17 [−0.27, −0.08] at m = 1, about −0.03 at m = 5 and 10, none at
+   m = 20; the same pattern when the seed is counted (median 10 fields).
+3. **Cost.** "Not on specimen size" replaced by "governed mainly by the margin; dependence on M diminishes at margins
+   ≥ 0.05 but stays large near the threshold". Discussion numbers corrected against Table 1 (near the threshold:
+   1,040–2,033 cells uniform, 660–2,043 classifier-driven, for M ≥ 2,000). Savings are expert-verified cells only.
+4. **Proposition 1.** Lower bound corrected to the positive-part form; checks extended to 0 ≤ n ≤ N (script 17 and a new
+   test; 26 tests pass).
+5. **Verifier / marrow.** The 0.03 margin is exploratory, in-sample and direction-specific; the conclusion is that a
+   separately established bound on verifier error is needed. Field counts and weights come from the first reader.
+   Marrow analyses validate the method; they do not establish clinical validity on peripheral blood; θ_s = p_s.
+6. **Figures and repository.** Fig. 2(b) plots the field-level teacher (exploratory); Fig. 4(b) foregrounds the
+   bias-corrected ICC. Repository URL inserted (github.com/Afridi-7/certified-adaptive-pbs) — it is currently
+   **private** (unauthenticated requests return 404): make it public or invite the supervisor, and push.

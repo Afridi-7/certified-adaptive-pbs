@@ -1,5 +1,8 @@
 """
 Paper figures from the FROZEN confirmatory outputs (no new analysis; every number is read from results/).
+Two exploratory overlays, clearly labelled, were added on 2026-10-22 at the supervisor's request: the field-level teacher
+in Fig. 1(b) (results/kt1_field_teacher) and the bias-corrected clustering estimate in Fig. 4(b)
+(results/a4_bmwsi/icc_excess.json), with the raw estimate kept as a comparison.
 Usage: python scripts/25_figures.py  -> figures/fig1_partI.pdf/.png ... fig4_rq4.pdf/.png + figures/captions.md
 Colour roles (validated categorical slots, light mode): blue = uniform / field-level, orange = adaptive
 (InfoDPP-PAC, classifier-driven) or naive, aqua = mixture; grey = reference lines. Aqua is always direct-labelled.
@@ -49,23 +52,34 @@ ax[0].text(-0.1, 1 - nmed / N + 0.035, f"worst case, any strategy: 1 − n/N = {
 ax[0].set_xticks(xs, [str(m) for m in ms]); ax[0].set_xlabel("cells per field (dilution m)"); ax[0].set_ylim(0, 1)
 ax[0].set_ylabel("miss rate, one critical field (k = 1)"); ax[0].set_title("(a) Premature stops at matched cost", loc="left")
 ax[0].legend(frameon=False, loc="lower right")
-for col, lab, c, mk in [("kt1_auc_info_step1", "information gain", ORANGE, "o"), ("kt1_auc_relevance", "relevance (teacher)", BLUE, "s")]:
+for col, lab, c, mk in [("kt1_auc_info_step1", "information gain (stopping signal)", ORANGE, "o"),
+                        ("kt1_auc_relevance", "relevance, cell-level teacher", BLUE, "s")]:
     mu, lo, hi = [], [], []
     for m in ms:
         v = E[E.m == m][col].dropna().values; rng = np.random.default_rng(0)
         bs = [rng.choice(v, len(v)).mean() for _ in range(1000)]; mu.append(v.mean()); lo.append(np.quantile(bs, .025)); hi.append(np.quantile(bs, .975))
     mu, lo, hi = map(np.array, (mu, lo, hi))
     ax[1].errorbar(xs, mu, yerr=[mu - lo, hi - mu], color=c, marker=mk, capsize=0, elinewidth=1, label=lab)
+FT = pd.read_csv("results/kt1_field_teacher/episodes.csv")                 # exploratory: same pooled embeddings as the selector
+mu, lo, hi = [], [], []
+for m in ms:
+    v = FT[FT.m == m]["auc_rel_field"].dropna().values; rng = np.random.default_rng(0)
+    bs = [rng.choice(v, len(v)).mean() for _ in range(1000)]; mu.append(v.mean()); lo.append(np.quantile(bs, .025)); hi.append(np.quantile(bs, .975))
+mu, lo, hi = map(np.array, (mu, lo, hi))
+ax[1].errorbar(xs + 0.06, mu, yerr=[mu - lo, hi - mu], color=AQUA, marker="^", ls="--", capsize=0, elinewidth=1,
+               label="relevance, field-level teacher\n(exploratory, 10,000 episodes)")
 ax[1].axhline(0.5, color=GREY, ls="--", lw=1); ax[1].text(3.0, 0.508, "chance", color=INK2, fontsize=6.5, ha="right")
 ax[1].set_xticks(xs, [str(m) for m in ms]); ax[1].set_xlabel("cells per field (dilution m)"); ax[1].set_ylim(0.45, 1.0)
 ax[1].set_ylabel("AUC for identifying critical fields"); ax[1].set_title("(b) Kill-test 1: stopping signal vs relevance", loc="left")
-ax[1].legend(frameon=False, loc="center right")
+ax[1].legend(frameon=False, loc="lower right", bbox_to_anchor=(1.0, 0.33), fontsize=6.3)
 save(fig, "fig1_partI",
      f"Part I (RQ1), confirmatory run (24,000 episodes; N = {N} fields; 5 patient-grouped folds). (a) Probability of stopping "
      f"without examining the single critical field, InfoDPP-PAC vs uniform sampling at the same per-episode cost "
      f"(median {int(nmed)} fields); 95% Wilson intervals. Dashed: worst-case lower bound 1 − n/N for any strategy without "
      "location information (Theorem 3). (b) AUC with which the information-gain term that drives stopping, and the "
-     "teacher relevance score, rank critical above non-critical fields; mean over episodes with 95% bootstrap intervals.")
+     "cell-level teacher's relevance score, rank critical above non-critical fields; mean over episodes with 95% bootstrap "
+     "intervals. Dashed (exploratory, separate 10,000 episodes): the field-level teacher, trained on the pooled embeddings the "
+     "selector sees.")
 
 # ---------------- Figure 2: Part II (RQ2) ----------------
 T = pd.read_csv("results/part2_v1/nstar_table.csv")
@@ -139,13 +153,17 @@ for th, c, mk in [(0.10, BLUE, "o"), (0.20, ORANGE, "s")]:
         r, lo, hi = cp(int(g.naive_cell_cert.sum()), len(g)); x = max(place[f"theta{th}_{arr}"], 1e-3)
         ax[1].errorbar(x, r, yerr=[[r - lo], [hi - r]], color=c, marker=mk, mfc="white", mew=1.5, elinewidth=1, capsize=0, ls="none")
     ax[1].plot([], [], color=c, marker=mk, label=f"θ = {th:.2f}")
-ax[1].axvspan(max(cl["ci95"][0], 1e-3), cl["ci95"][1], color=GREY, alpha=0.18, lw=0)
-ax[1].text(0.028, 0.2, "ICC measured\nin real smears", color=INK2, fontsize=6.3, ha="center")
+ex = json.load(open("results/a4_bmwsi/icc_excess.json"))["S1"]             # bias-corrected (excess over permutation null)
+ax[1].axvspan(max(cl["ci95"][0], 1e-3), cl["ci95"][1], facecolor="none", edgecolor=GREY, hatch="////", lw=0, alpha=0.5)
+ax[1].axvspan(max(ex["excess_ci95"][0], 1e-3), ex["excess_ci95"][1], color=INK2, alpha=0.15, lw=0)
+ax[1].axvline(ex["excess"], color=INK, lw=1.2)
+ax[1].text(ex["excess"] * 0.92, 0.30, "real smears:\nbias-corrected ICC\n(95% CI)", color=INK, fontsize=6.3, ha="right")
+ax[1].text(cl["ci95"][1] * 1.08, 0.13, "raw ICC\n(biased upward)", color=INK2, fontsize=6.0, ha="left")
 ax[1].axhline(0.05, color=GREY, ls="--", lw=1); ax[1].text(0.9, 0.056, "α", color=INK2, fontsize=6.5)
 ax[1].set_xscale("log"); ax[1].set_xlim(8e-4, 1.5); ax[1].set_ylim(0, 0.55)
 ax[1].set_xlabel("within-field clustering of blasts (ICC, log scale)"); ax[1].set_ylabel("false certification at p = θ")
 ax[1].set_title("(b) Cell-level analysis of field samples", loc="left"); from matplotlib.lines import Line2D
-ax[1].plot([], [], color=GREY, lw=1.5, marker="o", ms=3.5, label="model at real-smear ICC (A4.2)")
+ax[1].plot([], [], color=GREY, lw=1.5, marker="o", ms=3.5, label="Beta-binomial model, 17 cells/field")
 ax[1].plot([], [], color=GREY, ls="none", marker="o", mfc="white", mew=1.5, label="E3.1 composites (observed)")
 ax[1].legend(frameon=False, loc="upper left", fontsize=6.3)
 save(fig, "fig4_rq4",
@@ -154,8 +172,9 @@ save(fig, "fig4_rq4",
      "false certification ≤ 0.014 at p = θ. (b) False certification at p = θ when cells from uniformly sampled fields are "
      "analysed as individual draws. Open markers: E3.1 composites (5 cells per field; scattered, hot0.6, hot1.0; 1,000 "
      "specimens each, 95% Clopper–Pearson). Lines: Beta-binomial model at the clustering measured in real bone-marrow "
-     "monolayer ROIs (17 cells per field; grey band = 95% CI of the S1 ICC, raw estimator; the raw ICC is biased upward, "
-     "see confirmatory_v4). Field-level analysis stayed ≤ 0.042 in every condition (not shown). ICC is plotted at 10⁻³ when 0.")
+     "monolayer ROIs (17 cells per field). Solid band and line: bias-corrected ICC of the real regions (excess over the "
+     "permutation null, patient-bootstrap 95% CI; exploratory). Hatched: 95% CI of the raw estimate, shown for comparison "
+     "(biased upward). Field-level analysis stayed ≤ 0.042 in every condition (not shown). ICC is plotted at 10⁻³ when 0.")
 
 open("figures/captions.md", "w").write("# Figure captions (generated by scripts/25_figures.py)\n\n" + "\n".join(CAP))
 print("written:", sorted(os.listdir("figures")))

@@ -116,3 +116,27 @@ background: false certification ≤ 0.030; median cells 395/160 (ALPHA, θ = 0.1
 - The paper's statement "the frozen scripts and src/ are unchanged since their tags" was imprecise (modules were added to
   src/ later). It now says that the frozen scripts and the modules they import are unchanged (checked with `git diff`
   against prereg-v4 for alpha.py, weighted_betting.py, infodpp.py and composites.py).
+
+## Supervisor review of 2026-10-22 (corrections; one exploratory re-analysis)
+- **Proposition 1 lower bound.** The paper stated (1 − n/(N−k+1))^k ≤ h(N, k, n) without restriction. It fails for even
+  k and n > N − k + 1, where h = 0 (e.g. N = 10, k = 2, n = 10: 1/81 > 0). Corrected to the positive-part form
+  [max{0, 1 − n/(N−k+1)}]^k, which holds for all 0 ≤ n ≤ N. `scripts/17_part2_verify.py` (not frozen) previously checked
+  only n ≤ N − k; check 2 now covers the full range and check 2b records the counterexample; `tests/test_theory.py`
+  gained `test_prop1_bounds_full_range`. No other result used the bound (Theorem 1 uses h exactly; the sufficient
+  sample size uses the upper bound). `results/part2_v1/verify.json` gained one key; `nstar_table.csv` is unchanged.
+- **H1a reclassified** from V (implementation/theorem check) to E (empirical claim): the halting statistic has no
+  relevance term but depends on the embeddings and the selected set, which depend on the cells.
+- **InfoDPP-PAC seed accounting** (`scripts/47_infodpp_seed_accounting.py`, exploratory, seed 20261022 as the 2.4% run).
+  The m0 = 5 random seed fields are scored by the teacher but were never counted as examined; cost and misses count only
+  greedy selections. At 2.4% the greedy rule made a median of 4–5 selections (range 2–10) after the seed and never
+  reselected a seed field. The script reproduces all 12,000 stored episodes of `results/sens_op_paperpool` exactly and
+  adds the alternative accounting (seed counted, uniform sampling at n + m0): k = 1 misses 0.78/0.92/0.93/0.95 vs
+  0.95/0.95/0.96/0.94 at m = 1/5/10/20, the same pattern as before. 2.4% is described as a ratio of reported averages.
+- **Wording**: content-blindness stated as an empirical finding; Proposition 3 described as an average-case result under
+  an independence model, not a proof that only relevance ranking helps and not a worst-case guarantee; certification
+  cost described as governed mainly by the margin, with dependence on M diminishing only at margins ≥ 0.05; the
+  Discussion's near-threshold numbers corrected (classifier-driven sampling needed 660 and 798 cells at θ = 0.10,
+  p = 0.12, M = 2,000 and 4,000, not more than 1,000); savings stated as expert-verified cells only; verifier margins
+  described as exploratory and direction-specific; field counts in the verifier analysis stated (first reader's).
+- **Figures**: Fig. 2(b) of main.tex now plots the field-level teacher (exploratory); Fig. 4(b) foregrounds the
+  bias-corrected ICC, with the raw estimate hatched as a comparison (`scripts/25_figures.py`, not frozen).

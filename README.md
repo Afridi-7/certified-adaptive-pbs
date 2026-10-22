@@ -31,7 +31,8 @@ four invalid analyses the paper warns against do not, and the Part II results. T
 
 ## Layout
 ```
-paper/        main.tex (full preprint), jbhi_compact.tex (journal version), refs.bib
+paper/        main.tex (full preprint), cmpb.tex (Computer Methods and Programs in Biomedicine version, built
+              from main.tex by build_cmpb.py), jbhi_compact.tex (8-page IEEE version), refs.bib
 src/cadpbs/   package code: samplers, stopping rules (InfoDPP-PAC re-implementation), ALPHA, weighted betting
 scripts/      numbered analysis steps (01_ ... 45_); each writes results/<run>/ with config.json
 notebooks/    Google Colab notebooks for the GPU and download steps (03, 15, 21, 35, 37, 42)

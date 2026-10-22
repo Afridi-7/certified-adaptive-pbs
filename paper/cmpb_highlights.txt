@@ -1,0 +1,7 @@
+Highlights
+
+- Saturation stopping lost its advantage over random sampling as cells were pooled
+- Certifying absence of rare evidence needs near-census examination in the worst case
+- Anytime-valid design-based tests certified blast thresholds at the nominal error
+- Classifier-guided sampling saved verified cells in distribution, not under shift
+- Validity required the sampled unit, cell-count weights and bounded verifier error

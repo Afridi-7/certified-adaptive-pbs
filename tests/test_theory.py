@@ -1,4 +1,4 @@
-"""Checks of the combinatorial results (Proposition 1, Theorem 1 attainment, ranked-search proposition)."""
+"""Checks of the combinatorial results (Proposition 1 including its bounds, Theorem 1 attainment, ranked-search proposition)."""
 from fractions import Fraction
 from math import comb
 import numpy as np
@@ -18,6 +18,19 @@ def test_h_product_form_and_k1():
                 assert h(N, k, n) == prod
         for n in range(N + 1):
             assert h(N, 1, n) == Fraction(N - n, N)
+
+
+def test_prop1_bounds_full_range():
+    """Proposition 1 sandwich bounds over the FULL range 0 <= n <= N (corrected 2026-10-22).
+    The lower bound needs the positive part: without it, (1 - n/(N-k+1))^k is positive for even k and n > N-k+1,
+    where h = 0 (e.g. N = 10, k = 2, n = 10: 1/81 > 0)."""
+    assert h(10, 2, 10) == 0 and (1 - Fraction(10, 9)) ** 2 == Fraction(1, 81)       # the reported counterexample
+    for N in range(2, 60):
+        for k in range(1, N + 1):
+            for n in range(0, N + 1):
+                lo = max(Fraction(0), 1 - Fraction(n, N - k + 1)) ** k
+                hi = (1 - Fraction(n, N)) ** k
+                assert lo <= h(N, k, n) <= hi, (N, k, n)
 
 
 def test_uniform_sampling_attains_h():

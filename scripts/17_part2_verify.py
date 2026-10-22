@@ -30,17 +30,22 @@ ok1b = all(n_star(N, 1, al) == ceil((1 - Fraction(al).limit_denominator(10**6)) 
 print(f"[1] miss(N,1,n) == 1 - n/N for all N<=300: {ok1};  n* == ceil((1-alpha)N): {ok1b}")
 log["check1_k1_exact"] = ok1 and ok1b
 
-# 2. product form and sandwich bounds  ((N-n-k+1)/(N-k+1))^k <= miss <= (1-n/N)^k
+# 2. product form and sandwich bounds  [max(0, 1 - n/(N-k+1))]^k <= miss <= (1-n/N)^k, over the FULL range 0 <= n <= N.
+#    (Corrected 2026-10-22: the earlier check covered only n <= N-k, and the paper stated the lower bound without the
+#    positive part, which fails for even k and n > N-k+1, e.g. N = 10, k = 2, n = 10: 1/81 > 0 = miss.)
 ok2 = True
 for N in range(1, 121):
     for k in range(1, N + 1):
-        for n in range(0, N - k + 1):
+        for n in range(0, N + 1):
             m = miss(N, k, n)
-            prod = np.prod([Fraction(N - n - i, N - i) for i in range(k)])
-            lo = Fraction(N - n - k + 1, N - k + 1) ** k; hi = (1 - Fraction(n, N)) ** k
+            prod = np.prod([Fraction(max(N - n - i, 0), N - i) for i in range(k)])
+            lo = max(Fraction(0), 1 - Fraction(n, N - k + 1)) ** k; hi = (1 - Fraction(n, N)) ** k
             ok2 &= (m == prod) and (lo <= m <= hi)
-print(f"[2] product form and sandwich bounds hold for all N<=120: {ok2}")
+print(f"[2] product form and sandwich bounds hold for all N<=120 and all 0<=n<=N: {ok2}")
 log["check2_bounds"] = bool(ok2)
+bad = (1 - Fraction(10, 9)) ** 2 > miss(10, 2, 10)                  # the bound without the positive part fails here
+print(f"[2b] without the positive part the lower bound fails at N=10, k=2, n=10: {bad}")
+log["check2b_unclipped_bound_fails_at_endpoint"] = bool(bad)
 
 # 3. monotone in k (worst case of unknown k >= 1 is k = 1)
 ok3 = all(miss(N, k + 1, n) <= miss(N, k, n) for N in range(2, 121) for k in range(1, N) for n in range(N + 1))

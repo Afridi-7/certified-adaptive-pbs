@@ -1,0 +1,32 @@
+{
+ "emb": "results/embeddings_v1",
+ "out": "results/infodpp_seed_v1",
+ "N": 200,
+ "k_list": [
+  1,
+  2,
+  5
+ ],
+ "m_list": [
+  1,
+  5,
+  10,
+  20
+ ],
+ "folds": [
+  0,
+  1,
+  2,
+  3,
+  4
+ ],
+ "episodes": 200,
+ "pool": "pool",
+ "pooling": "mean",
+ "target_frac": 0.024,
+ "n_calib": 8,
+ "tau_conf": 0.9,
+ "m_conf": 30,
+ "seed": 20261022,
+ "check": "results/sens_op_paperpool/episodes.csv"
+}

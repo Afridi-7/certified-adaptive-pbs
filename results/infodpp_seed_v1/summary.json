@@ -1,0 +1,436 @@
+{
+ "summary": {
+  "m1_k1": {
+   "episodes": 1000,
+   "selections_mean": 4.842,
+   "selections_median": 5.0,
+   "selections_min": 2,
+   "selections_max": 8,
+   "m0": 5,
+   "share_seed_reselected": 0.0,
+   "share_seed_has_crit": 0.031,
+   "infodpp_miss": 0.806,
+   "uniform_at_n_miss": 0.978,
+   "diff_seed_excluded": [
+    -0.172,
+    [
+     -0.2663023175961227,
+     -0.07769768240387726
+    ]
+   ],
+   "infodpp_seedincl_miss": 0.775,
+   "infodpp_seedincl_miss_wilson": [
+    0.7480937254100813,
+    0.799801480367404
+   ],
+   "uniform_at_n_plus_m0_miss": 0.952,
+   "uniform_at_n_plus_m0_miss_wilson": [
+    0.9369335997915913,
+    0.9636068838863117
+   ],
+   "diff_seed_included": [
+    -0.177,
+    [
+     -0.2719132221768917,
+     -0.08208677782310832
+    ]
+   ]
+  },
+  "m1_k2": {
+   "episodes": 1000,
+   "selections_mean": 4.901,
+   "selections_median": 5.0,
+   "selections_min": 2,
+   "selections_max": 9,
+   "m0": 5,
+   "share_seed_reselected": 0.0,
+   "share_seed_has_crit": 0.056,
+   "infodpp_miss": 0.634,
+   "uniform_at_n_miss": 0.956,
+   "diff_seed_excluded": [
+    -0.32199999999999995,
+    [
+     -0.526210605562003,
+     -0.11778939443799691
+    ]
+   ],
+   "infodpp_seedincl_miss": 0.584,
+   "infodpp_seedincl_miss_wilson": [
+    0.5531855021924276,
+    0.6141715788450588
+   ],
+   "uniform_at_n_plus_m0_miss": 0.905,
+   "uniform_at_n_plus_m0_miss_wilson": [
+    0.8852451678097385,
+    0.9216550443352853
+   ],
+   "diff_seed_included": [
+    -0.321,
+    [
+     -0.522111572854473,
+     -0.11988842714552703
+    ]
+   ]
+  },
+  "m1_k5": {
+   "episodes": 1000,
+   "selections_mean": 4.976,
+   "selections_median": 5.0,
+   "selections_min": 2,
+   "selections_max": 10,
+   "m0": 5,
+   "share_seed_reselected": 0.0,
+   "share_seed_has_crit": 0.137,
+   "infodpp_miss": 0.383,
+   "uniform_at_n_miss": 0.9,
+   "diff_seed_excluded": [
+    -0.517,
+    [
+     -0.7527803080496758,
+     -0.28121969195032426
+    ]
+   ],
+   "infodpp_seedincl_miss": 0.298,
+   "infodpp_seedincl_miss_wilson": [
+    0.2704680965335457,
+    0.3270779704953561
+   ],
+   "uniform_at_n_plus_m0_miss": 0.791,
+   "uniform_at_n_plus_m0_miss_wilson": [
+    0.7647090173367805,
+    0.8150637276859404
+   ],
+   "diff_seed_included": [
+    -0.49300000000000005,
+    [
+     -0.7029324189923987,
+     -0.28306758100760143
+    ]
+   ]
+  },
+  "m5_k1": {
+   "episodes": 1000,
+   "selections_mean": 4.752,
+   "selections_median": 5.0,
+   "selections_min": 2,
+   "selections_max": 8,
+   "m0": 5,
+   "share_seed_reselected": 0.0,
+   "share_seed_has_crit": 0.033,
+   "infodpp_miss": 0.955,
+   "uniform_at_n_miss": 0.983,
+   "diff_seed_excluded": [
+    -0.028000000000000025,
+    [
+     -0.04358026135852673,
+     -0.01241973864147332
+    ]
+   ],
+   "infodpp_seedincl_miss": 0.922,
+   "infodpp_seedincl_miss_wilson": [
+    0.9037170163353195,
+    0.937053081257767
+   ],
+   "uniform_at_n_plus_m0_miss": 0.95,
+   "uniform_at_n_plus_m0_miss_wilson": [
+    0.9346858639155304,
+    0.9618699273567182
+   ],
+   "diff_seed_included": [
+    -0.02799999999999996,
+    [
+     -0.054914318568375364,
+     -0.0010856814316245536
+    ]
+   ]
+  },
+  "m5_k2": {
+   "episodes": 1000,
+   "selections_mean": 4.762,
+   "selections_median": 5.0,
+   "selections_min": 2,
+   "selections_max": 8,
+   "m0": 5,
+   "share_seed_reselected": 0.0,
+   "share_seed_has_crit": 0.048,
+   "infodpp_miss": 0.903,
+   "uniform_at_n_miss": 0.957,
+   "diff_seed_excluded": [
+    -0.05399999999999996,
+    [
+     -0.0838984350092107,
+     -0.024101564990789224
+    ]
+   ],
+   "infodpp_seedincl_miss": 0.857,
+   "infodpp_seedincl_miss_wilson": [
+    0.833934563145855,
+    0.8773330312634623
+   ],
+   "uniform_at_n_plus_m0_miss": 0.917,
+   "uniform_at_n_plus_m0_miss_wilson": [
+    0.8982631299588786,
+    0.9325452366200719
+   ],
+   "diff_seed_included": [
+    -0.06000000000000003,
+    [
+     -0.08705710110118971,
+     -0.03294289889881036
+    ]
+   ]
+  },
+  "m5_k5": {
+   "episodes": 1000,
+   "selections_mean": 4.74,
+   "selections_median": 5.0,
+   "selections_min": 2,
+   "selections_max": 8,
+   "m0": 5,
+   "share_seed_reselected": 0.0,
+   "share_seed_has_crit": 0.137,
+   "infodpp_miss": 0.777,
+   "uniform_at_n_miss": 0.87,
+   "diff_seed_excluded": [
+    -0.093,
+    [
+     -0.17010586737726255,
+     -0.01589413262273745
+    ]
+   ],
+   "infodpp_seedincl_miss": 0.669,
+   "infodpp_seedincl_miss_wilson": [
+    0.6392355125320964,
+    0.6974709957457037
+   ],
+   "uniform_at_n_plus_m0_miss": 0.774,
+   "uniform_at_n_plus_m0_miss_wilson": [
+    0.7470571078650102,
+    0.7988457517096478
+   ],
+   "diff_seed_included": [
+    -0.10500000000000001,
+    [
+     -0.19168057221776974,
+     -0.018319427782230266
+    ]
+   ]
+  },
+  "m10_k1": {
+   "episodes": 1000,
+   "selections_mean": 4.407,
+   "selections_median": 4.0,
+   "selections_min": 2,
+   "selections_max": 7,
+   "m0": 5,
+   "share_seed_reselected": 0.0,
+   "share_seed_has_crit": 0.026,
+   "infodpp_miss": 0.957,
+   "uniform_at_n_miss": 0.982,
+   "diff_seed_excluded": [
+    -0.024999999999999977,
+    [
+     -0.052410803709486475,
+     0.0024108037094865246
+    ]
+   ],
+   "infodpp_seedincl_miss": 0.931,
+   "infodpp_seedincl_miss_wilson": [
+    0.9135849276398865,
+    0.945116285778645
+   ],
+   "uniform_at_n_plus_m0_miss": 0.962,
+   "uniform_at_n_plus_m0_miss_wilson": [
+    0.9482727912457906,
+    0.9721911544603846
+   ],
+   "diff_seed_included": [
+    -0.030999999999999982,
+    [
+     -0.05033260292873149,
+     -0.011667397071268473
+    ]
+   ]
+  },
+  "m10_k2": {
+   "episodes": 1000,
+   "selections_mean": 4.384,
+   "selections_median": 4.0,
+   "selections_min": 2,
+   "selections_max": 7,
+   "m0": 5,
+   "share_seed_reselected": 0.0,
+   "share_seed_has_crit": 0.052,
+   "infodpp_miss": 0.947,
+   "uniform_at_n_miss": 0.96,
+   "diff_seed_excluded": [
+    -0.012999999999999966,
+    [
+     -0.03806099247835161,
+     0.01206099247835168
+    ]
+   ],
+   "infodpp_seedincl_miss": 0.897,
+   "infodpp_seedincl_miss_wilson": [
+    0.8766159605900106,
+    0.9143454819323954
+   ],
+   "uniform_at_n_plus_m0_miss": 0.911,
+   "uniform_at_n_plus_m0_miss_wilson": [
+    0.891742264575647,
+    0.9271120247863401
+   ],
+   "diff_seed_included": [
+    -0.014000000000000012,
+    [
+     -0.03974356494349611,
+     0.011743564943496081
+    ]
+   ]
+  },
+  "m10_k5": {
+   "episodes": 1000,
+   "selections_mean": 4.454,
+   "selections_median": 4.0,
+   "selections_min": 3,
+   "selections_max": 7,
+   "m0": 5,
+   "share_seed_reselected": 0.0,
+   "share_seed_has_crit": 0.107,
+   "infodpp_miss": 0.822,
+   "uniform_at_n_miss": 0.891,
+   "diff_seed_excluded": [
+    -0.06900000000000002,
+    [
+     -0.12282863713675093,
+     -0.015171362863249112
+    ]
+   ],
+   "infodpp_seedincl_miss": 0.729,
+   "infodpp_seedincl_miss_wilson": [
+    0.7006135281867544,
+    0.7556337522606787
+   ],
+   "uniform_at_n_plus_m0_miss": 0.798,
+   "uniform_at_n_plus_m0_miss_wilson": [
+    0.7719963323687683,
+    0.8217228360737431
+   ],
+   "diff_seed_included": [
+    -0.06900000000000002,
+    [
+     -0.10608844046330347,
+     -0.03191155953669657
+    ]
+   ]
+  },
+  "m20_k1": {
+   "episodes": 1000,
+   "selections_mean": 4.582,
+   "selections_median": 5.0,
+   "selections_min": 2,
+   "selections_max": 7,
+   "m0": 5,
+   "share_seed_reselected": 0.0,
+   "share_seed_has_crit": 0.022,
+   "infodpp_miss": 0.97,
+   "uniform_at_n_miss": 0.967,
+   "diff_seed_excluded": [
+    0.0030000000000000027,
+    [
+     -0.018769929352205086,
+     0.02476992935220509
+    ]
+   ],
+   "infodpp_seedincl_miss": 0.948,
+   "infodpp_seedincl_miss_wilson": [
+    0.9324439406590116,
+    0.9601271582075824
+   ],
+   "uniform_at_n_plus_m0_miss": 0.94,
+   "uniform_at_n_plus_m0_miss_wilson": [
+    0.9235285893693421,
+    0.9531037398746343
+   ],
+   "diff_seed_included": [
+    0.007999999999999962,
+    [
+     -0.0023868409056844505,
+     0.018386840905684376
+    ]
+   ]
+  },
+  "m20_k2": {
+   "episodes": 1000,
+   "selections_mean": 4.603,
+   "selections_median": 5.0,
+   "selections_min": 2,
+   "selections_max": 7,
+   "m0": 5,
+   "share_seed_reselected": 0.0,
+   "share_seed_has_crit": 0.045,
+   "infodpp_miss": 0.942,
+   "uniform_at_n_miss": 0.96,
+   "diff_seed_excluded": [
+    -0.017999999999999995,
+    [
+     -0.034771267811349246,
+     -0.001228732188650744
+    ]
+   ],
+   "infodpp_seedincl_miss": 0.897,
+   "infodpp_seedincl_miss_wilson": [
+    0.8766159605900106,
+    0.9143454819323954
+   ],
+   "uniform_at_n_plus_m0_miss": 0.909,
+   "uniform_at_n_plus_m0_miss_wilson": [
+    0.8895740291786208,
+    0.9252955677777119
+   ],
+   "diff_seed_included": [
+    -0.011999999999999988,
+    [
+     -0.047820082411965475,
+     0.023820082411965496
+    ]
+   ]
+  },
+  "m20_k5": {
+   "episodes": 1000,
+   "selections_mean": 4.583,
+   "selections_median": 5.0,
+   "selections_min": 2,
+   "selections_max": 7,
+   "m0": 5,
+   "share_seed_reselected": 0.0,
+   "share_seed_has_crit": 0.119,
+   "infodpp_miss": 0.876,
+   "uniform_at_n_miss": 0.895,
+   "diff_seed_excluded": [
+    -0.019000000000000017,
+    [
+     -0.05367222888710795,
+     0.015672228887107918
+    ]
+   ],
+   "infodpp_seedincl_miss": 0.769,
+   "infodpp_seedincl_miss_wilson": [
+    0.7418771517803809,
+    0.7940639767801411
+   ],
+   "uniform_at_n_plus_m0_miss": 0.768,
+   "uniform_at_n_plus_m0_miss_wilson": [
+    0.74084178021127,
+    0.7931070021464247
+   ],
+   "diff_seed_included": [
+    0.0010000000000000009,
+    [
+     -0.05228907820557609,
+     0.05428907820557609
+    ]
+   ]
+  }
+ }
+}
