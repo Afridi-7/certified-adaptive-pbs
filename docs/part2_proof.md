@@ -87,7 +87,7 @@ Near-exhaustive examination is a property of small $k$, not of large specimens.
 
 ## 4. Result 3 — the lower bound holds for every strategy (minimax)
 
-Results 1–2 describe uniform sampling. The thesis needs a stronger statement: under Assumption A, **no** strategy,
+Results 1–2 describe uniform sampling. The study needs a stronger statement: under Assumption A, **no** strategy,
 however adaptive or clever, can do better in the worst case.
 
 **Theorem 3 (minimax lower bound).** Under Assumption A, for every policy $\pi$ that inspects at most $n$ fields:
@@ -143,7 +143,7 @@ sampling but a lower bound on every method, unless something beyond Assumption A
 **Remark 4 (imperfect verification).** Suppose verification detects an inspected critical field with probability
 $1-\beta$, independently of the selection. Then, for $k=1$ under SRSWOR, $P(M)=1-(1-\beta)\,n/N$. At $n=N$ this is
 $\beta$. So if $\beta>\alpha$, absence cannot be certified at level $\alpha$ even by a full census, and the certificate
-can be no better than the verifier. This matters for the thesis because the "expert" in Part III is simulated by
+can be no better than the verifier. This matters for the study because the "expert" in Part III is simulated by
 ground truth, i.e. $\beta=0$.
 
 ---
@@ -151,9 +151,9 @@ ground truth, i.e. $\beta=0$.
 ## 5. When the worst case does not describe the problem
 
 The bound is tight **only** under its assumptions. Each departure below changes the answer, and each corresponds to
-part of the thesis.
+part of the study.
 
-| Departure | What changes | Where in the thesis |
+| Departure | What changes | Where in the paper |
 |---|---|---|
 | **Informative features** (Assumption A fails: critical fields look different before verification) | The adversary's class shrinks, so a relevance-ordered search can beat $h$. But the gain is a *model* property, not a guarantee: it holds only as long as the feature–label relationship holds. | Part I: KT1 relevance AUC 0.977 → 0.896 as dilution grows. RQ4: blast recall 0.906 → 0.340 under acquisition shift. |
 | **Known $k\ge2$** (or a known lower bound on $k$) | Cost falls from $\approx(1-\alpha)N$ to $\approx N(1-\alpha^{1/k})$ (Prop. 2). | Rarity grid of Part I. |
@@ -189,7 +189,7 @@ $$\frac{n}{n+1}\hat R_n+\frac{B}{n+1}\le\alpha\iff\hat R_n\le\alpha-\frac{1-\alp
 The usable budget is negative iff $n<(1-\alpha)/\alpha$. That is $n<99$ positive calibration episodes at
 $\alpha=0.01$, and $n<19$ at $\alpha=0.05$ (verified in §7, check 7).
 
-This is an inference about which correction the proposal means. The thesis text should name the procedure
+This is an inference about which correction the proposal means. The paper should name the procedure
 explicitly. The claim is separate from Theorem 3 and concerns calibration, not search.
 
 ---
@@ -213,7 +213,7 @@ who mixes over all $n$-subsets and an adversary who picks $C$, and finds the val
 Without location information, adaptivity reduces to choosing a subset (Step 1 of the proof), so subsets are the full
 strategy space here.
 
-## 8. For the thesis text
+## 8. For the paper text
 
 - Present Proposition 1, Proposition 2, Theorem 3, Corollary 4 and Remark 4 as mathematical results that are
   proven here.

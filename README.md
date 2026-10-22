@@ -1,6 +1,6 @@
 # Certified Adaptive Examination of Peripheral Blood Smears
 
-MSc thesis code and paper: *When Information-Gain Stopping Fails, and What Can Be Guaranteed Instead.*
+Research code and paper: *When Information-Gain Stopping Fails, and What Can Be Guaranteed Instead.*
 Author: Qudrat Ullah · Supervisor: Balázs Harangi · University of Debrecen
 
 This is a methodological and empirical study. It is **not** a clinical tool, and nothing here establishes

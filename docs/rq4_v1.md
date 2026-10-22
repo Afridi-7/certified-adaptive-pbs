@@ -50,7 +50,7 @@ The assumptions separate into two kinds, and the data show that they fail differ
 
 The guarantee therefore survives exactly the violation the data exhibit, because it rests on the sampling design rather
 than on the model. Methods that would use predictions *in place of* verification for unexamined cells would not have this
-protection; that is the boundary this thesis can draw with evidence.
+protection; that is the boundary this study can draw with evidence.
 
 ## Next (RQ4)
 - Cross-source shift: embed RV-PBS crops (752 annotated instances, 153 blasts) and PBC-DIB crops on Colab, apply the

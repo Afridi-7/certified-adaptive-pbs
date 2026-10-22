@@ -1,4 +1,4 @@
-# Thesis runbook (living plan)
+# Research runbook (living plan)
 
 Each step lists **RQ**, **Where**, **How**, **What to send back**, and the **Decision gate** it feeds.
 Work location: your Windows PC. Keep one folder, e.g. `C:\Users\<you>\Documents\thesis_pbs`, with this layout:

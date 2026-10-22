@@ -67,7 +67,7 @@ Certification rate at or below the boundary [95% CI]; median cells examined to c
 ## Connection to Part I
 Part I found that selecting by **information gain** does not find rare evidence once it is diluted. Part III finds
 that selecting by **predicted relevance** does reduce certification cost — *if* the selection probabilities are
-carried into the test. The contrast is the thesis in one line: the adaptive signal must be relevance, not novelty,
+carried into the test. The contrast is the central argument in one line: the adaptive signal must be relevance, not novelty,
 and the guarantee must come from the sampling design, not from the selector's confidence.
 
 ## Open threats

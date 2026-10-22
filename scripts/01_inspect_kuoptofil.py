@@ -1,6 +1,6 @@
 """
 Step 1 — Inspect KU-Optofil (read-only). Prints facts we must VERIFY before designing composites.
-Usage (from the thesis folder):  python scripts/01_inspect_kuoptofil.py --data data/ku_optofil
+Usage (from the project folder):  python scripts/01_inspect_kuoptofil.py --data data/ku_optofil
 Paste the whole console output back into the chat.
 """
 import argparse, os, zipfile, collections, random

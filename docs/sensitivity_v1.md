@@ -38,7 +38,7 @@ the specimen was examined. Uniform's miss rate tracks the finite-population pred
 point (0.940 vs 0.950, 0.892 vs 0.900, 0.811 vs 0.835, 0.690 vs 0.705, 0.480 vs 0.500), an independent
 confirmation of the Part II derivation at five different budgets (H1d).
 
-## 3. Implication for the thesis
+## 3. Implication for the study
 Adaptive selection buys, at most, a small constant reduction in miss rate at fixed cost; it does not change the
 **rate** at which missing rare evidence decays with examination effort. Reducing the miss rate for a single
 critical field from 0.80 to 0.05 requires examining ~95% of the specimen, whichever rule chooses the fields.

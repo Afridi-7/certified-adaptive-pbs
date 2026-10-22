@@ -179,7 +179,7 @@ Let the verifier report a blast proportion $\tilde p$ for the specimen. If its f
 \item \emph{BoneMarrowWSI-PediatricLeukemia} \cite{hofener2025bmwsi,hofener2025descriptor} (CC BY 4.0). Whole-slide bone-marrow aspirate images, in which 228 regions of interest of about $225\,\mu$m were exhaustively annotated: every haematological structure was boxed and consensus-labelled by several experts. We used the annotations and, for the real-tile analysis of Part I, the image pixels of the annotated regions. Within eligible regions, a $2\times2$ quadrant holds a median of 20 nucleated cells (IQR 12--29, maximum 91; 758 quadrants, 99 patients), which we use as a realistic distribution of field sizes.
 \end{itemize}
 
-\paragraph{Representation and classifier.} Cells were embedded with a frozen, publicly available encoder (DINOv2 ViT-S/14 \cite{oquab2023dinov2}, 224\,px), which was not fine-tuned on these data. A logistic probe (blast vs.\ rest) was cross-fitted by patient fold and reached a pooled out-of-fold AUC of 0.979. The thesis this paper derives from does not compare encoders.
+\paragraph{Representation and classifier.} Cells were embedded with a frozen, publicly available encoder (DINOv2 ViT-S/14 \cite{oquab2023dinov2}, 224\,px), which was not fine-tuned on these data. A logistic probe (blast vs.\ rest) was cross-fitted by patient fold and reached a pooled out-of-fold AUC of 0.979. This study does not compare encoders.
 
 Two field-level relevance scores are used. The \emph{cell-level teacher} scores a field by the largest probe score among its cells; it presupposes that every cell in the field is detected and classified. The \emph{field-level teacher} is a logistic regression on the pooled field embedding, the same representation the selector sees. For each evaluation fold it is trained on composite fields built only from the other four folds, with one blast or none among $m$ cells. The pre-registered analyses used the cell-level teacher, both as InfoDPP-PAC's teacher and in Kill-test 1; the field-level teacher was added afterwards as an exploratory check.
 
@@ -504,7 +504,7 @@ When an adaptive system decides how much of a blood smear to examine, informatio
 
 \paragraph{Acknowledgements.} The author thanks Dr.\ Bal\'azs Harangi for supervising this work. [Further acknowledgements to be added.]
 
-\paragraph{Declaration of generative AI and AI-assisted technologies.} The research questions and study design come from the author's thesis proposal. During the preparation of this work the author used Claude (Anthropic) as an assistant for coding, checking calculations and references, and editing the text. The author reviewed and edited all output and takes full responsibility for the content of the article.
+\paragraph{Declaration of generative AI and AI-assisted technologies.} The research questions and study design come from the author's research proposal. During the preparation of this work the author used Claude (Anthropic) as an assistant for coding, checking calculations and references, and editing the text. The author reviewed and edited all output and takes full responsibility for the content of the article.
 
 \bibliographystyle{unsrtnat}
 \bibliography{refs}

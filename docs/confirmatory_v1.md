@@ -36,13 +36,13 @@ from −0.033 to −0.160 (SD 0.053), i.e. it depends on which blast patients ar
 is [−0.127, −0.047], also outside the margin, so the verdict does not depend on the CI method. At m = 20 the
 clustered CI is [−0.037, −0.004], inside the margin.
 
-**Methodological lesson (to state in the thesis):** the pre-registered H1c interval treated episodes as independent,
+**Methodological lesson (to state in the paper):** the pre-registered H1c interval treated episodes as independent,
 although episodes within a fold share blast patients; it is narrower than the fold-clustered interval. Here both lead
 to the same verdict, but for future equivalence claims the clustered interval is the appropriate one. The
 exploratory estimate at m = 10 (−0.027) lay within the fold-to-fold spread now observed; with only 5 folds, that
 spread was underestimated when the sample size was planned.
 
-## Status of the thesis claims after confirmation
+## Status of the study's claims after confirmation
 - Content-blind stopping (H1a), separability of the signals (KT1), dilution as the governing axis (H1b) and the Part II
   finite-population formula (H1d) are **confirmed**.
 - "No protection under dilution" is **confirmed only at 20 cells per field**; at 10 there is a residual, patient-dependent

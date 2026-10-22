@@ -1,4 +1,4 @@
-# Thesis status — Week 1 (2026-09-19)
+# Project status — Week 1 (2026-09-19)
 
 Scope this session: W1–2 of the timeline (source verification, derivation checks, pre-registration inputs) plus a first synthetic pilot of Kill-test 2 (RQ1). Code: `sim/pilot.py`, `verify/part2_and_budget.py`, `verify/mcnemar_power.py`.
 
@@ -16,7 +16,7 @@ Scope this session: W1–2 of the timeline (source verification, derivation chec
 
 - **k = 1.** Under uniform sampling without replacement, P(miss) = 1 − n/N exactly, so n ≥ ⌈(1−α)N⌉. Checked by Monte Carlo (N ∈ {100, 500, 1000}, α ∈ {0.05, 0.01}); all values agree to 3 decimals.
 - **k > 1.** P(all k missed) = C(N−k, n)/C(N, n); this is correct. Minimal n at α = 0.05, N = 1000: k = 1 → 950, 2 → 777, 3 → 631, 5 → 450, 10 → 258, 20 → 138, 50 → 57. A good closed form is n ≈ N(1 − α^{1/k}), which comes from the with-replacement approximation and is slightly conservative.
-- **Addition for the thesis (a stronger statement than the proposal makes).** If field features carry no information about location, *every* strategy that examines n fields, adaptive or not, has miss probability 1 − n/N averaged over a uniformly random critical position. Any deterministic order has worst-case miss probability 1. Uniform random sampling is therefore minimax-optimal (a Yao-type argument), which makes "near-exhaustive" a lower bound on all methods, not a property of uniform sampling. **This needs a written proof.**
+- **Addition for the study (a stronger statement than the proposal makes).** If field features carry no information about location, *every* strategy that examines n fields, adaptive or not, has miss probability 1 − n/N averaged over a uniformly random critical position. Any deterministic order has worst-case miss probability 1. Uniform random sampling is therefore minimax-optimal (a Yao-type argument), which makes "near-exhaustive" a lower bound on all methods, not a property of uniform sampling. **This needs a written proof.**
 - **Caveat.** The hypergeometric bound needs k, or a lower bound on k. When k is unknown, certifying *absence* falls back to the k = 1 regime. This is exactly why Part III reformulates the estimand.
 - **The α = 0.01 claim.** It is reproduced **if** the calibration uses a conformal-risk-control-type correction (n/(n+1))·R̂ + B/(n+1) ≤ α with B = 1. The usable budget α − (1−α)/n is negative for n < 1/α − 1 = 99. At α = 0.05 the threshold is n ≥ 19. **This is an inference about which correction the proposal means. The procedure should be named explicitly in the proposal/pre-registration.**
 
