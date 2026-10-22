@@ -142,6 +142,150 @@
    "false_certification_rate": 1.0,
    "reps": 200,
    "allowed_max": null
+  },
+  {
+   "test": "Betting with control variate, exact null, scores=random, unequal=False",
+   "false_certification_rate": 0.006,
+   "reps": 500,
+   "allowed_max": 0.0792403830344269
+  },
+  {
+   "test": "Betting with control variate, exact null, scores=oracle, unequal=False",
+   "false_certification_rate": 0.0,
+   "reps": 500,
+   "allowed_max": 0.0792403830344269
+  },
+  {
+   "test": "Betting with control variate, exact null, scores=antioracle, unequal=False",
+   "false_certification_rate": 0.0,
+   "reps": 500,
+   "allowed_max": 0.0792403830344269
+  },
+  {
+   "test": "Betting with control variate, exact null, scores=random, unequal=True",
+   "false_certification_rate": 0.0,
+   "reps": 500,
+   "allowed_max": 0.0792403830344269
+  },
+  {
+   "test": "Betting with control variate, exact null, scores=oracle, unequal=True",
+   "false_certification_rate": 0.0,
+   "reps": 500,
+   "allowed_max": 0.0792403830344269
+  },
+  {
+   "test": "Betting with control variate, exact null, scores=antioracle, unequal=True",
+   "false_certification_rate": 0.0,
+   "reps": 500,
+   "allowed_max": 0.0792403830344269
+  },
+  {
+   "test": "Betting, 50% uniform mixture, exact null, scores=oracle, unequal=False",
+   "false_certification_rate": 0.034,
+   "reps": 500,
+   "allowed_max": 0.0792403830344269
+  },
+  {
+   "test": "Betting, 50% uniform mixture, exact null, scores=antioracle, unequal=False",
+   "false_certification_rate": 0.0,
+   "reps": 500,
+   "allowed_max": 0.0792403830344269
+  },
+  {
+   "test": "Betting, 25% uniform mixture, exact null, scores=oracle, unequal=True",
+   "false_certification_rate": 0.006,
+   "reps": 500,
+   "allowed_max": 0.0792403830344269
+  },
+  {
+   "test": "Betting, 25% uniform mixture, exact null, scores=antioracle, unequal=True",
+   "false_certification_rate": 0.008,
+   "reps": 500,
+   "allowed_max": 0.0792403830344269
+  },
+  {
+   "test": "Hedged betting, exact null, sampler=uniform, unequal=False",
+   "false_certification_rate": 0.024,
+   "reps": 500,
+   "allowed_max": 0.0792403830344269
+  },
+  {
+   "test": "Hedged betting, exact null, sampler=prop_oracle, unequal=False",
+   "false_certification_rate": 0.0,
+   "reps": 500,
+   "allowed_max": 0.0792403830344269
+  },
+  {
+   "test": "Hedged betting, exact null, sampler=prop_antioracle, unequal=False",
+   "false_certification_rate": 0.034,
+   "reps": 500,
+   "allowed_max": 0.0792403830344269
+  },
+  {
+   "test": "Hedged betting, exact null, sampler=mix50_antioracle, unequal=False",
+   "false_certification_rate": 0.02,
+   "reps": 500,
+   "allowed_max": 0.0792403830344269
+  },
+  {
+   "test": "Hedged betting, exact null, sampler=follow_the_blasts, unequal=False",
+   "false_certification_rate": 0.026,
+   "reps": 500,
+   "allowed_max": 0.0792403830344269
+  },
+  {
+   "test": "Hedged betting, exact null, sampler=uniform, unequal=True",
+   "false_certification_rate": 0.018,
+   "reps": 500,
+   "allowed_max": 0.0792403830344269
+  },
+  {
+   "test": "Hedged betting, exact null, sampler=prop_oracle, unequal=True",
+   "false_certification_rate": 0.0,
+   "reps": 500,
+   "allowed_max": 0.0792403830344269
+  },
+  {
+   "test": "Hedged betting, exact null, sampler=prop_antioracle, unequal=True",
+   "false_certification_rate": 0.028,
+   "reps": 500,
+   "allowed_max": 0.0792403830344269
+  },
+  {
+   "test": "Hedged betting, exact null, sampler=mix50_antioracle, unequal=True",
+   "false_certification_rate": 0.03,
+   "reps": 500,
+   "allowed_max": 0.0792403830344269
+  },
+  {
+   "test": "Hedged betting, exact null, sampler=follow_the_blasts, unequal=True",
+   "false_certification_rate": 0.018,
+   "reps": 500,
+   "allowed_max": 0.0792403830344269
+  },
+  {
+   "test": "'Above' certificate without positivity of q_t (kelly bets), exact null",
+   "false_certification_rate": 0.0,
+   "reps": 500,
+   "allowed_max": 0.0792403830344269
+  },
+  {
+   "test": "'Above' certificate without positivity of q_t (hedged bets), exact null",
+   "false_certification_rate": 0.0,
+   "reps": 500,
+   "allowed_max": 0.0792403830344269
+  },
+  {
+   "test": "Hedged power sanity at p = 0.15, theta = 0.10: uniform",
+   "false_certification_rate": 1.0,
+   "reps": 200,
+   "allowed_max": null
+  },
+  {
+   "test": "Hedged power sanity at p = 0.15, theta = 0.10: 50% mixture",
+   "false_certification_rate": 1.0,
+   "reps": 200,
+   "allowed_max": null
   }
  ]
 }

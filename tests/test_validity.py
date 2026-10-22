@@ -170,3 +170,140 @@ def test_power_sanity():
     record("Power sanity at p = 0.15, theta = 0.10: ALPHA", ra / reps, reps, None)
     record("Power sanity at p = 0.15, theta = 0.10: betting", rb / reps, reps, None)
     assert ra / reps > 0.9 and rb / reps > 0.9, (ra / reps, rb / reps)
+
+
+# ================================================================ added 2026-10-22 (audit item C5)
+# The control-variate branch of the frozen betting test, the defensive mixture sampler and the exploratory hedged bets
+# had no direct validity test. Same protocol as above: exact nulls, fixed seeds, Monte Carlo limit max_allowed(reps).
+from cadpbs.hedged_betting import hedged_betting_w, KAPPAS
+from cadpbs.weighted_betting_w import betting_test_w
+
+SCORES = ("random", "oracle", "antioracle")
+
+
+def _scores(kind, f, rng):
+    N = len(f)
+    return {"random": rng.random(N), "oracle": f + 1e-3, "antioracle": 1 - f + 1e-3}[kind]
+
+
+def _mixture(pi, S, lam):
+    """The 50% (or lam) uniform mixture of scripts/19 and scripts/49: q_t = (1 - lam) prop-MS + lam uniform."""
+    base = sampler_prop_w(pi, S)
+    return lambda rem, t: (1 - lam) * base(rem, t) + lam / len(rem)
+
+
+def _specimen(rng, N, unequal, theta=0.10):
+    sizes = _sizes(rng, N) if unequal else None
+    B, m_i = exact_null_fields(N, 5, theta, rng, sizes=sizes, small_enriched=unequal)
+    return m_i / m_i.sum(), B / m_i
+
+
+@pytest.mark.parametrize("score_kind", SCORES)
+@pytest.mark.parametrize("unequal", [False, True])
+def test_betting_control_variate_exact_null(score_kind, unequal):
+    """Frozen betting test with use_cv=True (the 'CV' design of Fig. 3): beta_t is predictable and the bet cap keeps
+    1 + lambda Y > 0, so validity must hold for informative, uninformative and adversarial side information."""
+    theta, N, reps = 0.10, 60, REPS // 2
+    rng = np.random.default_rng([20, int(unequal), SCORES.index(score_kind)]); rej = 0
+    for _ in range(reps):
+        w, f = _specimen(rng, N, unequal, theta); S = _scores(score_kind, f, rng)
+        rej += betting_test_w(f, w, S, sampler_prop_w(w, S), theta, alpha=ALPHA, use_cv=True, rng=rng)["stop"] > 0
+    record(f"Betting with control variate, exact null, scores={score_kind}, unequal={unequal}", rej / reps, reps, max_allowed(reps))
+    assert rej / reps <= max_allowed(reps), rej / reps
+
+
+@pytest.mark.parametrize("lam,score_kind,unequal", [(0.5, "oracle", False), (0.5, "antioracle", False),
+                                                    (0.25, "oracle", True), (0.25, "antioracle", True)])
+def test_mixture_sampler_exact_null(lam, score_kind, unequal):
+    """Defensive mixture (H6a): a predictable q_t bounded below by lam / n_remaining, with the frozen betting test."""
+    theta, N, reps = 0.10, 60, REPS // 2
+    rng = np.random.default_rng([21, int(100 * lam), SCORES.index(score_kind), int(unequal)]); rej = 0
+    for _ in range(reps):
+        w, f = _specimen(rng, N, unequal, theta); S = _scores(score_kind, f, rng)
+        rej += betting_rejects(f, w, S, _mixture(w, S, lam), theta, rng)
+    record(f"Betting, {lam:.0%} uniform mixture, exact null, scores={score_kind}, unequal={unequal}", rej / reps, reps, max_allowed(reps))
+    assert rej / reps <= max_allowed(reps), rej / reps
+
+
+HEDGE_SAMPLERS = ("uniform", "prop_oracle", "prop_antioracle", "mix50_antioracle", "follow_the_blasts")
+
+
+@pytest.mark.parametrize("sampler_kind", HEDGE_SAMPLERS)
+@pytest.mark.parametrize("unequal", [False, True])
+def test_hedged_betting_exact_null(sampler_kind, unequal):
+    """Exploratory hedged bets (average of fixed-fraction betting processes, src/cadpbs/hedged_betting.py)."""
+    theta, N, reps = 0.10, 60, REPS // 2
+    rng = np.random.default_rng([22, int(unequal), HEDGE_SAMPLERS.index(sampler_kind)]); rej = 0
+    for _ in range(reps):
+        w, f = _specimen(rng, N, unequal, theta)
+        if sampler_kind == "uniform":
+            smp = sampler_uniform_w(N)
+        elif sampler_kind == "prop_oracle":
+            smp = sampler_prop_w(w, f + 1e-3)
+        elif sampler_kind == "prop_antioracle":
+            smp = sampler_prop_w(w, 1 - f + 1e-3)
+        elif sampler_kind == "mix50_antioracle":
+            smp = _mixture(w, 1 - f + 1e-3, 0.5)
+        else:
+            smp = _follow_the_blasts(N, f)
+        rej += hedged_betting_w(f, w, smp, theta, alpha=ALPHA, rng=rng)["stop"] > 0
+    record(f"Hedged betting, exact null, sampler={sampler_kind}, unequal={unequal}", rej / reps, reps, max_allowed(reps))
+    assert rej / reps <= max_allowed(reps), rej / reps
+
+
+def _zero_mass_oracle(f):
+    """A predictable sampler that is NOT positive on all unsampled fields: it puts all mass on the unsampled fields with
+    the most blasts (the top half). Z_t then has conditional mean <= the unsampled mass, because f >= 0."""
+    def q(rem, t):
+        k = max(1, len(rem) // 2); top = np.argsort(-f[rem], kind="stable")[:k]
+        out = np.zeros(len(rem)); out[top] = 1.0 / k; return out
+    return q
+
+
+@pytest.mark.parametrize("test_kind", ["kelly", "hedged"])
+def test_above_certificate_valid_without_positivity(test_kind):
+    """The papers state that positivity of q_t is needed for power and for 'p < theta' certificates but not for the
+    validity of 'p > theta'. Check: exact null, unequal fields, sampler with zero mass on half of the unsampled fields."""
+    theta, N, reps = 0.10, 60, REPS // 2; rng = np.random.default_rng([23, int(test_kind == "hedged")]); rej = 0
+    for _ in range(reps):
+        w, f = _specimen(rng, N, True, theta); smp = _zero_mass_oracle(f)
+        if test_kind == "kelly":
+            rej += betting_rejects(f, w, np.zeros(N), smp, theta, rng)
+        else:
+            rej += hedged_betting_w(f, w, smp, theta, alpha=ALPHA, rng=rng)["stop"] > 0
+    record(f"'Above' certificate without positivity of q_t ({test_kind} bets), exact null", rej / reps, reps, max_allowed(reps))
+    assert rej / reps <= max_allowed(reps), rej / reps
+
+
+def test_hedged_wealth_matches_direct_computation():
+    """Implementation check: the hedged stop equals the first time the average of the fixed-fraction products
+    prod_s (1 + kappa (Z_s / mu_s - 1)), recomputed independently from the recorded draw order, reaches 1/alpha
+    (or the sampled mass exceeds m0)."""
+    rng = np.random.default_rng(24)
+    for _ in range(200):
+        N = int(rng.integers(5, 40)); theta = float(rng.choice([0.1, 0.2]))
+        m_i = rng.integers(1, 12, N); w = m_i / m_i.sum(); f = rng.binomial(m_i, rng.uniform(0, 0.4)) / m_i
+        S = rng.random(N); seed = int(rng.integers(1 << 30))
+        out = hedged_betting_w(f, w, sampler_prop_w(w, S), theta, rng=np.random.default_rng(seed))
+        q_fn = sampler_prop_w(w, S); rem = list(range(N)); sampled = 0.0; W = np.ones(len(KAPPAS)); stop = -1
+        for t, i in enumerate(out["order"], start=1):
+            q = q_fn(np.array(rem), t); qi = q[rem.index(i)]; mu = theta - sampled
+            if mu > 0:
+                W *= 1 + np.array(KAPPAS) * (w[i] * f[i] / qi / mu - 1)
+            sampled += w[i] * f[i]; rem.remove(i)
+            if W.mean() >= 1 / ALPHA * (1 - 1e-12) or sampled > theta + 1e-12:
+                stop = t; break
+        assert stop == out["stop"], (stop, out["stop"])
+
+
+def test_hedged_power_sanity():
+    """Hedged bets must certify a clear alternative: p = 0.15 against theta = 0.10, 100 fields of 5 cells."""
+    theta, N, m = 0.10, 100, 5; rng = np.random.default_rng(25); reps = 200; ru = rm = 0
+    for _ in range(reps):
+        cells = np.zeros(N * m); cells[:int(round(0.15 * N * m))] = 1; rng.shuffle(cells)
+        f = cells.reshape(N, m).mean(1); w = np.full(N, 1 / N); S = f + 0.1 * rng.random(N)
+        ru += hedged_betting_w(f, w, sampler_uniform_w(N), theta, rng=rng)["stop"] > 0
+        rm += hedged_betting_w(f, w, _mixture(w, S, 0.5), theta, rng=rng)["stop"] > 0
+    record("Hedged power sanity at p = 0.15, theta = 0.10: uniform", ru / reps, reps, None)
+    record("Hedged power sanity at p = 0.15, theta = 0.10: 50% mixture", rm / reps, reps, None)
+    assert ru / reps > 0.9 and rm / reps > 0.9, (ru / reps, rm / reps)

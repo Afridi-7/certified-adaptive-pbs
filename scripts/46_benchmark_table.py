@@ -22,6 +22,9 @@ Sources (all under results/):
   mll23        mll23_shift_v1
   real         real_arrangements_v1 (BoneMarrowWSI, theta_s = p_s); ALPHA = bounded assorter, betting = known counts
   reader       verifier_error_v1 (first reader as verifier, consensus as truth; known-count betting)
+  rerun        baseline_reference_v1 (scripts/49, exploratory, added 2026-10-22): uniform ALPHA on the external cells and
+               the 50% mixture with hedged bets on all three sources, all designs on the same specimens. Entries from it
+               are marked $^c$ in the table (the hedged row carries the mark in its label).
 
 Usage: python scripts/46_benchmark_table.py --out results/benchmark_v1
 """
@@ -122,12 +125,25 @@ for col, note in [("above_cert", "reader-0 labels, threshold theta_s"), ("above_
     add("reader" if col == "above_cert" else "reader_margin003", "bet_u", pooled=float(ve[col].mean()),
         max_spec=float(per.max()), n_runs=int(len(ve)), note=f"{note}; {per.size} specimens, {int((per > 0.05).sum())} above 0.05")
 
+# --- exploratory rerun on the same specimens (scripts/49; added 2026-10-22) ----------------------------------------------
+br = {src: pd.read_csv(f"{R}/baseline_reference_v1/episodes_{src}.csv") for src in ("ku", "mll23", "rvpbs")}
+def bsel(src, th, p): e = br[src]; return e[np.isclose(e.theta, th) & np.isclose(e.p, p)]
+for cond, src in [("rvpbs", "rvpbs"), ("mll23", "mll23")]:
+    r1, n1 = rate(bsel(src, .10, .10), "alpha_uniform_cert"); m, nm = med(bsel(src, .10, .15), "alpha_uniform_cells")
+    add(cond, "alpha_u", r1, None, n1, None, cost=m, n_cost=nm, note="rerun (baseline_reference_v1)")
+for cond, src in [("in_dist", "ku"), ("rvpbs", "rvpbs"), ("mll23", "mll23")]:
+    r1, n1 = rate(bsel(src, .10, .10), "hedge_mix50_cert")
+    r2, n2 = rate(bsel(src, .20, .20), "hedge_mix50_cert") if src == "ku" else (None, None)
+    m, nm = med(bsel(src, .10, .15), "hedge_mix50_cells")
+    add(cond, "hedge_mix50", r1, r2, n1, n2, cost=m, n_cost=nm, note="rerun (baseline_reference_v1)")
+RERUN = {("rvpbs", "alpha_u"), ("mll23", "alpha_u")}                    # cells marked $^c$ in otherwise non-rerun rows
+
 T = pd.DataFrame(rows); T.to_csv(f"{a.out}/benchmark.csv", index=False)
 
 # --- LaTeX body ---------------------------------------------------------------------------------------------------------
 COLS = ["in_dist", "clustered", "confusable", "unequal", "rvpbs", "mll23", "real", "reader"]
 VALID = [("alpha_u", "ALPHA, uniform$^{a}$"), ("bet_u", "Betting, uniform$^{a}$"), ("bet_c", "Betting, classifier-driven"),
-         ("mix50", "Betting, 50\\% mixture")]
+         ("mix50", "Betting, 50\\% mixture"), ("hedge_mix50", "Hedged betting, 50\\% mixture$^c$")]
 INVALID = [("uncorrected", "Ranked, analysed as uniform"), ("cells_as_draws", "Cells of fields as draws"),
            ("fmean", "Mean of field proportions$^{b}$"), ("conv100", "100-cell count, ``above''")]
 
@@ -147,14 +163,14 @@ def vcell(cond, d):
     s = get(cond, d)
     if s is None: return "---"
     if cond in ("real", "reader"): return f"{fr(s.pooled)} [{fr(s.max_specimen)}]"
-    return fr(s.validity)
+    return fr(s.validity) + ("$^c$" if (cond, d) in RERUN else "")
 
 
 def ccell(cond, d):
     s = get(cond, d)
     if s is None or pd.isna(s.cost_cells_p015_theta010): return "---"
     v = int(np.floor(s.cost_cells_p015_theta010 + 0.5))                     # half up, as in the paper text
-    return f"{v:,d}".replace(",", "{,}")
+    return f"{v:,d}".replace(",", "{,}") + ("$^c$" if (cond, d) in RERUN else "")
 
 
 lines = ["\\multicolumn{9}{@{}l}{\\emph{False certification of ``$p>\\theta$'' at $p=\\theta$}}\\\\"]

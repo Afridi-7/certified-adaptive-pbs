@@ -154,3 +154,48 @@ background: false certification ≤ 0.030; median cells 395/160 (ALPHA, θ = 0.1
   grow "towards" values it already exceeded; "up to a third" for 37%; "≤ 0.014 under shift" for 0.011). All are
   corrected in the text; no analysis changed.
 
+
+## Full audit of 2026-10-22 (corrections; two exploratory re-analyses; tests)
+Applied to `paper/cmpb.tex`, `paper/main.tex` (and the supplement built from it), `paper/jbhi_compact.tex`, the cover
+letter, title page and highlights. Nothing frozen was modified.
+- **Cost reference (C1).** Earlier text reported classifier-driven savings against uniform *betting* with
+  approximate-Kelly bets, which itself needs 1.03–1.83 times the cells of uniform ALPHA. The reference is now uniform
+  ALPHA, the best valid design without a classifier in our runs. `scripts/49_baseline_reference.py` (exploratory, seed
+  family 20261101) reruns all designs on the same specimens for KU-Optofil, MLL23 and RV-PBS: classifier-driven/ALPHA
+  0.45–0.75 in distribution, 1.30/1.46 on MLL23 and 1.67/3.00 on RV-PBS (p = 0.15/0.20); within 0.02 of the
+  threshold (p = 0.12) every design approached a census of the 500 cells and the ratio was 0.78 (MLL23) and 0.97 (RV-PBS),
+  so "1.3–3.0 under shift" is stated for margins of 0.05–0.10. Confirmatory comparisons
+  against uniform betting (H3c, H6b–d) are still reported as pre-registered. Fig. 4(a) now shows this rerun.
+- **Hedged bets (new, exploratory).** `src/cadpbs/hedged_betting.py`: the average of fixed-fraction betting processes
+  (κ ∈ {0.05, 0.1, 0.2, …, 0.9}, fixed in advance), a test supermartingale because averages of test supermartingales
+  are. Uniform hedged betting matched ALPHA (0.98–1.17); the hedged 50% mixture needed 0.61–0.81 times the cells of
+  ALPHA in distribution and at most 1.15 under shift. Not pre-registered; reported as exploratory everywhere.
+- **RV-PBS probe refit.** Script 49 refits the KU-trained probe; its RV-PBS recall is 0.327, not the confirmatory 0.340
+  (H4a keeps 0.340). Reported in main.tex.
+- **ICC null bias (C4).** `scripts/51_icc_diagnostics.py` (seed 20261102) shows why the permutation null of the pooled
+  ANOVA ICC is positive (between mean squares weighted by k_r − 1, within by n_r − k_r, and label variance falls with
+  region size; Spearman −0.55) and gives a null-centred estimator; the bias-corrected values reported earlier stand. In
+  the 32 regions with ≤ 30% blasts the 4 × 4 ICC is 0.059 [0.007, 0.108] (exploratory).
+- **Verifier result reframed.** No new analysis: at exact nulls examined almost completely, false certification is
+  decided by the sign of the reader's error (23 over-counting specimens → "above", 52 under-counting → "below", 8
+  without error → neither). Remark 1 now states that β0, β1 are per-specimen bounds on the same cells.
+- **Statements corrected.** Positivity of q_t is needed for power and "below" certificates, not for validity of
+  "above" (f ≥ 0); Assumption 1 reworded (the class of specimens regarded as possible contains every placement);
+  Remark 1 needs the same denominator and per-specimen bounds (counterexample: excluding 30 non-blasts gives
+  p̃ = 0.1031 > 0.10 with β0 = 0); a corollary of Theorem 1 for halting rules that ignore verified labels; Wald's
+  approximation is within 20% only at M = 4,000 (it fails at M = 1,000 for θ = 0.20, p = 0.25: 303 vs 406); KT2
+  (the proposal's rarity hypothesis) listed as not supported on exploratory data and not counted among the 20
+  pre-registered hypotheses; episode-level McNemar tests described as Monte Carlo precision only (11 blast patients),
+  with fold-level t intervals for miss-rate differences; 200-cell counts added to the decision table (from
+  `results/decision_level_v1`, unchanged); survey-sampling framing (Kish design effect, Cochran mean-of-ratios,
+  Hansen–Hurwitz/Horvitz–Thompson PPS) added with references.
+- **Tests (C5).** `tests/test_validity.py` gained 24 checks: the control-variate branch, the 25% and 50% uniform
+  mixtures, hedged bets with uniform, oracle, anti-oracle, mixture and adaptive samplers, a sampler with zero mass on
+  half of the unsampled fields ("above" stays valid), an independent recomputation of the hedged wealth, and a power
+  check. 50 checks pass; the largest false-certification rate among valid procedures is 0.034 (500 repetitions).
+- **Output convention.** Script 49 writes run settings to `config_<source>.json` and numbers only to
+  `summary_<source>.json`, so `python reproduce.py verify baseline_reference` compares numbers; the stored summaries were
+  split accordingly (no number changed; a full MLL23 rerun matches exactly).
+- **Compact (JBHI) version.** To stay within 8 pages after the corrections, the assumptions table and the M-scaling
+  table were replaced by text, the proof of Theorem 1 moved from the appendix into the text, and the malaria-protocol
+  aside omitted; all three remain in main.tex and the CMPB article.

@@ -111,6 +111,8 @@ version numbers some propositions and tables differently.
 | `real_arrangements` | X | M | Observed validity on 75 real specimens | `python scripts/30_real_arrangement_validity.py --out results/real_arrangements_v1 --seed 20261023` |
 | `mll23_embeddings` | D | GPU | MLL23 embeddings | Colab: `notebooks/37_mll23_embeddings_colab.ipynb` |
 | `mll23` | X | S | Second external source (MLL23) | `python scripts/38_mll23_shift.py --mll data/mll23 --out results/mll23_shift_v1 --seed 20261029` |
+| `baseline_reference` | X | M | Cost reference (uniform ALPHA), hedged bets; Fig. 4a; reference-design table (audit 2026-10-22) | `python scripts/49_baseline_reference.py --source ku --out results/baseline_reference_v1`<br>`python scripts/49_baseline_reference.py --source mll23 --out results/baseline_reference_v1`<br>`python scripts/49_baseline_reference.py --source rvpbs --out results/baseline_reference_v1` |
+| `icc_diagnostics` | X | M | Null bias of the pooled ICC, null-centred ICC, low-blast regions (audit 2026-10-22) | `python scripts/51_icc_diagnostics.py` |
 | `sessions_download` | D | GPU | Reader labels (no GPU needed) | Colab: `notebooks/42_bmwsi_sessions_colab.ipynb` |
 | `verifier` | X | M | Imperfect verification; Remark 2 | `python scripts/43_verifier_error.py --sessions data/bmwsi_sessions/annotations_sessions.csv.gz --out results/verifier_error_v1 --seed 20261034` |
 | `benchmark` | X | S | Benchmark table across conditions (main Table 3, compact Table IV) | `python scripts/46_benchmark_table.py --out results/benchmark_v1` |

@@ -24,9 +24,10 @@ python reproduce.py verify <step id> ...                                    # re
 (`data/CHECKSUMS.txt`), the Colab notebooks that need a GPU, and which scripts are frozen by the pre-registration.
 
 ## Tests
-`pytest -q tests` (about 30 s) checks by simulation that each test used in the paper keeps its error rate at the exact
-null (uniform, adversarial and adaptive samplers; equal and unequal fields; imperfect verifier with a margin), that the
-four invalid analyses the paper warns against do not, and the Part II results. The last report is in
+`pytest -q tests` (50 checks, about 50 s) checks by simulation that each test used in the paper keeps its error rate at
+the exact null (uniform, adversarial and adaptive samplers; the control variate, the uniform mixture and the exploratory
+hedged bets; a sampler that is not positive on every unsampled field; equal and unequal fields; imperfect verifier with a
+margin), that the four invalid analyses the paper warns against do not, and the Part II results. The last report is in
 `results/validity_tests_v1/report.json`.
 
 ## Layout
@@ -35,8 +36,9 @@ paper/        main.tex (full preprint); cmpb.tex (Computer Methods and Programs 
               cmpb_supplement.tex (built from main.tex by build_cmpb_supplement.py), title page, cover letter,
               highlights and cmpb_submission/Figure_1-4; audit_cmpb_numbers.py (checks the article's numbers against
               results/); jbhi_compact.tex (8-page IEEE version); refs.bib
-src/cadpbs/   package code: samplers, stopping rules (InfoDPP-PAC re-implementation), ALPHA, weighted betting
-scripts/      numbered analysis steps (01_ ... 48_); each writes results/<run>/ with config.json
+src/cadpbs/   package code: samplers, stopping rules (InfoDPP-PAC re-implementation), ALPHA, weighted betting,
+              hedged betting (hedged_betting.py, exploratory, added 2026-10-22)
+scripts/      numbered analysis steps (01_ ... 51_); each writes results/<run>/ with config.json
 notebooks/    Google Colab notebooks for the GPU and download steps (03, 15, 21, 35, 37, 42)
 tests/        validity test suite (pytest)
 verify/       numerical checks of the power analysis and the calibration budget

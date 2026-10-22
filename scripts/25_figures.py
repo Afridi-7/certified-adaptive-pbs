@@ -129,18 +129,26 @@ save(fig, "fig3_partIII",
      "never certify count as 500. Thresholds from ICC 2022 (0.10) and WHO 5th ed. 2022 (0.20) are analysed separately.")
 
 # ---------------- Figure 4: RQ4 ----------------
-X = pd.concat([pd.read_csv(f) for f in sorted(glob.glob("results/a3_mixture_*/ep_*.csv"))])
+# Panel (a) changed 2026-10-22 (audit correction C1): costs are shown against uniform ALPHA, the best valid design without a
+# classifier, from the exploratory rerun with all designs on the same specimens (scripts/49_baseline_reference.py,
+# seed family 20261101), for the three cell sources. The confirmatory E3.2 comparison (results/a3_mixture_*) is reported
+# in the text and the supplement.
+X = pd.concat([pd.read_csv(f) for f in sorted(glob.glob("results/baseline_reference_v1/episodes_*.csv"))])
+X = X[np.isclose(X.theta, 0.10)]
 fig, ax = plt.subplots(1, 2, figsize=(7.2, 2.8), constrained_layout=True)
-groups = [("ku", 0.15, "KU-Optofil\np = 0.15"), ("ku", 0.20, "KU-Optofil\np = 0.20"), ("rvpbs", 0.15, "RV-PBS (shift)\np = 0.15"), ("rvpbs", 0.20, "RV-PBS (shift)\np = 0.20")]
-for d, lab, c, mk, dx in [("uniform", "uniform", BLUE, "o", -0.18), ("prop", "classifier-driven", ORANGE, "s", 0.0), ("mix50", "50/50 mixture", AQUA, "D", 0.18)]:
+groups = [("ku", 0.15, "KU-Optofil\np = 0.15"), ("ku", 0.20, "KU-Optofil\np = 0.20"), ("mll23", 0.15, "MLL23\np = 0.15"),
+          ("mll23", 0.20, "MLL23\np = 0.20"), ("rvpbs", 0.15, "RV-PBS\np = 0.15"), ("rvpbs", 0.20, "RV-PBS\np = 0.20")]
+for d, lab, c, mk, dx in [("alpha_uniform", "uniform (ALPHA)", BLUE, "o", -0.2), ("bet_prop", "classifier-driven", ORANGE, "s", 0.0),
+                          ("hedge_mix50", "50/50 mixture, hedged", AQUA, "D", 0.2)]:
     med, lo, hi = [], [], []
     for src, p, _ in groups:
         v = X[(X.source == src) & np.isclose(X.p, p)][f"{d}_cells"].values; rng = np.random.default_rng(1)
         bs = [np.median(rng.choice(v, len(v))) for _ in range(1000)]; med.append(np.median(v)); lo.append(np.quantile(bs, .025)); hi.append(np.quantile(bs, .975))
     med, lo, hi = map(np.array, (med, lo, hi))
-    ax[0].errorbar(np.arange(4) + dx, med, yerr=[med - lo, hi - med], color=c, marker=mk, ls="none", elinewidth=1, capsize=0, label=lab)
-ax[0].set_xticks(range(4), [g[2] for g in groups], fontsize=6.3); ax[0].set_ylabel("median cells to certify (θ = 0.10)")
-ax[0].set_ylim(0, 345); ax[0].axvline(1.5, color=GREY, lw=0.8); ax[0].legend(frameon=False, loc="upper center", ncol=3, fontsize=6.5, handletextpad=0.3, columnspacing=1.0)
+    ax[0].errorbar(np.arange(len(groups)) + dx, med, yerr=[med - lo, hi - med], color=c, marker=mk, ls="none", elinewidth=1, capsize=0, label=lab)
+ax[0].set_xticks(range(len(groups)), [g[2] for g in groups], fontsize=5.8); ax[0].set_ylabel("median cells to certify (θ = 0.10)")
+ax[0].set_ylim(0, 320); ax[0].axvline(1.5, color=GREY, lw=0.8); ax[0].axvline(3.5, color=GREY, lw=0.8)
+ax[0].legend(frameon=False, loc="upper left", ncol=1, fontsize=6.3, handletextpad=0.3)
 ax[0].set_title("(a) Cost in distribution vs under shift", loc="left")
 S = pd.concat([pd.read_csv(f) for f in sorted(glob.glob("results/a3_spatial_theta0*/ep_*.csv"))])
 br = json.load(open("results/a4_bmwsi/bridge.json")); cl = json.load(open("results/a4_bmwsi/clustering.json"))["primary"]["S1"]
@@ -167,9 +175,10 @@ ax[1].plot([], [], color=GREY, lw=1.5, marker="o", ms=3.5, label="Beta-binomial 
 ax[1].plot([], [], color=GREY, ls="none", marker="o", mfc="white", mew=1.5, label="E3.1 composites (observed)")
 ax[1].legend(frameon=False, loc="upper left", fontsize=6.3)
 save(fig, "fig4_rq4",
-     "RQ4. (a) Median cells to certify p > 0.10 (95% bootstrap intervals; 500 specimens per point) when the classifier is "
-     "in distribution (KU-Optofil, cross-fitted) and under acquisition shift (RV-PBS, KU-trained probe). All designs keep "
-     "false certification ≤ 0.014 at p = θ. (b) False certification at p = θ when cells from uniformly sampled fields are "
+     "RQ4. (a) Median cells to certify p > 0.10 (95% bootstrap intervals; 400 specimens per point; exploratory rerun with "
+     "all designs on the same specimens) when the classifier is in distribution (KU-Optofil, cross-fitted) and under two "
+     "acquisition shifts (MLL23, RV-PBS; KU-trained probe): uniform sampling with ALPHA, classifier-driven betting "
+     "(approximate-Kelly bets) and a 50% uniform mixture with hedged bets. All designs keep false certification ≤ 0.034 at p = θ. (b) False certification at p = θ when cells from uniformly sampled fields are "
      "analysed as individual draws. Open markers: E3.1 composites (5 cells per field; scattered, hot0.6, hot1.0; 1,000 "
      "specimens each, 95% Clopper–Pearson). Lines: Beta-binomial model at the clustering measured in real bone-marrow "
      "monolayer ROIs (17 cells per field). Solid band and line: bias-corrected ICC of the real regions (excess over the "

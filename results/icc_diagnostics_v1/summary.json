@@ -1,0 +1,83 @@
+{
+ "note": "exploratory; scripts/51_icc_diagnostics.py; seed 20261102",
+ "all_rois": {
+  "S1": {
+   "pooled": 0.03165151155044984,
+   "null_centred": 0.010316898829224739,
+   "n0": 19.666805130209994,
+   "analytic_null_E_MSB": 0.07808642520836717,
+   "analytic_null_E_MSW": 0.0571158723873938,
+   "analytic_null_icc": 0.018326781133580414,
+   "perm_null_mean_pooled": 0.01798037295462894,
+   "perm_null_mean_null_centred": -0.000234743512935833,
+   "excess_pooled": 0.013671138595820899,
+   "corr_S2_n_spearman": -0.55377819366005,
+   "n_rois": 116,
+   "n_patients": 75,
+   "n_cells": 9375,
+   "null_centred_ci95": [
+    0.0001867376984483674,
+    0.021915983705309637
+   ]
+  },
+  "S2": {
+   "pooled": 0.09828966890343227,
+   "null_centred": 0.036776591522918095,
+   "n0": 5.7441862491362246,
+   "analytic_null_E_MSB": 0.07349297010014443,
+   "analytic_null_E_MSW": 0.05492831399244376,
+   "analytic_null_icc": 0.05556897335855094,
+   "perm_null_mean_pooled": 0.05589781373114656,
+   "perm_null_mean_null_centred": 0.00033575542911234746,
+   "excess_pooled": 0.04239185517228571,
+   "corr_S2_n_spearman": -0.55377819366005,
+   "n_rois": 116,
+   "n_patients": 75,
+   "n_cells": 9375,
+   "null_centred_ci95": [
+    0.013625722673768157,
+    0.06027499031710131
+   ]
+  }
+ },
+ "low_blast_rois_p_le_0.30": {
+  "S1": {
+   "pooled": 0.024066995363914153,
+   "null_centred": 0.002284218208942492,
+   "n0": 22.890823844877698,
+   "analytic_null_E_MSB": 0.035946663459438116,
+   "analytic_null_E_MSW": 0.024201726994834354,
+   "analytic_null_icc": 0.02076021939182317,
+   "perm_null_mean_pooled": 0.02094621290811596,
+   "perm_null_mean_null_centred": 0.00022549042458484914,
+   "excess_pooled": 0.0031207824557981934,
+   "corr_S2_n_spearman": -0.7677916877577159,
+   "n_rois": 32,
+   "n_patients": 26,
+   "n_cells": 2990,
+   "null_centred_ci95": [
+    -0.006519396802200681,
+    0.011152602555573859
+   ]
+  },
+  "S2": {
+   "pooled": 0.13149405757685576,
+   "null_centred": 0.058533131053530016,
+   "n0": 6.219860407773684,
+   "analytic_null_E_MSB": 0.033096319049592544,
+   "analytic_null_E_MSW": 0.023087301006121646,
+   "analytic_null_icc": 0.06515914163238885,
+   "perm_null_mean_pooled": 0.06454474405966037,
+   "perm_null_mean_null_centred": -0.0002112954748536713,
+   "excess_pooled": 0.06694931351719538,
+   "corr_S2_n_spearman": -0.7677916877577159,
+   "n_rois": 32,
+   "n_patients": 26,
+   "n_cells": 2990,
+   "null_centred_ci95": [
+    0.007393847264268012,
+    0.10801637914241949
+   ]
+  }
+ }
+}

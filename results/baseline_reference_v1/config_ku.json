@@ -1,0 +1,17 @@
+{
+ "config": {
+  "source": "ku",
+  "out": "results/baseline_reference_v1",
+  "seed": 20261101,
+  "n_null": 1000,
+  "n_alt": 400,
+  "n_boot": 4000
+ },
+ "env": {
+  "python": "3.13.16",
+  "numpy": "2.5.3",
+  "scipy": "1.18.1",
+  "pandas": "3.0.5",
+  "sklearn": "1.9.1"
+ }
+}

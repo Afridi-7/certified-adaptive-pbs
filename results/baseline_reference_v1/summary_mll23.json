@@ -1,0 +1,235 @@
+{
+ "source": "mll23",
+ "recall_at_ku_threshold": 0.630722751568673,
+ "fp_at_ku_threshold": 0.05959245066790818,
+ "n_blast_pool": 8606,
+ "n_background_pool": 27923,
+ "validity": {
+  "theta0.10_p0.10_alpha_uniform": {
+   "rate": 0.034,
+   "cp95_upper": 0.04718943861570743,
+   "p_excess": 0.9940793949369774
+  },
+  "theta0.10_p0.10_bet_uniform": {
+   "rate": 0.013,
+   "cp95_upper": 0.022127803636778486,
+   "p_excess": 0.9999999999397184
+  },
+  "theta0.10_p0.10_bet_prop": {
+   "rate": 0.003,
+   "cp95_upper": 0.008742023238478303,
+   "p_excess": 1.0
+  },
+  "theta0.10_p0.10_hedge_uniform": {
+   "rate": 0.021,
+   "cp95_upper": 0.0319223351804155,
+   "p_excess": 0.9999992341153623
+  },
+  "theta0.10_p0.10_hedge_prop": {
+   "rate": 0.013,
+   "cp95_upper": 0.022127803636778486,
+   "p_excess": 0.9999999999397184
+  },
+  "theta0.10_p0.10_hedge_mix50": {
+   "rate": 0.03,
+   "cp95_upper": 0.042551402470029046,
+   "p_excess": 0.9992808027197848
+  }
+ },
+ "median_cells": {
+  "theta0.10_p0.12": {
+   "alpha_uniform": 390.0,
+   "bet_uniform": 420.0,
+   "bet_prop": 305.0,
+   "hedge_uniform": 390.0,
+   "hedge_prop": 300.0,
+   "hedge_mix50": 315.0
+  },
+  "theta0.10_p0.15": {
+   "alpha_uniform": 165.0,
+   "bet_uniform": 270.0,
+   "bet_prop": 215.0,
+   "hedge_uniform": 170.0,
+   "hedge_prop": 185.0,
+   "hedge_mix50": 135.0
+  },
+  "theta0.10_p0.20": {
+   "alpha_uniform": 65.0,
+   "bet_uniform": 115.0,
+   "bet_prop": 95.0,
+   "hedge_uniform": 70.0,
+   "hedge_prop": 70.0,
+   "hedge_mix50": 50.0
+  }
+ },
+ "ratios": {
+  "theta0.10_p0.12_bet_prop_over_alpha_uniform": {
+   "ratio": 0.782051282051282,
+   "ci95": [
+    0.7625,
+    0.82
+   ],
+   "wilcoxon_p": 6.612618806933863e-09
+  },
+  "theta0.10_p0.12_bet_prop_over_bet_uniform": {
+   "ratio": 0.7261904761904762,
+   "ci95": [
+    0.7058823529411765,
+    0.7380952380952381
+   ],
+   "wilcoxon_p": 6.719172770753778e-47
+  },
+  "theta0.10_p0.12_bet_uniform_over_alpha_uniform": {
+   "ratio": 1.0769230769230769,
+   "ci95": [
+    1.0625,
+    1.1333333333333333
+   ],
+   "wilcoxon_p": 2.4145052876711723e-17
+  },
+  "theta0.10_p0.12_hedge_uniform_over_alpha_uniform": {
+   "ratio": 1.0,
+   "ci95": [
+    0.9620253164556962,
+    1.0526315789473684
+   ],
+   "wilcoxon_p": 0.07853487984238168
+  },
+  "theta0.10_p0.12_hedge_prop_over_alpha_uniform": {
+   "ratio": 0.7692307692307693,
+   "ci95": [
+    0.7468354430379747,
+    0.8079470198675497
+   ],
+   "wilcoxon_p": 1.239375358083247e-12
+  },
+  "theta0.10_p0.12_hedge_prop_over_hedge_uniform": {
+   "ratio": 0.7692307692307693,
+   "ci95": [
+    0.7468354430379747,
+    0.8026315789473685
+   ],
+   "wilcoxon_p": 3.777719049494755e-21
+  },
+  "theta0.10_p0.12_hedge_mix50_over_alpha_uniform": {
+   "ratio": 0.8076923076923077,
+   "ci95": [
+    0.7777777777777778,
+    0.8456375838926175
+   ],
+   "wilcoxon_p": 3.1723216925812087e-12
+  },
+  "theta0.10_p0.15_bet_prop_over_alpha_uniform": {
+   "ratio": 1.303030303030303,
+   "ci95": [
+    1.1804937214611873,
+    1.371068548387097
+   ],
+   "wilcoxon_p": 9.686850653654449e-12
+  },
+  "theta0.10_p0.15_bet_prop_over_bet_uniform": {
+   "ratio": 0.7962962962962963,
+   "ci95": [
+    0.7543859649122807,
+    0.86
+   ],
+   "wilcoxon_p": 2.1332864917765523e-13
+  },
+  "theta0.10_p0.15_bet_uniform_over_alpha_uniform": {
+   "ratio": 1.6363636363636365,
+   "ci95": [
+    1.4492276887871853,
+    1.7419354838709677
+   ],
+   "wilcoxon_p": 9.35634283323361e-25
+  },
+  "theta0.10_p0.15_hedge_uniform_over_alpha_uniform": {
+   "ratio": 1.0303030303030303,
+   "ci95": [
+    0.8857142857142857,
+    1.1428571428571428
+   ],
+   "wilcoxon_p": 0.9479382743266336
+  },
+  "theta0.10_p0.15_hedge_prop_over_alpha_uniform": {
+   "ratio": 1.121212121212121,
+   "ci95": [
+    1.0142857142857142,
+    1.1875
+   ],
+   "wilcoxon_p": 0.8972985041700065
+  },
+  "theta0.10_p0.15_hedge_prop_over_hedge_uniform": {
+   "ratio": 1.088235294117647,
+   "ci95": [
+    1.0,
+    1.2258064516129032
+   ],
+   "wilcoxon_p": 0.7859603551849772
+  },
+  "theta0.10_p0.15_hedge_mix50_over_alpha_uniform": {
+   "ratio": 0.8181818181818182,
+   "ci95": [
+    0.7142857142857143,
+    0.8787878787878788
+   ],
+   "wilcoxon_p": 1.3729707745427704e-08
+  },
+  "theta0.10_p0.20_bet_prop_over_alpha_uniform": {
+   "ratio": 1.4615384615384615,
+   "ci95": [
+    1.3571428571428572,
+    1.75
+   ],
+   "wilcoxon_p": 2.5637563821442357e-18
+  },
+  "theta0.10_p0.20_bet_prop_over_bet_uniform": {
+   "ratio": 0.8260869565217391,
+   "ci95": [
+    0.76,
+    0.9545454545454546
+   ],
+   "wilcoxon_p": 0.00873853543389329
+  },
+  "theta0.10_p0.20_bet_uniform_over_alpha_uniform": {
+   "ratio": 1.7692307692307692,
+   "ci95": [
+    1.5714285714285714,
+    2.0
+   ],
+   "wilcoxon_p": 1.667317349441606e-28
+  },
+  "theta0.10_p0.20_hedge_uniform_over_alpha_uniform": {
+   "ratio": 1.0769230769230769,
+   "ci95": [
+    1.0,
+    1.25
+   ],
+   "wilcoxon_p": 0.020023842786088975
+  },
+  "theta0.10_p0.20_hedge_prop_over_alpha_uniform": {
+   "ratio": 1.0769230769230769,
+   "ci95": [
+    0.9285714285714286,
+    1.1666666666666667
+   ],
+   "wilcoxon_p": 0.08803073681064214
+  },
+  "theta0.10_p0.20_hedge_prop_over_hedge_uniform": {
+   "ratio": 1.0,
+   "ci95": [
+    0.8666666666666667,
+    1.0769230769230769
+   ],
+   "wilcoxon_p": 0.4872942422898626
+  },
+  "theta0.10_p0.20_hedge_mix50_over_alpha_uniform": {
+   "ratio": 0.7692307692307693,
+   "ci95": [
+    0.7142857142857143,
+    0.9166666666666666
+   ],
+   "wilcoxon_p": 4.699409861524206e-05
+  }
+ }
+}
