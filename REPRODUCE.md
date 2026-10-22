@@ -1,8 +1,9 @@
 # Reproducing the paper
 
 This file explains how to regenerate every number, table and figure of `paper/main.tex` (full preprint) and
-`paper/cmpb.tex` (Computer Methods and Programs in Biomedicine version, generated from `main.tex` by
-`paper/build_cmpb.py`, so both carry the same numbers) and `paper/jbhi_compact.tex` (8-page IEEE version).
+`paper/cmpb.tex` (Computer Methods and Programs in Biomedicine article; its supplement `paper/cmpb_supplement.tex`
+is generated from `main.tex` by `paper/build_cmpb_supplement.py`, so the two carry the same numbers) and
+`paper/jbhi_compact.tex` (8-page IEEE version).
 `reproduce.py` wraps the same commands.
 
 ## 1. Three levels
@@ -116,7 +117,7 @@ version numbers some propositions and tables differently.
 
 
 Figures: `python scripts/25_figures.py` writes `figures/fig1_partI.pdf` ... `fig4_rq4.pdf`; copy them to
-`paper/figures/`. Papers: `cd paper`, then `latexmk -pdf main.tex`, `python build_cmpb.py && latexmk -pdf cmpb.tex`
+`paper/figures/`. Papers: `cd paper`, then `latexmk -pdf main.tex`, `latexmk -pdf cmpb.tex`, `python build_cmpb_supplement.py && latexmk -pdf cmpb_supplement.tex`
 (elsarticle class) and `latexmk -pdf jbhi_compact.tex`
 (the latter needs the IEEEtran class, included in TeX Live as `texlive-publishers`).
 

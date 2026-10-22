@@ -1,0 +1,31 @@
+\documentclass[11pt]{letter}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{xurl}
+\usepackage{hyperref}
+\signature{Qudrat Ullah\\Corresponding author, on behalf of both authors\\Faculty of Informatics, University of Debrecen\\\href{mailto:qudratafridi@mailbox.unideb.hu}{qudratafridi@mailbox.unideb.hu}}
+\address{Faculty of Informatics\\University of Debrecen\\Kassai út 26, 4028 Debrecen, Hungary}
+\date{\today}
+\begin{document}
+\begin{letter}{The Editor\\Computer Methods and Programs in Biomedicine}
+\opening{Dear Editor,}
+
+We submit the manuscript ``Certified adaptive examination of peripheral blood smears: when information-gain stopping fails, and what can be guaranteed instead'' for consideration as an original research article.
+
+\textbf{Why this journal.} The manuscript develops and evaluates computational methods, adaptive sampling designs and sequential statistical tests, for the automated examination of peripheral blood smears, and releases the complete software with a pre-registration audit trail and a reproducibility package. It therefore fits the journal's scope of computing methodology and software for biomedical research and practice.
+
+\textbf{What is known.} Automated smear analysis increasingly decides which fields to examine and when to stop. Manual differential counts are known to be imprecise for rare cell types, and stopping rules based on information saturation have recently been proposed for slide-level image analysis. Design-based, anytime-valid tests for partly examined finite populations exist in the election-auditing literature, but they have not been evaluated for smear examination, and whether their assumptions hold on real smear data was unknown.
+
+\textbf{What this study adds.}
+\begin{itemize}
+\item A pre-registered evaluation showing that information-saturation stopping does not certify unexamined material: with one critical field among 200 it missed 76\% of positive specimens, against 85\% for uniform sampling of the same size.
+\item A minimax lower bound showing that certifying the absence of rare cells requires examining nearly the whole specimen for every strategy without location information.
+\item A demonstration that whether the blast percentage exceeds a diagnostic threshold can be certified with finite-sample, anytime-valid guarantees, with a cost in expert-verified cells governed mainly by the margin to the threshold.
+\item An empirical test of the assumptions on two external datasets and on exhaustively annotated bone-marrow regions, showing that validity depends on the sampling design, the unit of analysis and its weighting, and the reliability of verification, whereas classifier quality affects only efficiency.
+\end{itemize}
+
+The manuscript has not been published elsewhere, in whole or in part, and is not under consideration by another journal. Both authors have approved the submission. The study used only publicly available, de-identified datasets. [If a preprint is posted before submission, state the server and DOI here.]
+
+\closing{Yours sincerely,}
+\end{letter}
+\end{document}

@@ -288,3 +288,17 @@ opened from here; check abstract, highlight and length rules against it before s
 6. **Figures and repository.** Fig. 2(b) plots the field-level teacher (exploratory); Fig. 4(b) foregrounds the
    bias-corrected ICC. Repository URL inserted (github.com/Afridi-7/certified-adaptive-pbs) — it is currently
    **private** (unauthenticated requests return 404): make it public or invite the supervisor, and push.
+
+## CMPB guide for authors applied (2026-10-22)
+The journal-specific rules (original research: about 3,500 words excluding the abstract, structured abstract of at most
+350 words with Background and Objective / Methods / Results / Conclusions and sensitivity and specificity values, sections
+Introduction–Methods–Results–Discussion, double spacing, at most 50 references, 3–6 keywords, 3–5 highlights of at most 85
+characters in a separate file, separate title page and cover letter, figures as separate files, ethics, funding,
+competing-interest and CRediT statements) are now met by:
+- `paper/cmpb.tex`: rewritten as a stand-alone article of about 3,560 words (including formal statements), abstract 346
+  words, 22 references, 5 tables, 4 figures, double-spaced with line numbers.
+- `paper/cmpb_supplement.tex`: full methods, results, deviations, proof and audit trail, generated from `main.tex` by
+  `paper/build_cmpb_supplement.py` (replaces `build_cmpb.py`).
+- `paper/cmpb_title_page.tex`, `paper/cmpb_cover_letter.tex`, `paper/cmpb_highlights.txt`, `paper/cmpb_submission/Figure_1-4.pdf`.
+Still open for the authors: telephone number, funding and ethics confirmation, acknowledgements, author list, the
+declarations tool in the submission system, and the generative-AI declaration required by the guide.

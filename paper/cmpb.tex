@@ -1,301 +1,154 @@
 \documentclass[preprint,12pt]{elsarticle}
 \usepackage[utf8]{inputenc}
+\usepackage[a4paper,margin=2.5cm]{geometry}
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{graphicx}
 \usepackage{booktabs}
-\usepackage{multirow}
+\usepackage{array}
 \usepackage{microtype}
 \usepackage{xcolor}
 \usepackage{xurl}
 \usepackage[colorlinks=true,linkcolor=blue!50!black,citecolor=blue!50!black,urlcolor=blue!50!black]{hyperref}
 \usepackage{lineno}
 \usepackage{adjustbox}
-\usepackage[section]{placeins}
-\emergencystretch=1.5em
+\usepackage{setspace}
 \biboptions{numbers,sort&compress}
 \journal{Computer Methods and Programs in Biomedicine}
+\emergencystretch=1.5em
 
 \newtheorem{proposition}{Proposition}
 \newtheorem{theorem}{Theorem}
-\newtheorem{corollary}{Corollary}
 \theoremstyle{remark}
 \newtheorem{remark}{Remark}
 \theoremstyle{definition}
 \newtheorem{assumption}{Assumption}
-
 \newcommand{\Prb}{\mathbb{P}}
 \newcommand{\E}{\mathbb{E}}
-
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
 
 \begin{document}
 \begin{frontmatter}
 \title{Certified adaptive examination of peripheral blood smears: when information-gain stopping fails, and what can be guaranteed instead}
-% Author list to be confirmed with the supervisor before submission.
+% Author list and order to be confirmed with the co-author before submission.
 \author[ud]{Qudrat Ullah\corref{cor}}
 \ead{qudratafridi@mailbox.unideb.hu}
 \author[ud]{Bal\'azs Harangi}
 \cortext[cor]{Corresponding author.}
 \affiliation[ud]{organization={Faculty of Informatics, University of Debrecen},
-                 city={Debrecen}, country={Hungary}}
+                 addressline={Kassai út 26}, postcode={4028}, city={Debrecen}, country={Hungary}}
 
 \begin{abstract}
-\noindent\textbf{Background and Objective:} Automated smear examination increasingly decides which fields to inspect and when to stop. We asked what such a procedure can guarantee about unexamined material, and how many expert-verified cells are needed to certify whether the blast proportion lies above a diagnostic threshold.
+\noindent\textbf{Background and Objective:} Automated smear examination increasingly decides which fields to inspect and when to stop. We asked what such a procedure can guarantee about unexamined material, and how many expert-verified cells are needed to certify whether the blast percentage exceeds a diagnostic threshold.
 
-\noindent\textbf{Methods:} We reimplemented the information-saturation halting rule of InfoDPP-PAC and compared it, at matched cost, with uniform sampling, a fixed field order and confidence-based stopping on pre-registered composite specimens built from 28,280 expert-labelled cells (KU-Optofil) with controlled rarity and dilution. We derived the minimax number of fields needed to certify the absence of rare evidence. For threshold decisions at 10\% and 20\% blasts we evaluated design-based, anytime-valid tests (ALPHA and weighted betting without replacement) with uniform and classifier-driven sampling, and tested their assumptions under acquisition shift (RV-PBS, MLL23), spatial clustering, unequal field sizes and reader disagreement in annotated bone-marrow regions (BoneMarrowWSI).
+\noindent\textbf{Methods:} We reimplemented the information-saturation halting rule of InfoDPP-PAC, a recent patch-selection method, and compared it at matched cost with uniform sampling, a fixed order and confidence-based stopping on pre-registered composite specimens built from 28,280 expert-labelled cells with controlled rarity. We derived the minimax number of fields needed to certify the absence of rare evidence. For 10\% and 20\% blast thresholds we evaluated design-based, anytime-valid sequential tests with uniform and classifier-driven sampling, and tested their assumptions under acquisition shift on two external datasets, spatial clustering, unequal field sizes and reader disagreement in annotated bone-marrow regions. Analyses used exact binomial, McNemar and Wilcoxon tests and bootstrap intervals.
 
-\noindent\textbf{Results:} The saturation rule's stopping point barely changed with rarity. With one critical field among 200 it missed 76\% of positive specimens, against 85\% for equal-size uniform sampling, and on real marrow tiles it did worse than uniform sampling in low-blast specimens. Without location information, any strategy must examine 95\% of the fields to certify absence at a 5\% error level. The valid tests kept false certification at or below 0.031 wherever their assumptions held. Their cost in verified cells was governed mainly by the margin to the threshold; near the threshold a 100-cell count was wrong in up to 37\% of specimens, whereas valid procedures were mostly undetermined. Classifier-driven sampling needed 0.28--0.73 times the verified cells of uniform sampling in distribution, 0.76--0.90 times on MLL23 and 1.77 times on RV-PBS, while validity held. Analysing the cells of sampled fields as independent draws exceeded the nominal error in 27 of 75 real specimens, and with a single reader as verifier the tests certified that reader's count rather than the consensus.
+\noindent\textbf{Results:} The saturation rule's stopping point barely changed with rarity; with one critical field among 200 it missed 76\% of positive specimens (uniform sampling of equal size: 85\%). Without location information, any strategy must examine 95\% of the fields to certify absence at a 5\% error level. The blast classifier's sensitivity was 0.91 at 0.95 specificity in distribution and fell to 0.63 and 0.34 under acquisition shift, with specificity near 0.94. Valid tests kept false certification below 0.05 wherever their assumptions held, including under shift. Their cost was governed mainly by the margin to the threshold; near it, a 100-cell count was wrong in up to 37\% of specimens, whereas valid procedures were mostly undetermined. Classifier-driven sampling needed 0.28--0.73 times the verified cells of uniform sampling in distribution, and 1.77 times under the strongest shift. Treating cells of sampled fields as independent draws exceeded the nominal error in 27 of 75 real specimens, and single-reader verification certified that reader's count, not the consensus.
 
 \noindent\textbf{Conclusions:} Information saturation does not certify unexamined material. A classifier can reduce verification effort, but validity depends on the sampling design, the unit of analysis and its weighting, and the reliability of verification.
 \end{abstract}
 
 \begin{keyword}
-adaptive sampling \sep anytime-valid inference \sep risk-limiting audit \sep peripheral blood smear \sep blast percentage \sep rare-event certification
+adaptive sampling \sep sequential testing \sep anytime-valid inference \sep risk-limiting audit \sep blood smear \sep blast percentage
 \end{keyword}
 \end{frontmatter}
+
+\doublespacing
 \linenumbers
 
 \section{Introduction}
-A peripheral blood smear contains far more cells than any examiner inspects. A manual differential usually counts 100 or 200 leukocytes, and the statistical variability that this implies has been known for decades \cite{rumke1978}. Automated systems add a new degree of freedom: they choose which fields to look at and decide when enough has been seen. For diagnostic questions that hinge on rare cells, such as the proportion of blasts relative to a classification threshold \cite{khoury2022who,arber2022icc}, the relevant question is not how accurate the classifier is on the fields it examined, but what can be said about the fields it did not examine.
+A peripheral blood smear contains far more cells than any examiner inspects; a manual differential counts 100 or 200 leukocytes, with well-known sampling variability \cite{rumke1978}. Automated systems add a degree of freedom: they choose which fields to examine and when to stop. For decisions that hinge on rare cells, such as whether the blast percentage exceeds a classification threshold \cite{khoury2022who,arber2022icc}, what matters is not classifier accuracy on the examined fields but what can be said about the fields that were not examined.
 
-Adaptive stopping rules based on \emph{information saturation} address this question implicitly. They stop when additional fields are expected to add little information about the specimen as the selector's embedding represents it. InfoDPP-PAC \cite{mittal2026infodpp} is a recent, carefully constructed instance for whole-slide histopathology. It combines Gaussian-process relevance, determinantal diversity and a PAC-style halting certificate, and its authors state clearly that the certificate bounds residual information in the selection objective, not downstream diagnostic performance. That distinction is the starting point of this paper. Saturation of information about the embedding does not imply that the decision-relevant evidence has been seen, especially when that evidence is rare.
+Stopping rules based on \emph{information saturation} answer this question implicitly: they stop when further fields would add little information about the selector's representation of the specimen. InfoDPP-PAC \cite{mittal2026infodpp}, a recent preprint for whole-slide histopathology, selects patches greedily under a blended information-gain and relevance objective and stops when the largest remaining information gain falls below a concentration-corrected threshold. Its authors state that the certificate bounds residual information in the selection objective, not diagnostic performance. That distinction is our starting point.
 
-We study this gap in the setting of peripheral blood smears and blast counting, and ask four research questions:
-\begin{itemize}
-\item[\textbf{RQ1}] Does information-saturation stopping fail systematically when decision-changing evidence is rare?
-\item[\textbf{RQ2}] Why does certifying the \emph{absence} of rare evidence require near-exhaustive examination in the worst case?
-\item[\textbf{RQ3}] How many cells must be examined to certify a threshold decision under adaptive sampling?
-\item[\textbf{RQ4}] Where do the assumptions of anytime-valid audit methods break on real blood-smear data?
-\end{itemize}
+Guarantees about partly examined finite populations come from a different literature. Risk-limiting audits test assertions about a population of ballots with a bounded probability of confirming a false assertion \cite{lindeman2012gentle}; ALPHA \cite{stark2023alpha} turns such assertions into bounded-mean tests for sampling without replacement, and Shekhar et al.\ \cite{shekhar2023rlfa} extended them to weighted, adaptive sampling with side information, anytime-valid through Ville's inequality \cite{ville1939,waudbysmith2024betting}. Whether these tools apply to smear examination, and whether their assumptions hold on real smear data, is examined here.
 
-\paragraph{Contributions.}
-\begin{enumerate}
-\item A pre-registered evaluation of information-saturation stopping on specimens assembled from real expert-labelled cells with controlled rarity and dilution. In the tested settings the stopping point barely changed with the amount of critical evidence, and the halting signal decoupled from critical evidence as cells were pooled into fields, although a teacher with access to the same pooled representation still detected it (RQ1). Two further saturation rules behaved the same way; on real bone-marrow tiles, saturation-based selection did worse than uniform sampling in low-blast specimens; and a short proposition gives the miss probability of a relevance-ranked search under an independence model in terms of the model's ROC curve; it reduces to the worst-case bound when there is no location information. One of the Part I predictions failed (three of the 20 pre-registered hypotheses overall), and these failures are reported as such.
-\item A worst-case lower bound, a direct application of Yao's minimax principle \cite{yao1977}. It shows that near-exhaustive examination is required of \emph{every} strategy that lacks location information, not only of uniform sampling (RQ2).
-\item An evaluation of design-based, anytime-valid certification of blast-proportion assertions using ALPHA \cite{stark2023alpha} and importance-weighted betting under adaptive sampling \cite{shekhar2023rlfa}. We quantify validity and cost for populations of 500 to 4,000 cells, and the failure of uncorrected adaptive designs and conventional counts (RQ3).
-\item An empirical examination of the assumptions behind these methods (RQ4): classifier-error heterogeneity, acquisition shift on two external sources, and spatial clustering of blasts, the last measured in real smear regions in which every cell was annotated, and unequal field sizes. For the latter we give two valid constructions: a weighted test when cell counts are known, and a bounded assorter when only an upper bound is known. We then measure validity directly on 75 real marrow specimens, specimen by specimen, and with a single reader's labels in place of the consensus. We separate the assumptions that matter for validity from those that matter only for efficiency.
-\end{enumerate}
+We address four research questions. RQ1: does information-saturation stopping fail systematically when decision-changing evidence is rare? RQ2: why does certifying the \emph{absence} of rare evidence require near-exhaustive examination? RQ3: how many cells must be examined to certify a threshold decision under adaptive sampling? RQ4: where do the assumptions of anytime-valid audit methods break on real data? The study is methodological. Most specimens are composites of real single-cell images, and no result establishes clinical diagnostic validity.
 
-\paragraph{Scope.} This is a methodological study. The ``expert'' who verifies sampled cells is simulated with the datasets' expert labels, most specimens are composites of real single-cell images, and no result here establishes clinical diagnostic validity.
+\section{Methods}
+\subsection{Setting and estimands}
+A specimen has $N$ fields; field $i$ holds $m_i$ cells, $B_i$ of them blasts, $M=\sum_im_i$, and $p=\sum_iB_i/M$. We distinguish \emph{detection} (has a critical field, one with at least one blast, been examined?), \emph{estimation} of $p$, and \emph{threshold certification} (is $p>\theta$?). We use $\theta=0.10$, the blast percentage at which the International Consensus Classification separates myelodysplastic syndrome with excess blasts from MDS/AML \cite{arber2022icc}, and $\theta=0.20$, the WHO 5th-edition threshold for acute myeloid leukaemia without defining genetic abnormalities \cite{khoury2022who}. Both classifications count blast equivalents, which our labels do not; the thresholds are analysed separately and are inputs to the procedure, not validated by it. An examiner selects fields sequentially, possibly using features $x$ and past labels, and each selected field is \emph{verified}: its cells' labels are revealed. All probabilities are over the examiner's randomisation for a fixed specimen, so every guarantee is finite-population and design-based.
 
-\section{Related work}
-\paragraph{Variability of cell counts.} The binomial and finite-population variability of manual differentials, and the resulting uncertainty of low-frequency cell types, were characterised by R\"umke \cite{rumke1978}. Our conventional-count baseline makes that variability concrete near a diagnostic threshold. For the absence of rare events, the ``rule of three'' bounds an event rate after zero observed events \cite{hanley1983}; Proposition~\ref{prop:uniform} is its finite-population, design-based counterpart.
-
-\paragraph{Adaptive selection with stopping.} InfoDPP-PAC \cite{mittal2026infodpp}, a recent preprint, selects whole-slide image patches greedily under a blended information-gain and relevance objective, and stops when the maximal information gain among unselected patches falls below a concentration-corrected threshold. It was evaluated on gastrointestinal whole-slide images with selection-quality metrics. Its stopping certificate (Theorem~6 there) bounds residual information in the teacher-seeded Gaussian-process surrogate, not diagnostic performance, as its authors state. It also rests on a stability assumption (Assumption~1 there) whose bounded-difference constant and target quantity are assumed rather than derived. Our results do not depend on that certificate, and we do not claim it. We reimplement the halting rule as the object of study, not as a straw man, and Section~\ref{sec:partI} shows that two other saturation rules behave the same way. Automated blast recognition itself is well studied \cite{matek2019aml}; our question concerns examination and inference, not classification accuracy.
-
-\paragraph{Risk-limiting audits and betting.} Risk-limiting audits test assertions about finite populations from a sample, with a guaranteed bound on the probability of confirming a false assertion \cite{lindeman2012gentle}. ALPHA \cite{stark2023alpha} turns such assertions into bounded-mean tests using an \emph{assorter}, and constructs a test supermartingale for sampling without replacement. Betting-based confidence sequences \cite{waudbysmith2024betting} provide the underlying anytime-valid machinery, through Ville's inequality \cite{ville1939}. Shekhar et al.\ \cite{shekhar2023rlfa} extend this to weighted, adaptive sampling without replacement: they use importance-weighted observations and allow side information both in the sampling distribution and as control variates. Stratified extensions \cite{spertus2024stratified} are relevant when a specimen is naturally partitioned. Prediction-powered inference \cite{angelopoulos2023ppi} and prediction-powered e-values \cite{csillag2025ppe} combine model predictions with a verified subset, and active statistical inference \cite{zrnic2024active} uses a model to choose which units to label. Prediction-powered and active inference give fixed-sample intervals for a superpopulation parameter, whereas the audit tests used here are anytime-valid statements about one finite specimen. Prediction-powered e-values bring predictions into the e-value framework. We did not implement prediction-powered e-values; side information enters our tests only through the sampling distribution and control variates.
-
-\section{Setting}
-A specimen consists of $N$ fields. Field $i$ holds $m_i$ cells, $B_i$ of them blasts, so there are $M=\sum_i m_i$ cells in total. Cell $j$ has a blast indicator $b_j\in\{0,1\}$, and the specimen's blast proportion is $p=M^{-1}\sum_j b_j=\sum_i B_i/\sum_i m_i$. Most experiments use equal field sizes, $m_i=m$; Section~\ref{sec:cert} treats unequal sizes, which real fields have. We distinguish three estimands, which the literature sometimes conflates:
-\begin{enumerate}
-\item \emph{Detection}: has at least one critical field (a field with at least one blast) been examined?
-\item \emph{Estimation}: what is $p$?
-\item \emph{Threshold certification}: is $p>\theta$, for a stated threshold $\theta$?
-\end{enumerate}
-We use $\theta=0.10$, the blast percentage at which the ICC 2022 separates myelodysplastic syndrome with excess blasts from MDS/AML (and, in the presence of AML-defining genetic abnormalities, from AML) \cite{arber2022icc}, and $\theta=0.20$, the WHO 5th-edition blast threshold for acute myeloid leukemia without defining genetic abnormalities \cite{khoury2022who}. Both classifications count certain blast equivalents (for example promonocytes); our labels count blast classes only. They are analysed separately and never pooled. These thresholds are inputs to a statistical procedure; the study does not validate them or any diagnosis.
-
-An examiner selects fields sequentially. Selection may use pre-inspection features $x$ (for instance embeddings) and past verified labels, and may be randomised. A selected field is \emph{verified}: the true labels of all its cells are revealed. All probabilities below are over the examiner's randomisation, conditional on the fixed specimen. The guarantees are therefore finite-population and design-based. They hold for every specimen in the stated class and say nothing about a population of patients.
-
-\section{Why saturation cannot certify absence (RQ2)}\label{sec:theory}
-Let $C\subseteq[N]$ be the set of critical fields, with $k=|C|$, and let $M_n$ be the event that none of them is among the (at most) $n$ examined fields. Define
-\[
-h(N,k,n)=\binom{N-k}{n}\Big/\binom{N}{n}=\prod_{i=0}^{k-1}\frac{N-n-i}{N-i}.
-\]
-
+\subsection{Certifying the absence of rare evidence (RQ2)}
+Let $C$ be the set of $k$ critical fields, $M_n$ the event that none of them is among $n$ examined fields, and $h(N,k,n)=\binom{N-k}{n}/\binom{N}{n}$.
 \begin{proposition}[Uniform sampling]\label{prop:uniform}
-Under simple random sampling of $n$ fields without replacement, $\Prb(M_n\mid C)=h(N,k,n)$ exactly. For $k=1$ this equals $1-n/N$, so $\Prb(M_n)\le\alpha$ if and only if $n\ge\lceil(1-\alpha)N\rceil$. Moreover, for every $0\le n\le N$, $\big[\max\{0,\,1-\tfrac{n}{N-k+1}\}\big]^k\le h\le(1-n/N)^k$, so $n\ge N(1-\alpha^{1/k})$ suffices.
+Under simple random sampling of $n$ fields without replacement, $\Prb(M_n\mid C)=h(N,k,n)$. For $k=1$ this equals $1-n/N$, so $\Prb(M_n)\le\alpha$ if and only if $n\ge\lceil(1-\alpha)N\rceil$. For every $0\le n\le N$, $[\max\{0,1-n/(N-k+1)\}]^k\le h\le(1-n/N)^k$, so $n\ge N(1-\alpha^{1/k})$ suffices.
 \end{proposition}
-
 \begin{assumption}[No location information]\label{ass:A}
-For the given features $x$, every placement $C$ with $|C|=k$ is possible.
+Given the features $x$, every placement $C$ with $|C|=k$ is possible.
 \end{assumption}
-
 \begin{theorem}[Minimax lower bound]\label{thm:minimax}
-Under Assumption~\ref{ass:A}, every policy (adaptive or not, randomised or not) that examines at most $n$ fields satisfies
-\[
-\max_{|C|=k}\Prb_\pi(M_n\mid x,C)\ \ge\ h(N,k,n).
-\]
-Uniform sampling attains this bound for every $C$. Every deterministic policy has worst-case miss probability $1$ whenever $n\le N-k$.
+Under Assumption~\ref{ass:A}, every policy, adaptive or not, randomised or not, that examines at most $n$ fields satisfies $\max_{|C|=k}\Prb_\pi(M_n\mid x,C)\ge h(N,k,n)$. Uniform sampling attains the bound, and every deterministic policy has worst-case miss probability 1 if $n\le N-k$.
 \end{theorem}
-\begin{proof}[Proof sketch]
-Fix the examiner's randomness $u$. On the run in which every examined field is negative, the policy's inputs are determined by $u$, so it examines a fixed set $A(u)$ with $|A(u)|\le n$. For any $C$, the actual run coincides with this all-negative run up to the first critical field it would reach, so the examiner misses $C$ exactly when $C\cap A(u)=\emptyset$. Averaging over a uniformly random $C$, which Assumption~\ref{ass:A} permits, gives a miss probability of at least $\binom{N-n}{k}/\binom{N}{k}=h(N,k,n)$. Since the maximum over $C$ is at least this average, the bound follows. The full proof is in \ref{app:proof}.
-\end{proof}
-
-\begin{corollary}[Unknown $k$]\label{cor:unknown}
-If an examiner declares ``no critical evidence'' whenever it has examined none, and this declaration must be wrong with probability at most $\alpha$ for every non-empty $C$, then, under Assumption~\ref{ass:A}, it must examine at least $\lceil(1-\alpha)N\rceil$ fields. The reason is that $C\subseteq C'$ implies $M_n(C')\subseteq M_n(C)$ pathwise, so the worst case is $k=1$.
-\end{corollary}
-
-\begin{remark}[Imperfect verification]
-If verification detects an examined critical field only with probability $1-\beta$, independently of selection, then for $k=1$ under uniform sampling the miss probability is $1-(1-\beta)n/N$, which equals $\beta$ at $n=N$. Absence therefore cannot be certified at level $\alpha<\beta$ even by a census.
-\end{remark}
-
-Figure~\ref{fig:partII} shows the resulting requirement. Informative features (the failure of Assumption~\ref{ass:A}) can let a search beat this bound on average, through a model of where critical evidence appears; that model is not itself certified, and the improvement is not a guarantee for every placement the features still allow. Section~\ref{sec:partI} shows how quickly such information disappears when cells are pooled into fields. Section~\ref{sec:rq4} shows it failing under acquisition shift. The bound is also specific to detecting the \emph{presence} of rare evidence: making ``$p>\theta$'' true requires more than $\theta M$ blasts, which cannot be hidden in a single field. This is why the threshold reformulation of Section~\ref{sec:cert} escapes it.
-
-All statements were checked exactly, using rational arithmetic (for all $N\le120$, and $N\le300$ when $k=1$) and, for $N\le7$, by solving the zero-sum search game as a linear program, whose value equalled $h(N,k,n)$ in every case. The code is in \texttt{scripts/17\_part2\_verify.py}.
-
-\begin{figure}[!htbp]
-\centering\includegraphics[width=0.48\linewidth]{figures/fig2_partII.pdf}
-\caption{Fraction of fields $n^*/N$ that any strategy without location information must examine to certify the absence of $k$ critical fields ($N=1000$; exact hypergeometric values, solid; sufficient closed form $1-\alpha^{1/k}$, dotted). The values depend only weakly on $N$.}\label{fig:partII}
-\end{figure}
-
-\section{Certifying a threshold assertion (RQ3)}\label{sec:cert}
-Following \cite{stark2023alpha}, define the assorter $a_j=b_j/(2\theta)\in[0,1/(2\theta)]$. Then $\bar a>1/2\iff p>\theta$, so the assertion becomes a one-sided test of $H_0:\bar a\le 1/2$ for a bounded finite population. The observation unit is the field: an expert verifies every cell in a sampled field, the field mean of the assorters is observed, and with equal field sizes the population mean over fields equals $\bar a$. Unequal sizes are treated at the end of this section.
-
-\paragraph{Uniform sampling.} ALPHA constructs a non-negative supermartingale under $H_0$ for sampling without replacement \cite{stark2023alpha}. Rejecting when it exceeds $1/\alpha$ controls the false-certification probability at $\alpha$ for any data-dependent stopping time, by Ville's inequality.
-
-\paragraph{Adaptive sampling.} Write the target as a weighted mean $\sum_i w_i f_i$ over fields, with known weights $w_i>0$, $\sum_i w_i=1$, and field values $f_i\in[0,1]$; with equal field sizes, $w_i=1/N$ and $f_i=B_i/m$, so $\sum_i w_if_i=p$. Let $q_t$ be any predictable distribution over the unsampled fields that is strictly positive on all of them, and let $I_t$ be the field drawn at step $t$. Following Shekhar et al.\ \cite{shekhar2023rlfa}, the importance-weighted observation $Z_t=w_{I_t}f_{I_t}/q_t(I_t)$ has conditional mean equal to the mass not yet sampled, $\sum_{i\ \text{unsampled}}w_if_i$. Under $H_0:p\le\theta$ this is at most $\mu_t=\theta-\sum_{s<t}w_{I_s}f_{I_s}$, the mass the null allows to remain. A betting process $W_t=\prod_{s\le t}(1+\lambda_s(Z_s-\mu_s))$ with predictable, non-negative bets $\lambda_s$, bounded so that wealth cannot become negative, is then a test supermartingale under $H_0$, whatever the classifier does. We use their prop-MS sampler, $q_t(i)\propto w_iS_i$ with a floor, where $S_i$ is the field's mean classifier score; approximate-Kelly bets; and, as a variant, a zero-mean control variate built from $S$. Validity requires only that $q_t$ is known and positive and that labels come from verification. The classifier affects efficiency, not validity.
-
-\paragraph{Fields of unequal size.} The field-mean assorter above averages field \emph{proportions}. When field sizes differ, that average is $N^{-1}\sum_iB_i/m_i$, which is not $p$.
-
-\begin{proposition}[Unequal field sizes]\label{prop:unequal}
-Let field $i$ hold $m_i$ cells, $B_i$ of them blasts, and let $p=\sum_iB_i/\sum_im_i$.
-\begin{enumerate}
-\item[(a)] \emph{Counts known.} If every $m_i$ is known before verification, set $w_i=m_i/M$ and $f_i=B_i/m_i$ (fields with $m_i=0$ are dropped). Then $\sum_iw_if_i=p$, and the weighted betting test above is valid for $H_0:p\le\theta$.
-\item[(b)] \emph{Only a bound known.} If only $m_i\le m_{\max}$ is known, define
-\[
-a_i=\frac{B_i-\theta m_i+\theta m_{\max}}{m_{\max}}.
-\]
-Then $a_i\in[0,1]$ and $N^{-1}\sum_ia_i>\theta\iff p>\theta$. Equal-weight ALPHA or betting on $a_i$ with null mean $\theta$ is therefore valid.
-\end{enumerate}
+The proof (Supplementary Section S4) follows Yao's principle \cite{yao1977}. If $k$ is unknown the worst case is $k=1$, so certifying absence at level $\alpha$ needs $\lceil(1-\alpha)N\rceil$ fields. Informative features can let a search beat this bound on average, through a model of where evidence lies:
+\begin{proposition}[Ranked search]\label{prop:bridge}
+Let one field be critical with score $S_c\sim F_1$, and let the other $N-1$ scores be independent with distribution $F_0$. A scan of the $n$ highest-scoring fields misses the critical field with probability $\E_{S_c}[\Prb(\mathrm{Bin}(N-1,1-F_0(S_c))\ge n)]$, which tends to $1-\mathrm{TPR}(t_r)$ as $N\to\infty$ with $n/(N-1)\to r$, where $t_r$ is the threshold with false-positive rate $r$.
 \end{proposition}
-\begin{proof}
-(a) $\sum_iw_if_i=\sum_i(m_i/M)(B_i/m_i)=p$, and the construction of Shekhar et al.\ requires only known positive weights and $f_i\in[0,1]$.
-(b) Since $0\le B_i\le m_i\le m_{\max}$, we have $a_i\ge\theta(m_{\max}-m_i)/m_{\max}\ge0$ and $a_i\le\{(1-\theta)m_i+\theta m_{\max}\}/m_{\max}\le1$. Summing, $\sum_ia_i=(\sum_iB_i-\theta M)/m_{\max}+N\theta$, so $N^{-1}\sum_ia_i>\theta$ if and only if $\sum_iB_i>\theta M$.
-\end{proof}
+With $F_1=F_0$ the formula returns $1-n/N$. Certifying absence by ranking thus needs a sensitivity of about $1-\alpha$ at a false-positive rate of $n/N$, a property of the model that no sampling design supplies. The proposition is an average-case result under independence; it does not show that only ranking can help, and it is not a worst-case guarantee, because a ranked scan misses with certainty any critical field placed among the low-scoring fields. All statements were verified exactly (Supplementary Section S1.2).
 
-In (b), the margin $N^{-1}\sum_ia_i-\theta=(p-\theta)\bar m/m_{\max}$ shrinks by the factor $\bar m/m_{\max}$, where $\bar m=M/N$, so a loose bound costs power. With equal sizes and $m_{\max}=m$, $a_i=B_i/m$ and (b) reduces to the field-mean test.
+\subsection{Certifying a threshold assertion (RQ3)}
+Making ``$p>\theta$'' true requires more than $\theta M$ blasts, which cannot hide in one field, so Theorem~\ref{thm:minimax} does not apply. With equal field sizes and the assorter $a_j=b_j/(2\theta)$, where $b_j$ is the blast fraction of the $j$-th sampled field, the specimen mean of $a$ exceeds $1/2$ if and only if $p>\theta$, and the assertion becomes a one-sided bounded-mean test. Under uniform sampling of fields, ALPHA \cite{stark2023alpha} gives a test supermartingale, and rejecting when it exceeds $1/\alpha$ bounds the probability of false certification by $\alpha$ at any data-dependent stopping time. For adaptive sampling, write $p=\sum_iw_if_i$ with known weights $w_i$ and $f_i\in[0,1]$. If field $I_t$ is drawn from a predictable distribution $q_t$ that is positive on every unsampled field, the observation $Z_t=w_{I_t}f_{I_t}/q_t(I_t)$ has conditional mean equal to the unsampled mass, which under $H_0\colon p\le\theta$ is at most $\mu_t=\theta-\sum_{s<t}w_{I_s}f_{I_s}$. A betting process $\prod_s\{1+\lambda_s(Z_s-\mu_s)\}$ with predictable, non-negative, bounded bets is then a test supermartingale whatever the classifier does \cite{shekhar2023rlfa}. We used the prop-MS sampler of that work, $q_t(i)\propto w_iS_i$ with a floor, where $S_i$ is the field's mean classifier score, and approximate-Kelly bets. Validity requires only known, positive selection probabilities and verified labels.
 
-\begin{remark}[Imperfect verification of a threshold assertion]\label{rem:verif}
-Let the verifier report a blast proportion $\tilde p$ for the specimen. If its false blast calls number at most $\beta_0$ times the true non-blasts, then $\tilde p\le p+\beta_0(1-p)$, so $p\le\theta$ implies $\tilde p\le\theta+\beta_0(1-\theta)$. A valid test of $\tilde p>\theta+\beta_0(1-\theta)$ on the verified labels is therefore a valid test of $p>\theta$, whatever the verifier's missed blasts. Symmetrically, testing $\tilde p<\theta(1-\beta_1)$ is valid for $p<\theta$ if missed blasts number at most $\beta_1$ times the true blasts. The bound concerns the verifier's errors in this specimen, and nothing in the sampling design supplies it.
+Averaging field proportions estimates $N^{-1}\sum_iB_i/m_i$, which is not $p$ when field sizes differ.
+\begin{proposition}[Unequal field sizes]\label{prop:unequal}
+(a) If every $m_i$ is known, $w_i=m_i/M$ and $f_i=B_i/m_i$ give $\sum_iw_if_i=p$, so the weighted test is valid for $H_0\colon p\le\theta$. (b) If only a bound $m_i\le m_{\max}$ is known, $a_i=(B_i-\theta m_i+\theta m_{\max})/m_{\max}\in[0,1]$ and $N^{-1}\sum_ia_i>\theta$ if and only if $p>\theta$, so equal-weight tests on $a_i$ with null mean $\theta$ are valid.
+\end{proposition}
+In (b) the margin shrinks by $\bar m/m_{\max}$, so a loose bound costs power.
+\begin{remark}[Imperfect verification]\label{rem:verif}
+If the verifier's false blast calls number at most $\beta_0$ times the true non-blasts, its proportion satisfies $\tilde p\le p+\beta_0(1-p)$, so testing $\tilde p>\theta+\beta_0(1-\theta)$ is valid for $p>\theta$. Symmetrically, testing $\tilde p<\theta(1-\beta_1)$ is valid for $p<\theta$ if missed blasts number at most $\beta_1$ times the true blasts. The bound concerns the verifier, not the design.
 \end{remark}
+We compared, on each specimen, ALPHA and betting with uniform sampling, betting with classifier-driven sampling (with and without a control variate), an invalid \emph{uncorrected} design that ranks fields by score but analyses them as uniform draws, and conventional 100- and 200-cell counts.
 
-\paragraph{Designs compared.} All designs are run on the same specimen:
-\begin{itemize}
-\item ALPHA with uniform sampling;
-\item betting with uniform sampling;
-\item betting with classifier-driven sampling (prop-MS);
-\item classifier-driven betting with the control variate;
-\item a deliberately invalid \emph{uncorrected} design, which prioritises fields by classifier score and analyses them with unweighted ALPHA as if they had been sampled uniformly;
-\item conventional 100- and 200-cell counts, which call ``above'' when the observed fraction exceeds $\theta$ and carry no guarantee.
-\end{itemize}
+\subsection{Data}
+KU-Optofil \cite{yarikan2026kuoptofil} contains Sysmex DI-60 images of May--Gr\"unwald--Giemsa-stained peripheral blood smears labelled by haematologists; we used 28,280 cells from 275 identified patients (13 classes) in five patient-grouped folds. Its 489 blasts come from only 11 patients. RV-PBS \cite{rvpbs2024} provides 752 annotated cells (153 blasts) from phone-camera fields and was used only as an acquisition-shift probe. MLL23 \cite{shetabboushehri2025mll23} contains 41,621 peripheral-blood cells (Pappenheim stain, Metafer scanner), including 8,606 myeloblasts; we excluded atypical promyelocytes, which both classifications count as blast equivalents but our labels do not, smudge cells and normoblasts, leaving 36,529 cells without patient identifiers. BoneMarrowWSI \cite{hofener2025bmwsi,hofener2025descriptor} provides pediatric bone-marrow aspirate slides with 228 exhaustively annotated regions of about 225\,$\mu$m; we used the annotations, the label from each reading round, and the image pixels of the annotated regions.
 
-\section{Experimental design}\label{sec:design}
-\paragraph{Pre-registration.} Hypotheses, decision rules, seeds and analysis scripts were frozen in five git tags, each pushed to a remote repository before the corresponding data were generated: the Part I protocol, one amendment to it made before any confirmatory data existed, and three amendments covering Part III with the external dataset, spatial clustering with a defensive mixture, and real-specimen spatial structure. \ref{app:audit} lists, for each tag, the commit and push times and the time the first confirmatory output was written; outputs followed the push by 43\,s to 18\,min. The frozen scripts and the modules they import are unchanged since their tags. Exploratory runs used separate seed families and are labelled as exploratory. All deviations from the protocol and from the reimplemented method are logged (\ref{app:dev}).
+\subsection{Representation, teachers and specimens}
+Cells were embedded with a frozen DINOv2 ViT-S/14 encoder \cite{oquab2023dinov2}. A logistic probe cross-fitted by patient fold reached an out-of-fold area under the ROC curve (AUC) of 0.979 and, at the threshold giving 95\% specificity, a blast sensitivity of 0.906. The pre-registered \emph{cell-level teacher} scores a field by its largest cell score; an exploratory \emph{field-level teacher} is a logistic regression on the pooled field embedding that the selector sees. Part~I composites have $N=200$ fields of $m\in\{1,5,10,20\}$ cells with mean-pooled embeddings and $k\in\{1,2,5,10,20\}$ critical fields of one blast each. Part~III composites have 100 fields of 5 cells ($M=500$) with $p$ fixed exactly; exploratory extensions use $M$ up to 4,000 and field sizes drawn from BoneMarrowWSI.
 
-``Confirmatory'' has a limited meaning here. For Parts I and III and for the clustering stress test, it means fresh Monte Carlo draws, on a disjoint seed family, over the \emph{same} pool of cells and cross-fitted scores that the exploratory runs used. That protects against analytic flexibility, not against effects specific to this cell pool. Only H4a--c (external data, embedded after its amendment) and H7a (real-smear clustering) were confirmed on data not analysed before. Several pre-registered hypotheses check the implementation rather than an empirical claim: H1d checks a combinatorial identity, and H3a, H4c, H5a and H6a check validity that a theorem guarantees. Table~\ref{tab:hyp} marks them. An earlier draft also counted H1a as such a check, because Eq.~6 contains no relevance term; since the halting statistic still depends on the embeddings, which depend on the cells, H1a is an empirical claim.
+\subsection{InfoDPP-PAC and baselines (RQ1)}
+No code has been released for InfoDPP-PAC. We implemented its objective, greedy blended gain and halting rule (Eqs.~3--7 of \cite{mittal2026infodpp}) with the published weights, set the unreported constant $\rho=1$, and calibrated the halting threshold on blast-free specimens of other folds so that the median stop was 16.3\% of all fields. The original runs stopped at 16.3\% of a 300-patch budget, about 2.4\% of a slide according to the reported averages, so our setting gives InfoDPP-PAC roughly seven times its own examination share; a 2.4\% run is also reported. A random seed of 5 fields fits the Gaussian process and is not counted as examined. Baselines were uniform sampling of the same size in the same specimen, a fixed field order, confidence-based stopping (stop at the first field with relevance $\ge0.9$ or after 30 consecutive fields $\le0.1$), and exhaustive examination. Implementation details and all deviations are in Supplementary Sections S1.4 and S1.5.
 
-\paragraph{Data.}
-\begin{itemize}
-\item \emph{KU-Optofil} \cite{yarikan2026kuoptofil} (CC BY 4.0). Cells were imaged by a Sysmex DI-60 analyser from May--Gr\"unwald--Giemsa-stained peripheral blood smears and labelled by haematologists (Cohen's $\kappa>0.85$ for all classes, as reported by the authors). The analyser had already chosen which cells to image, which is itself a selection step outside our control. We used 28,280 single-cell images from 275 identified patients (13 classes, 368\,px crops), excluding 3,204 cells without patient identifiers. Blasts come from only 11 patients (489 blasts), a limitation we return to below. Cells were assigned to five patient-grouped folds, and every cell's classifier score is cross-fitted, i.e.\ produced by a model that never saw its patient.
-\item \emph{RV-PBS} \cite{rvpbs2024}. Real 1000$\times$ fields photographed with a phone camera; 752 annotated cells (153 blasts) from 583 images. Its annotation is class-partial, so field-level proportions are not identified. We use it only as an acquisition-shift probe: to measure classifier error, and to build specimens from its labelled crops. The repository states no licence; we used the data as distributed by the authors for research.
-\item \emph{MLL23} \cite{shetabboushehri2025mll23} (CC BY 4.0). 41,621 single-cell images of peripheral blood from the Munich Leukemia Laboratory (Pappenheim stain, Metafer scanner, $288\times288$\,px for $25\times25\,\mu$m), 8,606 of them myeloblasts. We excluded atypical promyelocytes, which both classifications count as blast equivalents but our labels do not, and smudge cells and normoblasts, which a leukocyte differential does not count; 36,529 images in 15 classes remain. The release has no patient identifiers. We use it as a second acquisition-shift source (exploratory).
-\item \emph{BoneMarrowWSI-PediatricLeukemia} \cite{hofener2025bmwsi,hofener2025descriptor} (CC BY 4.0). Whole-slide bone-marrow aspirate images, in which 228 regions of interest of about $225\,\mu$m were exhaustively annotated: every haematological structure was boxed and consensus-labelled by several experts. We used the annotations and, for the real-tile analysis of Part I, the image pixels of the annotated regions. Within eligible regions, a $2\times2$ quadrant holds a median of 20 nucleated cells (IQR 12--29, maximum 91; 758 quadrants, 99 patients), which we use as a realistic distribution of field sizes.
-\end{itemize}
+\subsection{Conditions for RQ4}
+The assumptions behind the guarantees were stressed in eight conditions (Table~\ref{tab:bench}): composites in distribution, with strongly clustered blasts, with a background enriched in the classes most often mistaken for blasts, and with unequal field sizes drawn from marrow regions; acquisition shift (RV-PBS, MLL23), with the classifier applied unchanged; real cell arrangements, with each BoneMarrowWSI patient as a specimen, $4\times4$ subregions of about 56\,$\mu$m as fields and the specimen's own blast proportion as threshold ($\theta_s=p_s$, an exact null at which every certification is false); and a single reader as verifier, with the consensus as truth and field counts from that reader. Part~I was also repeated on real image tiles of the annotated regions.
 
-\paragraph{Representation and classifier.} Cells were embedded with a frozen, publicly available encoder (DINOv2 ViT-S/14 \cite{oquab2023dinov2}, 224\,px), which was not fine-tuned on these data. A logistic probe (blast vs.\ rest) was cross-fitted by patient fold and reached a pooled out-of-fold AUC of 0.979. The thesis this paper derives from does not compare encoders.
-
-Two field-level relevance scores are used. The \emph{cell-level teacher} scores a field by the largest probe score among its cells; it presupposes that every cell in the field is detected and classified. The \emph{field-level teacher} is a logistic regression on the pooled field embedding, the same representation the selector sees. For each evaluation fold it is trained on composite fields built only from the other four folds, with one blast or none among $m$ cells. The pre-registered analyses used the cell-level teacher, both as InfoDPP-PAC's teacher and in Kill-test 1; the field-level teacher was added afterwards as an exploratory check.
-
-\paragraph{Composite specimens (Parts I and III).}
-\begin{itemize}
-\item \emph{Part I}: $N=200$ fields of $m\in\{1,5,10,20\}$ cells, with $k\in\{1,2,5,10,20\}$ critical fields each containing one blast. A field is represented by the mean of its cells' embeddings (max-pooling and single-cell representations were run as sensitivity analyses). Cells come from the evaluation fold.
-\item \emph{Part III}: 100 fields of 5 cells ($M=500$), with the blast proportion fixed exactly. Blasts are drawn without replacement from all 489 blasts, and background cells from blast-free patients. This is allowed because scores are cross-fitted. The background pool is every non-blast image, and 10\% of it consists of giant platelets, platelet clusters and erythroblasts, which a leukocyte differential would not count; $p$ is therefore the blast share of imaged objects. Restricting the background to leukocytes (exploratory; 4,400 new specimens) left false certification at most 0.030 and changed median costs by at most 15 cells, compared with the share-0 condition of the confusable-background run. An exploratory extension repeats the main designs at $M\in\{500,1000,2000,4000\}$ cells ($N=M/5$ fields); specimens needing more than 489 blasts reuse blast images, which does not affect uniform designs, because they see only labels.
-\item \emph{Unequal fields}: 60 fields whose sizes are drawn from the BoneMarrowWSI quadrant distribution (about 1,300 cells per specimen), filled with KU-Optofil cells. Blasts are placed either independently of field size or preferentially in small fields (cell weight proportional to $1/m_i$).
-\end{itemize}
-
-\paragraph{InfoDPP-PAC reimplementation.} We implemented the paper's selection objective, greedy blended gain and halting rule (Eqs.~3--7 of \cite{mittal2026infodpp}) with the published tuned weights. No code has been released, and the paper reports neither the threshold $\tau$, the constant $\rho$, the kernel nor the teacher for our domain; its teacher is a function of the patch embedding (cosine similarity to class prototypes). We set $\rho=1$ and calibrated $\tau$ on blast-free specimens from other folds. The paper's adaptive runs stopped at a mean of 48.9 patches against a 300-patch budget (16.3\%), on slides averaging 2,075 patches. The ratio of these two averages, about 2.4\%, is an approximate share of the slide, not a reproduction of the original configuration. We calibrated the median stop to 16.3\% of \emph{all} fields. As in the original method, a random seed set of $m_0$ fields is scored by the teacher to fit the Gaussian process before selection begins; we used $m_0=5$ (the original $m_0\approx0.01N$ would give two fields). Seed fields are not counted as examined: cost and misses count only the fields that the greedy rule selects. That gives InfoDPP-PAC about seven times the share of the specimen it examined in its own experiments, which favours it; Section~\ref{sec:partI} also reports a run at 2.4\%. Our implementation therefore reproduces a cost, not the authors' configuration or their nominal PAC guarantee, which we do not claim. Baselines were uniform sampling at the same per-episode cost (paired), a fixed field order (composites have no geometry, so this is not a spatial raster), confidence-based stopping, and exhaustive examination. Confidence-based stopping visits fields in random order and stops at the first field whose relevance score is at least 0.9, or after 30 consecutive fields scoring at most 0.1.
-
-\paragraph{Statistics.}
-\begin{itemize}
-\item Miss rates: Wilson intervals, exact McNemar tests on paired episodes, and fold-clustered bootstrap intervals (pre-registered). Because five folds allow only 126 distinct bootstrap resamples, we also report $t$ intervals on the five fold-level estimates (4 degrees of freedom), and, where episodes record the source patient, patient-level bootstrap intervals over the 11 blast patients.
-\item False-certification rates: Clopper--Pearson intervals, and the pre-registered rule of rate $\le 0.05$ with a one-sided exact binomial test not rejecting $\le0.05$.
-\item Paired cost comparisons: one-sided Wilcoxon signed-rank tests with Holm correction, and ratios of medians with bootstrap intervals as effect sizes.
-\item Spatial clustering: an intraclass correlation (ICC) with permutation and patient-bootstrap inference.
-\end{itemize}
-Intervals over episodes describe Monte Carlo error \emph{conditional on the fixed cell pool}. That is the right scale for validity, which is a statement about each specimen. Comparisons of cost and miss rate also depend on which patients supplied the blasts, and the fold-level and patient-level intervals address that. The level is $\alpha=0.05$ throughout; $\alpha=0.01$ is reported where noted.
-
-\paragraph{Implementation checks.} Our ALPHA and betting code was compared, on identical inputs, with the reference implementation of ALPHA in SHANGRLA \cite{stark2023alpha} (exploratory; 2,000 random populations, orders and thresholds). Given the same predictable estimates, the two ALPHA statistics agreed to $4\times10^{-14}$ in log scale over 233,765 draws, and our betting statistic with uniform sampling agreed with SHANGRLA's betting martingale, reparametrised accordingly, to $2\times10^{-13}$ over 364,373 draws. The full procedures stopped at the same draw in 93\% of cases. In every other case ours stopped later, because our frozen ALPHA lacks one rule of the reference code: reject as soon as the verified sample contains more blasts than the null allows in the whole specimen. The omission is conservative. In the Part III and population-size settings it bound in at most 7\% of specimens, only at $M=500$ within 0.02 of the threshold, and changed no median cost. A test suite of 26 deterministic checks (\texttt{tests/}, including the identities and bounds of Proposition~\ref{prop:uniform} over the full range $0\le n\le N$) tries to break validity at exact nulls (aggressive and timid prior guesses, unequal fields with size-dependent blasts, oracle, anti-oracle and adaptive samplers, verifier errors), and includes negative controls that the suite must flag as invalid and a power check. All passed; the largest false-certification rate among the valid procedures was 0.029 with 1,000 repetitions.
+\subsection{Pre-registration and statistical analysis}
+Hypotheses, decision rules, seeds and scripts were frozen in five git tags before the corresponding data were generated (Supplementary Section S5). ``Confirmatory'' means fresh Monte Carlo draws on a disjoint seed family over the same cell pool; only the external-shift and real-clustering hypotheses used data not analysed before. Later analyses used new seed families and are reported as exploratory. Miss rates were compared with exact McNemar tests on paired episodes, with Wilson intervals and $t$ intervals on the five fold estimates. False-certification rates were tested against 0.05 with one-sided exact binomial tests and reported with Clopper--Pearson intervals. Costs were compared with paired Wilcoxon signed-rank tests with Holm correction and ratios of medians with bootstrap intervals. Real-data analyses bootstrap over patients. $\alpha=0.05$ unless stated. The implementation was checked against the reference implementation of ALPHA and with 26 deterministic tests, including adversarial samplers and negative controls (Supplementary Section S1.4).
 
 \section{Results}
 \subsection{Information-saturation stopping (RQ1)}\label{sec:partI}
-The confirmatory run comprised 24,000 episodes: 1,000 per $(m,k)$ cell, and 3,000 for the two cells of the equivalence hypothesis. Figure~\ref{fig:partI} and Table~\ref{tab:hyp} summarise the results.
+In 24,000 confirmatory episodes the median stop was 32--33 of 200 fields in every cell and varied by at most one field across rarity levels. This is an empirical finding for the tested settings: the halting statistic has no relevance term, but it depends on the embeddings and the selected set, which depend on the cells. The AUC with which the information-gain term separated critical from non-critical fields fell from 0.778 at $m=1$ to 0.525 at $m=20$, whereas the field-level teacher on the same pooled embeddings kept 0.978 to 0.827 (Fig.~\ref{fig:partI}b). The evidence survived pooling; the halting signal did not use it.
 
-\paragraph{The stopping point barely moved with rarity (H1a, supported).} The median stop was 32--33 of 200 fields in every cell. Across rarity levels, the median varied by at most one field within each dilution level; the pre-registered tolerance was two fields. This is an empirical finding for the tested encoder, field sizes and rarity levels, not a consequence of the equations. The halting statistic contains no relevance or label term \cite{mittal2026infodpp}, but it depends on the embeddings and on the selected set, and both depend on the cells in the specimen; with other encoders or compositions the stopping point could respond to content.
+With one critical field, InfoDPP-PAC missed it in 0.315, 0.681, 0.759 and 0.805 of specimens at $m=1$, 5, 10 and 20, against 0.82--0.85 for uniform sampling of the same size, which matched $1-n/N$ (Fig.~\ref{fig:partI}a). The advantage shrank with dilution for every $k$, but the pre-registered claim of no advantage at $m\ge10$ was not supported: the difference was $-0.087$ $[-0.107,-0.067]$ at $m=10$, and $-0.023$ at $m=20$ with a fold-level interval of $[-0.050,0.003]$. Dilution, not rarity, governed the gap; rarity drove the absolute miss rate of every method. Two other saturation rules, pure information-gain sampling and $k$-centre coverage stopping, missed within 0.04 of InfoDPP-PAC in every cell. A scan ranked by the field-level teacher missed 0.05--0.37, within 0.02 of the values predicted by Proposition~\ref{prop:bridge}. At about 2.4\% of the specimen, InfoDPP-PAC made 4--5 selections after its seed and missed 0.81--0.97 against 0.97--0.98 for uniform sampling, an advantage of $-0.17$ $[-0.27,-0.08]$ with single-cell fields and at most about 0.03 otherwise, whether or not the seed was counted as examined.
 
-\paragraph{The halting signal decouples from critical evidence (Kill-test 1, supported).} The AUC with which the information-gain term separates critical from non-critical fields fell from 0.778 ($m=1$) to 0.593, 0.552 and 0.525 ($m=5,10,20$). The cell-level teacher, which the halting rule does not use, stayed at 0.977, 0.943, 0.920 and 0.896. That teacher has access to every cell's score, which the selector does not, so we re-ran the comparison with the field-level teacher, trained on the same pooled embeddings the selector sees (exploratory; 10,000 new episodes). Its AUC was 0.978, 0.925, 0.882 and 0.827, with fold-level 95\% intervals of $[0.961,0.995]$, $[0.883,0.966]$, $[0.830,0.933]$ and $[0.779,0.874]$. The information-gain AUC in the same episodes was 0.775, 0.589, 0.546 and 0.529. Pooling therefore removes part of the relevance signal, but most of it survives in the representation; the halting statistic does not use it.
-
-\paragraph{Premature stops.} At $k=1$, InfoDPP-PAC missed the critical field in 0.315, 0.681, 0.759 and 0.805 of specimens for $m=1,5,10,20$. Uniform sampling at the same per-episode cost missed it in 0.822, 0.830, 0.846 and 0.828 of specimens, in agreement with $1-n/N$ (H1d, supported; all $|z|<1.5$). Replacing InfoDPP-PAC's teacher by the field-level teacher hardly changed its misses (0.316, 0.662, 0.764 and 0.770), because the teacher enters selection only through a term of weight 0.25 and does not enter the halting statistic at all.
-\begin{itemize}
-\item The advantage of saturation-based selection shrinks with dilution for every tested rarity level (H1b, supported). The contrast $\Delta(20,k)-\Delta(1,k)$ had fold-clustered 95\% intervals of $[0.39,0.57]$, $[0.51,0.59]$, $[0.26,0.33]$ and $[0.07,0.17]$ for $k=1,2,5,10$. The contrast was positive in all five folds for every $k$; $t$ intervals on the fold estimates were $[0.34,0.63]$, $[0.49,0.62]$, $[0.24,0.35]$ and $[0.03,0.20]$.
-\item The pre-registered claim of \emph{no} advantage at $m\ge10$ was \textbf{not supported} (H1c). At $m=10$ the difference was $-0.087$ $[-0.107,-0.067]$, outside the $\pm0.05$ margin; in a secondary analysis it varied across patient folds from $-0.03$ to $-0.16$. At $m=20$ it was $-0.023$ $[-0.043,-0.004]$, inside the margin. With a $t$ interval on the five fold estimates, the $m=10$ difference is $[-0.153,-0.021]$ and the $m=20$ difference $[-0.050,0.003]$, which sits at the edge of the margin. The pre-registered interval treated episodes as independent although episodes in a fold share blast patients; equivalence at $m=20$ should therefore be read as borderline.
-\end{itemize}
-The correct statement is therefore that the advantage decays with dilution and becomes negligible between 10 and 20 cells per field. Relative to the proposal's hypothesis that the gap would widen with rarity, the governing variable was dilution, not rarity: rarity drove the \emph{absolute} miss rate of every method.
-
-\paragraph{Pre-registered sensitivity analyses.} The four sensitivity analyses fixed in the protocol were run with their own seeds, using the frozen script and 1,000 episodes per $(m,k)$ (\ref{app:dev} explains why they were run late). Differences are InfoDPP-PAC minus uniform at $k=1$, with $t$ intervals on the fold estimates.
-\begin{itemize}
-\item \emph{Max pooling} kept more signal: $-0.115$ $[-0.198,-0.032]$ at $m=10$ and $-0.056$ $[-0.141,0.029]$ at $m=20$. InfoDPP-PAC still missed 73\% and 77\% of single-critical-field specimens.
-\item \emph{Single-cell representation} behaved like mean pooling: $-0.036$ $[-0.079,0.007]$ at $m=10$.
-\item \emph{Operating point.} Across 5\% to 50\% of the specimen, the difference at $m\ge10$ never exceeded 0.13 in absolute value. It grew with the operating point, reaching $-0.08$ and $-0.10$ at $m=20$ for 30\% and 50\%. Re-running the 16.3\% operating point on this seed gave $-0.050$ $[-0.085,-0.015]$ at $m=20$, against $-0.023$ in the main run; the residual advantage at $m=20$ is therefore of the order of the equivalence margin. At approximately the share of the slide examined in the original experiments (about 2.4\%; exploratory), InfoDPP-PAC selected a median of 4--5 fields (mean 4.4--4.9, range 2--10, 12,000 episodes) after its 5-field random seed, and never reselected a seed field. It missed the single critical field in 0.81, 0.96, 0.96 and 0.97 of specimens at $m=1,5,10,20$, against 0.98, 0.98, 0.98 and 0.97 for uniform sampling of the same size: a clear advantage with single-cell fields ($-0.17$ $[-0.27,-0.08]$, fold $t$ interval), about $-0.03$ at $m=5$ and 10, and none at $m=20$ ($+0.003$ $[-0.019,0.025]$). Counting the seed as examined (a median of 10 fields, against uniform sampling of the same 10) gave 0.78, 0.92, 0.93 and 0.95 against 0.95, 0.95, 0.96 and 0.94, with the same pattern. At this operating point the advantage over uniform sampling is substantial only with single-cell fields; from 5 cells per field it is at most about 0.03.
-\item \emph{Single-host background.} When all background cells came from one patient, the advantage was much larger: $-0.27$ $[-0.38,-0.17]$ at $m=10$ and $-0.15$ $[-0.20,-0.10]$ at $m=20$. The information-gain AUC at $m=20$ rose to 0.57. A one-patient background is more homogeneous, so a blast stands out more. In this construction, however, each specimen draws up to 4,000 background cells with replacement from about 110 cells of one patient, so duplicates make it artificially homogeneous. Even here, InfoDPP-PAC missed 57\% and 71\% of single-critical-field specimens at $m=10$ and 20, having examined 16\% of the fields.
-\end{itemize}
-The direction of every result is unchanged: the advantage shrinks with dilution, and the absolute miss rate stays near the worst-case bound. Its size depends on the background construction, and the single-host result shows that the advantage need not vanish by $m=20$.
-
-\paragraph{Other exploratory analyses.} Confidence-based stopping was cheaper (median 8--41 fields) and missed more often (0.78--0.88 at $m\ge10$, $k=1$). Critical-evidence recall at the stop point, the fraction of the $k$ critical fields examined, fell with dilution for InfoDPP-PAC from 0.34--0.69 at $m=1$ to 0.19--0.21 at $m=20$, against 0.15--0.18 for uniform sampling at every $m$ and $k$. A scan ranked by the field-level teacher, at the same cost as InfoDPP-PAC, missed the single critical field in 0.03, 0.15, 0.24 and 0.36 of specimens at $m=1,5,10,20$. That is far fewer than InfoDPP-PAC (0.32--0.77), but it comes with no guarantee: Section~\ref{sec:rq4} shows such rankings failing under acquisition shift.
-
-\paragraph{A class of saturation rules (exploratory).} To check that the result is not specific to one method, three saturation-type rules were run on the same 4,000 new specimens with the field-level teacher, each calibrated to stop at 16.3\% of the fields on blast-free specimens:
-\begin{itemize}
-\item InfoDPP-PAC;
-\item pure information-gain (uncertainty) sampling, i.e.\ InfoDPP-PAC without the relevance term, with the same halting rule;
-\item $k$-center (farthest-point) selection that stops when the covering radius falls below a calibrated value, a coverage-saturation rule.
-\end{itemize}
-At $k=1$ they missed the critical field in 0.31--0.34, 0.67--0.71, 0.74--0.77 and 0.83--0.85 of specimens at $m=1,5,10,20$; uniform sampling at the same cost missed 0.84, 0.85, 0.83 and 0.83. The three rules were within 0.04 of each other in every cell. A scan ranked by the field-level teacher, at InfoDPP-PAC's cost, missed 0.05, 0.14, 0.21 and 0.37. In these experiments, what separated the rules was whether they used a relevance score, not how they decided to stop. This does not show that only relevance ranking can help. The next proposition quantifies what relevance ranking achieves under an independence model, and it connects Part I with Theorem~\ref{thm:minimax}.
-
-\begin{proposition}[Ranked search]\label{prop:bridge}
-One of $N$ fields is critical. Its score $S_c$ has a continuous distribution $F_1$, and the scores of the other $N-1$ fields are independent with distribution $F_0$, independent of $S_c$. A scan of the $n$ highest-scoring fields misses the critical field with probability
-\[
-\Prb(M_n)=\E_{S_c\sim F_1}\Bigl[\Prb\bigl(\mathrm{Bin}(N-1,\,1-F_0(S_c))\ge n\bigr)\Bigr].
-\]
-As $N\to\infty$ with $n/(N-1)\to r\in(0,1)$, $\Prb(M_n)\to F_1(t_r)=1-\mathrm{TPR}(t_r)$, where $t_r$ solves $1-F_0(t_r)=r$, i.e.\ the threshold whose false-positive rate is $r$.
-\end{proposition}
-\begin{proof}
-Given $S_c=s$, the number of other fields scoring above $s$ is $\mathrm{Bin}(N-1,1-F_0(s))$, and the critical field is missed exactly when at least $n$ of them outrank it. Averaging over $S_c$ gives the formula. As $N\to\infty$, $\mathrm{Bin}(N-1,1-F_0(s))/(N-1)\to1-F_0(s)$, so the conditional miss probability tends to $\mathbf 1\{1-F_0(s)>r\}=\mathbf 1\{s<t_r\}$ for every $s\ne t_r$; dominated convergence gives the limit.
-\end{proof}
-Without location information, $F_1=F_0$, the rank of the critical field is uniform, and the formula returns $1-n/N$, the bound of Theorem~\ref{thm:minimax}. For large $N$, certifying absence at level $\alpha$ by ranking therefore requires a sensitivity of about $1-\alpha$ at a false-positive rate of $n/(N-1)$, and only under the independence model. That is a property of the model, which no sampling design supplies. The proposition is also an average over the score distributions, not a worst-case statement. Informative scores lower the average miss rate, but if a critical field can occur among the low-scoring fields, a ranked scan misses that placement with probability one; a guarantee for every admissible placement is still given only by Theorem~\ref{thm:minimax}. With the empirical score distributions, the formula predicted miss rates of 0.051, 0.146, 0.221 and 0.394 for the ranked scan at $m=1,5,10,20$; the observed rates were 0.052, 0.144, 0.214 and 0.374. The independence model is thus slightly pessimistic at $m=20$.
-
-\paragraph{Real image tiles (exploratory).} Composites have no real geometry, so Part I was repeated on image tiles from BoneMarrowWSI. Each of the 190 eligible annotated regions was cut into $4\times4$ tiles of about $56\,\mu$m (3,040 tiles from 99 patients; median 5 nucleated cells per tile), and each tile was embedded with the same frozen encoder. A specimen is one patient's tiles ($N=32$ for 91 patients, 16 for 8), and a tile is critical if it contains at least one consensus-labelled blast. The teacher is a logistic regression on tile embeddings, cross-fitted over five patient-grouped folds (AUC 0.966 over all tiles). InfoDPP-PAC was calibrated to stop at 16.3\% of the tiles on blast-free specimens from other folds, and stopped after 5.4 tiles on average (18\% of $N$). Uniform sampling, a row-by-row raster over one region after another, and a scan ranked by the teacher examined the same number of tiles in each run. Each of the 72 specimens with $0<k<N$ was run 200 times, and intervals are bootstraps over specimens.
-\begin{itemize}
-\item In the 24 specimens in which at most a quarter of the tiles were critical (14 with a single critical tile), InfoDPP-PAC missed every critical tile in 0.80 of runs, against 0.70 for uniform sampling, which matches the exact value $h(N,k,n)$ of Proposition~\ref{prop:uniform}. The difference was $+0.105$ $[0.002,0.203]$, and InfoDPP-PAC did worse in 18 of the 24 specimens. The raster missed 0.67 and the ranked scan 0.54.
-\item InfoDPP-PAC's failures were specific to the specimen. It missed in at least 95\% of runs in 15 of the 24 specimens, whereas uniform sampling's miss rate ranged from 0.25 to 0.90 and was close to $h(N,k,n)$ in every specimen. A nearly deterministic selector fails completely on some placements, which Theorem~\ref{thm:minimax} shows no deterministic policy can avoid.
-\item The teacher separated critical tiles well overall, but within the 24 low-blast specimens its AUC was 0.69, and 0.67 for tiles with a single blast. Ranking therefore helped less than on composites.
-\item $k$-center coverage stopping examined more tiles (8.5 on average). At $k=1$ it missed in 0.89 of runs, against 0.70 for uniform sampling at the same cost ($+0.19$ $[0.03,0.34]$).
-\item When more than half of the tiles were critical (42 specimens), every rule found one in at least 98.7\% of runs.
-\end{itemize}
-On real marrow tiles, then, saturation-based selection did not merely lose its advantage: in low-blast specimens it did worse than uniform sampling of the same size. These specimens are small and come from one pediatric cohort, so the size of the effect is uncertain. It extends the composite result: there the advantage shrank to about zero as dilution grew; here it reversed.
+On real image tiles (3,040 tiles of about 56\,$\mu$m from 99 patients; specimens of 16--32 tiles), InfoDPP-PAC stopped after 5.4 tiles on average. In the 24 specimens in which at most a quarter of the tiles were critical, it missed every critical tile in 0.80 of runs, against 0.70 for uniform sampling of the same size, a difference of $+0.105$ $[0.002,0.203]$. It missed in at least 95\% of runs in 15 of these specimens, as Theorem~\ref{thm:minimax} predicts for a nearly deterministic selector.
 
 \begin{figure}[!htbp]
 \centering\includegraphics[width=\linewidth]{figures/fig1_partI.pdf}
-\caption{Part I (RQ1), confirmatory run. (a) Miss rate with one critical field, for InfoDPP-PAC and for uniform sampling at the same per-episode cost (95\% Wilson intervals). Dashed: the worst-case bound $1-n/N$ for any strategy without location information (Theorem~\ref{thm:minimax}). (b) AUC of the information-gain term that drives stopping, and of the cell-level teacher's relevance score, for ranking critical above non-critical fields (95\% bootstrap intervals). Dashed, exploratory: the field-level teacher, trained on the same pooled embeddings the selector sees (10,000 separate episodes); it is the fair comparison for the information-gain term.}\label{fig:partI}
+\caption{Information-saturation stopping (RQ1), confirmatory run. (a) Miss rate with one critical field for InfoDPP-PAC and for uniform sampling of the same size (95\% Wilson intervals); dashed: the worst-case bound $1-n/N$. (b) AUC of the information-gain term that drives stopping and of the cell-level teacher for ranking critical above non-critical fields; dashed: the field-level teacher on the same pooled embeddings as the selector (exploratory, 10,000 separate episodes).}\label{fig:partI}
+\end{figure}
+
+\subsection{Certifying absence (RQ2)}
+Figure~\ref{fig:partII} shows the fraction of fields that any strategy without location information must examine. With one critical field and $\alpha=0.05$ it is 95\% of the specimen for every $N$; with $k=10$ critical fields it is still about a quarter.
+
+\begin{figure}[!htbp]
+\centering\includegraphics[width=0.6\linewidth]{figures/fig2_partII.pdf}
+\caption{Certifying absence (RQ2). Fraction of fields $n^*/N$ that any strategy without location information must examine to certify the absence of $k$ critical fields ($N=1000$). Solid: exact values; dotted: the sufficient closed form $1-\alpha^{1/k}$.}\label{fig:partII}
 \end{figure}
 
 \subsection{Certified threshold decisions (RQ3)}
-The confirmatory run used 12,000 specimens, with 1,000 per value of $p$ for each threshold. Figure~\ref{fig:partIII} and Table~\ref{tab:hyp} summarise the results.
-\begin{itemize}
-\item \textbf{Validity (H3a).} All four valid designs passed at both thresholds. False certification at $p=\theta$ ranged from 0.001 to 0.022.
-\item \textbf{Uncorrected adaptive selection (H3b).} The uncorrected design certified falsely in 0.993 (ICC, $\theta=0.10$) and 0.889 (WHO, $\theta=0.20$) of boundary specimens.
-\item \textbf{Cost (H3c, H3d).} Classifier-driven betting needed fewer cells than ALPHA with uniform sampling at every $p>\theta$ (all Holm-adjusted $p<10^{-59}$). The median cells examined were:
-  \begin{itemize}
-  \item at $\theta=0.10$: 220 vs.\ 390 ($p=0.12$), 75 vs.\ 165 ($p=0.15$), 40 vs.\ 60 ($p=0.20$);
-  \item at $\theta=0.20$: 335 vs.\ 445 ($p=0.22$), 145 vs.\ 250 ($p=0.25$), 60 vs.\ 105 ($p=0.30$).
-  \end{itemize}
-  Cost fell monotonically with the margin $|p-\theta|$. This comparison changes two things at once, the test and the sampler. Holding the test fixed, classifier-driven betting needed 0.28--0.73 times the cells of uniform betting (bootstrap intervals within $\pm0.03$). Holding the sampler fixed, the betting test needed 1.03--1.83 times the cells of ALPHA. In these 500-cell specimens, certification within 0.02 of the threshold required 44--89\% of the specimen; the next paragraph shows that this proportion is a consequence of the small population.
-\item \textbf{Conventional counts.} A 100-cell count called ``above'' in 0.41 ($\theta=0.10$) and 0.43 ($\theta=0.20$) of specimens lying exactly on the threshold. It also called ``above'' in 0.14 and 0.24 of specimens 0.02 below the threshold.
-\end{itemize}
+In 12,000 confirmatory 500-cell specimens, the four valid designs kept false certification at $p=\theta$ between 0.001 and 0.022, whereas the uncorrected design certified falsely in 0.993 ($\theta=0.10$) and 0.889 ($\theta=0.20$) of boundary specimens (Fig.~\ref{fig:partIII}a). Classifier-driven betting needed fewer cells than uniform ALPHA at every $p>\theta$ (all Holm-adjusted $p<10^{-59}$), for example 75 against 165 cells at $p=0.15$, $\theta=0.10$, and cost fell with the margin $|p-\theta|$ (Fig.~\ref{fig:partIII}b,c). Holding the test fixed, the classifier-driven sampler needed 0.28--0.73 times the cells of uniform sampling.
 
-\paragraph{Population size (exploratory).} Every cost above is capped at $M=500$. Repeating the designs at $M=1{,}000$, 2,000 and 4,000 cells (17,600 new specimens) left validity intact: false certification at $p=\theta$ was at most 0.040 at $\alpha=0.05$ and at most 0.007 at $\alpha=0.01$, for every design and $M$. Cost in cells, however, is governed mainly by the margin (Table~\ref{tab:mscale}). Its dependence on $M$ diminished once $M$ was large enough at margins of 0.05 or more, but remained large close to the threshold. At a margin of 0.05 or more, the cells needed changed by at most 40\% between $M=1{,}000$ and 4,000, and at $M=4{,}000$ were within 20\% of Wald's large-population approximation $\log(1/\alpha)/\mathrm{KL}(p\,\|\,\theta)$ for a sequential probability ratio test with known alternative \cite{wald1945}. The approximation ignores both the gain from sampling without replacement and the cost of learning the alternative. Within 0.02 of the threshold, cost kept growing with $M$ towards that approximation (about 1,400 cells at $\theta=0.10$ and 2,500 at $\theta=0.20$). The fraction of the specimen examined fell as $M$ grew. ``Near-census'' is therefore a property of small specimens; in larger specimens the binding constraint is the number of cells, set mainly by the margin and, close to the threshold, also by $M$. Classifier-driven sampling saved 36--65\% of the cells at every $M$, except at $p=0.22$ against $\theta=0.20$, where the saving was 19--23\% at $M\le1{,}000$ and vanished for $M\ge2{,}000$. Lowering $\alpha$ to 0.01 multiplied the cost of uniform ALPHA by 1.0--1.7. The proposal behind this paper stated that $\alpha=0.01$ is unattainable at realistic calibration sizes. That statement concerns a calibration correction of conformal-risk-control type, $\tfrac{n}{n+1}\hat R_n+\tfrac{1}{n+1}\le\alpha$, whose usable budget $\alpha-(1-\alpha)/n$ is negative below $n=99$ positive calibration episodes at $\alpha=0.01$ (and $n=19$ at $\alpha=0.05$). The tests used here are design-based and use no calibration set, so that restriction does not apply to them. The 100-cell count called ``above'' in 40--45\% of boundary specimens at every $M$.
+With specimens of up to 4,000 cells (exploratory; 17,600 specimens), validity was unchanged (false certification at most 0.040 at $\alpha=0.05$ and 0.007 at $\alpha=0.01$). Cost in cells was governed mainly by the margin (Table~\ref{tab:mscale}): at margins of 0.05 or more it changed by at most 40\% between 1,000 and 4,000 cells and was within 20\% of Wald's approximation $\log(1/\alpha)/\mathrm{KL}(p\,\|\,\theta)$ \cite{wald1945}, whereas within 0.02 of the threshold it still grew with $M$, towards about 1,400 ($\theta=0.10$) and 2,500 cells ($\theta=0.20$). The near-census observed at $M=500$ was therefore a small-specimen effect. All savings are counts of expert-verified cells; classifier-driven sampling still needs every field to be imaged and scored.
+
+At fixed budgets (exploratory; 2,000-cell specimens), we compared three-way decisions: ``above'', ``below'' or ``undetermined'' (Table~\ref{tab:decision}). Within 0.02 of the threshold a 100-cell count was wrong in 18--37\% of specimens. Valid procedures were wrong in at most 0.7\% of specimens off the threshold, but at those margins returned ``undetermined'' in 61--98\% of specimens at budgets up to 500 cells.
+
+\begin{figure}[!htbp]
+\centering\includegraphics[width=\linewidth]{figures/fig3_partIII.pdf}
+\caption{Certified threshold decisions (RQ3), confirmatory run (500-cell specimens, $\alpha=0.05$, designs paired on the same specimen). (a) False certification at $p=\theta$ with 95\% Clopper--Pearson intervals (log scale); CV: control variate; the uncorrected design analyses classifier-ranked fields as uniform draws. (b, c) Median cells to certification with interquartile bands; specimens that never certify count as 500 cells.}\label{fig:partIII}
+\end{figure}
 
 \begin{table}[!htbp]
 \centering\small
-\caption{Median cells to certify $p>\theta$ against population size $M$ (exploratory; $\alpha=0.05$; 400 specimens per cell, $m=5$ cells per field). U: ALPHA with uniform sampling; C: betting with classifier-driven sampling. Approx.: $\log(1/\alpha)/\mathrm{KL}(p\|\theta)$. $^\dagger$Blast images reused, which affects only C.}\label{tab:mscale}
-\begin{adjustbox}{max width=\linewidth}
+\caption{Median cells to certify $p>\theta$ against specimen size $M$ (exploratory; $\alpha=0.05$; 400 specimens per cell; 5 cells per field). U: ALPHA with uniform sampling; C: betting with classifier-driven sampling; Approx.: $\log(1/\alpha)/\mathrm{KL}(p\|\theta)$. $^\dagger$Blast images reused, which affects only C.}\label{tab:mscale}
 \begin{tabular}{@{}llrrrrrrrrr@{}}
 \toprule
  & & \multicolumn{2}{c}{$M=500$} & \multicolumn{2}{c}{$M=1{,}000$} & \multicolumn{2}{c}{$M=2{,}000$} & \multicolumn{2}{c}{$M=4{,}000$} & \\
@@ -309,110 +162,42 @@ $\theta$ & $p$ & U & C & U & C & U & C & U & C & Approx.\\
 0.20 & 0.30 & 100 & 60 & 115 & 65 & 120$^\dagger$ & 65$^\dagger$ & 125$^\dagger$ & 70$^\dagger$ & 106\\
 \bottomrule
 \end{tabular}
-\end{adjustbox}
 \end{table}
-
-\paragraph{ALPHA's prior guess (exploratory).} Every ALPHA run above uses the default prior guess for the alternative in our implementation, a blast proportion of $1/2+\theta/2$ shrunk towards the running mean. Any guess fixed in advance gives a valid test, so the choice affects only cost. On 4,400 new 500-cell specimens, guesses of $\theta+0.05$ and $\theta+0.10$ kept the test valid (false certification at most 0.003) but made ALPHA slower at every margin, by a factor of up to 2.2 at a margin of 0.10 (e.g.\ 145 or 120 instead of 65 cells at $p=0.20$, $\theta=0.10$). With field-level observations, the reported ALPHA costs are therefore not inflated by the default. For individually sampled cells the reverse holds (next paragraph).
-
-\paragraph{Decisions at a fixed budget (exploratory).} The comparison with conventional counts above is made at $p=\theta$, where every decisive call is wrong by construction. A more useful question is how often each procedure is right, wrong or undecided at a given budget, on both sides of the threshold. On 2,000-cell specimens, cells were sampled individually and at random, and after $n\in\{100,200,500\}$ cells (2,000 specimens per $(\theta,p)$) three procedures returned ``above'', ``below'' or ``undetermined'':
-\begin{itemize}
-\item a sequential procedure running two one-sided ALPHA tests at $\alpha/2$ each, for $p>\theta$ and $p<\theta$, with prior guesses $\theta\pm0.05$ fixed in advance;
-\item exact one-sided hypergeometric tests at $\alpha/2$ each, evaluated once at $n$ and valid only for that $n$;
-\item the conventional count, which never returns ``undetermined''.
-\end{itemize}
-Table~\ref{tab:decision} gives the results. At 100 cells and within 0.02 of the threshold, the conventional count was wrong in 18--37\% of specimens. The valid procedures were wrong in at most 0.7\% of specimens off the threshold, and in at most 4.7\% exactly on it (bound $\alpha$), but at those margins they returned ``undetermined'' in 61--98\% of specimens at budgets up to 500 cells. The fixed-$n$ test was decisive more often than the sequential one at every budget; the sequential test pays for being valid at every $n$. With ALPHA's default prior guess, which suits field-level observations, the sequential procedure certified ``above'' far less often: at $p=0.15$, $\theta=0.10$ and $n=500$, in 31\% instead of 86\% of specimens. Near the threshold, then, the honest output of a few hundred cells is usually ``undetermined''; a conventional count turns that into a definite answer that is wrong in up to a third of cases.
 
 \begin{table}[!htbp]
 \centering\small
-\caption{Three-way decisions after a fixed number $n$ of individually sampled cells (exploratory; $M=2{,}000$; 2,000 specimens per row; $\alpha=0.05$). Conv.: share wrong for the conventional count. Exact: one-sided hypergeometric tests at $\alpha/2$, valid at this $n$ only. Seq.: two one-sided ALPHA tests at $\alpha/2$, valid at every $n$. ``Undetermined'' is $1-{}$correct${}-{}$wrong. At $p=\theta$ any decisive call is wrong.}\label{tab:decision}
-\begin{adjustbox}{max width=\linewidth}
-\begin{tabular}{@{}ll r rr rr r rr rr@{}}
+\caption{Three-way decisions after $n$ individually sampled cells (exploratory; $M=2{,}000$; 2,000 specimens per row; $\alpha=0.05$). Conv.: share wrong for the conventional count. Exact: one-sided hypergeometric tests at $\alpha/2$, valid at this $n$ only. Seq.: two one-sided sequential tests at $\alpha/2$, valid at every $n$. Entries for Exact and Seq.\ are shares correct\,/\,wrong; the rest is ``undetermined''.}\label{tab:decision}
+\begin{tabular}{@{}llccccc@{}}
 \toprule
- & & \multicolumn{5}{c}{$n=100$} & \multicolumn{5}{c}{$n=500$}\\
-\cmidrule(lr){3-7}\cmidrule(l){8-12}
- & & Conv. & \multicolumn{2}{c}{Exact} & \multicolumn{2}{c}{Seq.} & Conv. & \multicolumn{2}{c}{Exact} & \multicolumn{2}{c}{Seq.}\\
-$\theta$ & $p$ & wrong & corr. & wrong & corr. & wrong & wrong & corr. & wrong & corr. & wrong\\
+ & & \multicolumn{3}{c}{$n=100$} & \multicolumn{2}{c}{$n=500$}\\
+\cmidrule(lr){3-5}\cmidrule(l){6-7}
+$\theta$ & $p$ & Conv. & Exact & Seq. & Exact & Seq.\\
 \midrule
-0.10 & 0.05 & 0.01 & 0.42 & 0 & 0.21 & 0 & 0 & 1.00 & 0 & 0.95 & 0\\
-0.10 & 0.08 & 0.18 & 0.08 & $<$0.01 & 0.04 & $<$0.01 & 0.03 & 0.39 & 0 & 0.15 & $<$0.01\\
-0.10 & 0.10 & 1.00 & 0 & 0.04 & 0 & 0.02 & 1.00 & 0 & 0.04 & 0 & 0.03\\
-0.10 & 0.12 & 0.33 & 0.08 & $<$0.01 & 0.02 & $<$0.01 & 0.06 & 0.34 & 0 & 0.15 & $<$0.01\\
-0.10 & 0.15 & 0.10 & 0.30 & $<$0.01 & 0.12 & $<$0.01 & 0 & 0.96 & 0 & 0.86 & $<$0.01\\
-\addlinespace
-0.20 & 0.15 & 0.06 & 0.25 & 0 & 0.08 & 0 & 0 & 0.92 & 0 & 0.66 & 0\\
-0.20 & 0.18 & 0.24 & 0.07 & $<$0.01 & 0.02 & $<$0.01 & 0.08 & 0.23 & 0 & 0.09 & $<$0.01\\
-0.20 & 0.20 & 1.00 & 0 & 0.05 & 0 & 0.01 & 1.00 & 0 & 0.04 & 0 & 0.03\\
-0.20 & 0.22 & 0.37 & 0.05 & 0.01 & 0.02 & $<$0.01 & 0.12 & 0.25 & $<$0.01 & 0.08 & $<$0.01\\
-0.20 & 0.25 & 0.14 & 0.18 & 0 & 0.06 & 0 & $<$0.01 & 0.87 & 0 & 0.59 & 0\\
+0.10 & 0.08 & 0.18 & 0.08\,/\,$<$0.01 & 0.04\,/\,$<$0.01 & 0.39\,/\,0 & 0.15\,/\,$<$0.01\\
+0.10 & 0.12 & 0.33 & 0.08\,/\,$<$0.01 & 0.02\,/\,$<$0.01 & 0.34\,/\,0 & 0.15\,/\,$<$0.01\\
+0.10 & 0.15 & 0.10 & 0.30\,/\,$<$0.01 & 0.12\,/\,$<$0.01 & 0.96\,/\,0 & 0.86\,/\,$<$0.01\\
+0.20 & 0.18 & 0.24 & 0.07\,/\,$<$0.01 & 0.02\,/\,$<$0.01 & 0.23\,/\,0 & 0.09\,/\,$<$0.01\\
+0.20 & 0.22 & 0.37 & 0.05\,/\,0.01 & 0.02\,/\,$<$0.01 & 0.25\,/\,$<$0.01 & 0.08\,/\,$<$0.01\\
+0.20 & 0.25 & 0.14 & 0.18\,/\,0 & 0.06\,/\,0 & 0.87\,/\,0 & 0.59\,/\,0\\
 \bottomrule
 \end{tabular}
-\end{adjustbox}
 \end{table}
 
-\paragraph{Confusable background (exploratory).} Part III backgrounds came from blast-free patients and consist mostly of segmented neutrophils and lymphocytes. In leukaemic blood, immature granulocytes and reactive lymphocytes are common, and they are the classes the probe most often mistakes for blasts (false-positive rates 0.37, 0.24 and 0.19 for metamyelocytes, myelocytes and reactive lymphocytes). Drawing 10\% or 20\% of each specimen's non-blast cells from these classes left every design valid (false certification at most 0.038 at $p=\theta$, 1,000 specimens per condition). It raised the cost of classifier-driven sampling, from 75 to 85 and 105 cells at $p=0.15$, $\theta=0.10$, and from 140 to 150 and 175 cells at $p=0.25$, $\theta=0.20$, but classifier-driven sampling remained cheaper than uniform ALPHA in every condition (160--240 cells at a margin of 0.05). The uniform designs see only labels and were unaffected.
-
-\begin{figure}[!htbp]
-\centering\includegraphics[width=\linewidth]{figures/fig3_partIII.pdf}
-\caption{Part III (RQ3), confirmatory run (500-cell specimens; $\alpha=0.05$; designs paired on the same specimen). (a) False-certification rate at $p=\theta$ with 95\% Clopper--Pearson intervals, on a log scale. CV: control variate. The uncorrected design ranks fields by classifier score but analyses them as if uniformly sampled. (b, c) Median cells to certification, with interquartile bands; specimens that never certify are counted as 500 cells.}\label{fig:partIII}
-\end{figure}
-
 \subsection{Where the assumptions break (RQ4)}\label{sec:rq4}
-\paragraph{Classifier error is not exchangeable (exploratory, KU-Optofil).}
-\begin{itemize}
-\item Blast recall at 95\% specificity varied across the 11 blast patients from 0.39 to 1.00 (homogeneity $\chi^2_{10}=61.1$, Monte-Carlo $p=0.0002$).
-\item False-positive rates across blast-free patients were overdispersed 6.6-fold relative to a common binomial rate.
-\item Errors concentrated in the immature granulocyte series and in lymphoid cells.
-\item Within cell class, errors were associated with stain colour and contrast.
-\end{itemize}
-Certification remained valid even when blasts were drawn only from the low-recall patients (false certification $\le0.007$). Classifier-driven certification at $p=0.15$ then needed 2.3 times as many cells as with blasts from high-recall patients (140 vs.\ 60).
+Table~\ref{tab:bench} summarises validity and cost across the eight conditions. Wherever their assumptions held, the design-based tests kept false certification at or below 0.031; every analysis without a design-based guarantee failed in at least one condition, often while looking acceptable in another.
 
-\paragraph{Acquisition shift (confirmatory, RV-PBS).} Applied unchanged to RV-PBS crops, the KU-trained probe's blast recall fell from 0.906 to 0.340 [0.250, 0.421] (H4a, supported), and its AUC from 0.979 to 0.786. Its false-positive rate did not rise: 0.058 [0.037, 0.081] vs.\ 0.050 (H4b, \textbf{not supported}). The certificate built on these shifted scores remained valid, with 3 false certifications in 1,000 specimens (H4c, supported). Efficiency, however, reversed. On fresh episodes (H6d, supported), classifier-driven sampling needed a median of 195 cells, against 110 for uniform sampling, at $p=0.20$ (paired Wilcoxon $p=1.5\times10^{-54}$). A plausible explanation is that a classifier which misses most blasts steers the sample away from them.
+\emph{Classifier error and acquisition shift.} On KU-Optofil, blast sensitivity at 95\% specificity varied across the 11 blast patients from 0.39 to 1.00. Applied unchanged, the classifier's sensitivity fell to 0.34 [0.25, 0.42] on RV-PBS and 0.63 [0.62, 0.64] on MLL23, while its false-positive rate barely rose (0.058 and 0.060, against 0.050). Every design stayed valid, but efficiency did not transfer: classifier-driven sampling needed 0.76 [0.70, 0.81] times the cells of uniform sampling on MLL23 at $p=0.15$, and 1.77 times on RV-PBS at $p=0.20$. A 50\% uniform mixture stayed valid and reduced the RV-PBS excess to $+23\%$ [11, 30], missing the pre-registered bound of 20\%.
 
-\paragraph{A defensive mixture (confirmatory).} We mixed classifier-driven sampling with 50\% uniform sampling ($q_t=\tfrac12 q^{\text{prop}}_t+\tfrac12 q^{\text{unif}}_t$). The test remained valid on both sources (false certification 0.001--0.014; H6a). In distribution, the mixture retained 58--73\% of the classifier-driven saving (H6c, supported). Under shift it reduced the excess cost at $p=0.20$ from $+77\%$ to $+23\%$ (ratio 1.23, 95\% CI [1.11, 1.30]). This missed the pre-registered bound of 1.20, so H6b was \textbf{not supported}. With a 25\% uniform share, the mixture gave essentially no protection under shift (ratio 1.73).
+\emph{Clustering and the unit of analysis.} Under strong synthetic clustering, analysing the cells of sampled fields as independent draws certified falsely in up to 0.478 of boundary specimens, whereas field-level designs stayed valid. In 116 exhaustively annotated marrow regions of 75 patients, blasts were clustered but weakly (bias-corrected intraclass correlation 0.013 [0.002, 0.028] at the quadrant scale; Fig.~\ref{fig:rq4}b). On the real arrangements, the cell-level analysis gave 0.051 overall, close to $\alpha$, yet exceeded 0.05 in 27 of 75 specimens (significantly in 21) and reached 0.335, whereas the weighted test of Proposition~\ref{prop:unequal}(a) stayed at or below 0.01 in every specimen. Validity is a statement about each specimen, and a pooled rate can hide failures.
 
-\paragraph{A second external source (exploratory, MLL23).} Applied unchanged to MLL23 images, the KU-trained probe had an AUC of 0.915 and a blast recall of 0.63 [0.62, 0.64] at the fixed threshold. Its false-positive rate was 0.060 [0.057, 0.062], highest for neoplastic lymphocytes (0.47), promyelocytes (0.22) and reactive lymphocytes (0.18). These intervals are bootstraps over images, because the release has no patient identifiers, and are therefore too narrow. In specimens built as for RV-PBS (100 fields of 5 cells, $\theta=0.10$), all three designs remained valid, with false certification of 0.001--0.011 in 1,000 boundary specimens. Classifier-driven sampling needed 0.76 [0.70, 0.81] times the cells of uniform sampling at $p=0.15$ (medians 215 vs.\ 283) and 0.90 [0.82, 1.05] at $p=0.20$ (95 vs.\ 105); the 50\% mixture needed 0.78 and 0.81 times. Across the three sources, the saving from classifier-driven sampling thus shrank as blast recall fell: 0.28--0.73 times the cells of uniform sampling in distribution (recall 0.91), 0.76--0.90 on MLL23 (0.63), and 1.77 times on RV-PBS (0.34). The sources differ in more than recall, so this ordering describes three cases and is not a dose--response estimate.
+\emph{Unequal field sizes.} With the field sizes of marrow quadrants (12--29 cells, interquartile range), averaging field proportions certified falsely in 0.38 and 0.32 of boundary specimens even with blasts placed independently of size, and in every specimen with blasts enriched in small fields; both constructions of Proposition~\ref{prop:unequal} stayed at or below 0.005.
 
-\paragraph{Spatial clustering and the unit of analysis.} We placed blasts in a few ``hot'' fields of 5 cells, at nominal densities of 0.6 and 1.0, so that clustering was strong (E3.1, confirmatory, 18,000 specimens).
-\begin{itemize}
-\item The three field-level designs remained valid in all 36 pre-registered cells, with a maximum false-certification rate of 0.042 (H5a).
-\item Analysing the cells of uniformly sampled fields \emph{as if each had been drawn individually} was valid when blasts were scattered (0.029 and 0.041). It certified falsely in 0.327 [0.298, 0.357] ($\theta=0.10$) and 0.478 [0.447, 0.509] ($\theta=0.20$) of boundary specimens under the strongest clustering (H5b).
-\item Clustering doubled the cost of uniform field sampling, from 160 to 345 cells at $p=0.15$, $\theta=0.10$ (H5c). It lowered the cost of classifier-driven sampling, from 80 to 55 cells, because the classifier finds the hot fields.
-\end{itemize}
-
-\paragraph{Clustering in real smears (confirmatory, BoneMarrowWSI).} The eligible data comprised 75 patients, 116 fully labelled regions of interest, 9,375 nucleated cells and 5,841 blasts.
-\begin{itemize}
-\item Blasts were clustered within regions (H7a, supported). The intraclass correlation across the four quadrants of a region (about $113\,\mu$m) was 0.032 [0.016, 0.050] (permutation $p=0.024$). At the $4\times4$ scale (about $56\,\mu$m) it was 0.098 (permutation $p=0.0005$). Nearest-neighbour blast enrichment was also significant ($p=0.0005$).
-\item No difference between the two regions of a patient was detected.
-\item After the run we noticed that the permutation null of the ANOVA estimator is not centred at zero: with binary labels in small, unequal subfields its mean is 0.018 at the quadrant scale and 0.055 at the $4\times4$ scale. The permutation tests are unaffected, but the raw ICC overstates clustering. The excess over the permutation-null mean, with a patient bootstrap that recomputes the null in every resample (exploratory), was 0.013 [0.002, 0.028] at the quadrant scale and 0.043 [0.018, 0.067] at the $4\times4$ scale. Clustering is therefore present but weak.
-\item In a pre-specified Beta-binomial model with 17 cells per field, the cell-level mis-analysis certified falsely in 0.033--0.043 ($\theta=0.10$) and 0.035--0.051 ($\theta=0.20$) of boundary specimens between no clustering and an ICC of 0.016, the grid points that bracket the bias-corrected estimate, and in up to 0.061 and 0.095 at 0.032, just above its upper limit (Figure~\ref{fig:rq4}b). Across the confidence range of the raw ICC (0.016--0.050), which is biased upward, the pre-specified figures were 0.043--0.070 and 0.051--0.103. Field-level analysis stayed $\le0.014$.
-\item On the same ICC scale, the E3.1 stress arrangements (0.5--1.0) are one to two orders of magnitude more clustered than these monolayer regions (Figure~\ref{fig:rq4}b).
-\end{itemize}
-
-\paragraph{Observed validity on real arrangements (exploratory).} The Beta-binomial model above can be replaced by the real specimens. Each of the 75 patients was treated as one specimen: all nucleated cells of their eligible regions, at their real positions and with their consensus labels, with the $4\times4$ subregions as fields. Fields held a median of 5 cells (maximum 33), and specimens a median of 22 fields and 105 cells. Setting each specimen's threshold to its own blast proportion, $\theta_s=p_s$, makes every specimen an exact null, so every certification is false. $\theta_s$ is not a diagnostic threshold; the construction tests validity, which a design-based test must have for every $\theta$, not decisions at the fixed WHO or ICC thresholds. These are bone-marrow specimens, so the analysis validates the method on real arrangements; it does not establish clinical validity on peripheral blood. Each design was run along 400 independent sampling orders per specimen.
-\begin{itemize}
-\item The weighted test with known counts (Proposition~\ref{prop:unequal}a) certified falsely in 0.001 of runs overall and in at most 0.01 of runs in any specimen. The bounded assorter ($m_{\max}=33$) never did. ALPHA on individually sampled cells, which a microscope cannot do, gave 0.027 overall and at most 0.055 in any specimen, none significantly above 0.05.
-\item The cell-level analysis of field samples gave 0.051 [0.049, 0.054] overall, close to $\alpha$ and to the model's prediction. Per specimen, however, it exceeded 0.05 in 27 of 75 specimens, significantly so in 21 (one-sided binomial tests at 0.05; about 4 would be expected by chance if every rate were exactly 0.05), and reached 0.335. In the 23 specimens with $p_s\le0.20$ it averaged 0.035, with a maximum of 0.102.
-\item Averaging field proportions gave 0.062 overall, but certified falsely in every run in two specimens, where the mean of the field proportions exceeds $p_s$.
-\end{itemize}
-A false-certification rate pooled over specimens can therefore sit at $\alpha$ while the rate in individual specimens is several times larger. Validity is a statement about each specimen, and only the field-level designs met it in every specimen. These are small, mostly high-blast pediatric marrow specimens: 46 of 75 had $p_s>0.5$ and only two lay between 0.05 and 0.30, so the arrangements of specimens near the diagnostic thresholds are barely represented. Because the specimens are small, certifying a margin of 0.05 with the known-count test required examining a median of 97\% of the cells (52 specimens with $p_s\ge0.10$); the bounded assorter, whose margin shrinks by $\bar m/m_{\max}\approx0.15$, almost never certified (0.7\% of runs).
-
-\paragraph{Imperfect verification (exploratory, BoneMarrowWSI reader labels).} Every analysis so far takes the verifier's label as the truth. BoneMarrowWSI also publishes the label from each reading round: every cell was read by a first and a second reader, and further readers were asked only when they disagreed; the conversion documentation of the release states that which person read which cell is not recorded \cite{hofener2025bmwsi}. Within the eligible regions, the second reader called a blast in 1.1\% [0.7, 1.7] of the cells that the first called a counted non-blast, and a non-blast in 1.2\% [0.8, 1.6] of those the first called a blast (patient bootstrap). In a further 2.7\% of boxes one reader counted the cell and the other did not (for example calling it damaged or a smudge cell), which changes the denominator. We then repeated the real-arrangement analysis with the first reader as the verifier and the consensus as the truth (83 specimens, $\theta_s=p_s$, 400 orders each). The field counts and weights are the first reader's: a cell enters a field's count if the first reader counted it, fields with no such cell are dropped, and the consensus defines $p_s$. Disagreements about whether a cell belongs in the denominator are therefore part of the verifier error measured here.
-\begin{itemize}
-\item The first reader's blast proportion differed from the consensus by a median of 0.005 per specimen; the 90th percentile was 0.033 and the maximum 0.075. On average it was lower ($-0.007$).
-\item The weighted test then certified ``$p>\theta_s$'' falsely in 0.28 of runs (more than 0.05 in 23 specimens) and ``$p<\theta_s$'' in 0.63 (52 specimens). The test was valid for the reader's count; the reader's count differed from the truth.
-\item Inflating the threshold as in Remark~\ref{rem:verif}, with $\beta_0$ and $\beta_1$ set to the readers' disagreement rates, was not enough (0.16 and 0.42). In this sample a fixed margin of 0.03 was enough for ``above'' (testing $\tilde p>\theta_s+0.03$ certified falsely in 0.0003 of runs, at most 0.013 in any specimen) but not for ``below'', which still failed in 3 specimens with a margin of 0.05, because this reader missed blasts more often than it added them.
-\end{itemize}
-These margins were selected on the same 83 specimens used to evaluate them, are specific to the direction of the claim, and come from small, mostly high-blast marrow specimens read in rounds rather than by one identified person; they are not a validated correction. The main conclusion does not depend on them: a single reader's errors are of the same size as the margins at which certification is affordable (Table~\ref{tab:decision}), so a certificate verified by one reader certifies that reader's count, and inference about the consensus proportion requires a separately established bound on verifier error.
-
-\paragraph{Unequal field sizes (exploratory).} Real fields differ in size: BoneMarrowWSI quadrants hold 12--29 nucleated cells (interquartile range; coefficient of variation 0.62). In real regions, the mean of quadrant proportions differed from the region's blast proportion by $-0.004$ on average $[-0.008,0.001]$ (patient bootstrap, 116 regions). Proportion and size were barely related (within-region Spearman correlation 0.04), but the difference exceeded 0.03 in absolute value in 10\% of regions. In simulated specimens with these field sizes (about 1,300 cells), averaging field proportions with ALPHA certified falsely in 0.38 $[0.35,0.41]$ ($\theta=0.10$) and 0.32 $[0.29,0.35]$ ($\theta=0.20$) of boundary specimens, even with blasts placed independently of size. With blasts enriched in small fields it certified falsely in every specimen. The reason is that the analysis tests the mean of proportions, which exceeds $\theta$ in about half of the specimens with $p=\theta$; the test is valid for that quantity, but it is the wrong quantity. Both constructions of Proposition~\ref{prop:unequal} stayed valid in every condition, with false certification at most 0.005. They differ in cost. With known counts, classifier-driven sampling certified $p=0.15$ against $\theta=0.10$ with a median of 297 cells (23\% of the specimen), and uniform sampling with 646. The bounded assorter with $m_{\max}=91$, the largest quadrant observed, needed 631 cells with betting and 1,031 with ALPHA, because the bound shrinks the margin by $\bar m/m_{\max}\approx0.24$. Recording each field's cell count, which needs a detector but not a classifier, is therefore worth a large saving.
-
-\paragraph{One benchmark across conditions.} Table~\ref{tab:bench} puts the designs and conditions of this section side by side, from the stored results. Two patterns hold in every column. First, wherever their assumptions held, the design-based tests kept false certification at or below 0.031; the single reader is the one condition in which an assumption of the guarantee itself failed, and there the test certified the reader's count, not the truth. Second, every analysis without a design-based guarantee failed in at least one condition, often while looking acceptable in another: treating the cells of fields as individual draws gave 0.041 in distribution and 0.051 pooled over the real arrangements, but 0.478 under strong clustering and 0.335 in one real specimen; averaging field proportions is exact with equal fields and gave 0.379 with unequal ones. Cost, by contrast, depended on the condition. Classifier-driven sampling was the cheapest design in distribution, under clustering and with a confusable background (55--105 cells against 160--345 for uniform ALPHA). It kept part of its advantage on MLL23 (215 vs.\ 283 cells for uniform betting), and on RV-PBS it was no cheaper than uniform betting at this margin (265 vs.\ 260) and dearer at $p=0.20$ (195 vs.\ 110). Validity transferred across conditions; efficiency did not.
+\emph{Verifier error.} The second reader called a blast in 1.1\% [0.7, 1.7] of the cells the first reader called a counted non-blast, and a non-blast in 1.2\% [0.8, 1.6] of the first reader's blasts; in a further 2.7\% of cells only one reader counted the cell. With the first reader as verifier (83 specimens), the reader's blast proportion differed from the consensus by a median of 0.005 (maximum 0.075), and the weighted test certified ``$p>\theta_s$'' falsely in 0.28 of runs and ``$p<\theta_s$'' in 0.63. The correction of Remark~\ref{rem:verif} with the readers' disagreement rates was not enough (0.16 and 0.42). A margin of 0.03 sufficed for ``above'' in this sample, but ``below'' still failed in three specimens at 0.05; these margins were selected on the same specimens, are direction-specific and are not a validated correction.
 
 \begin{table}[!htbp]
 \centering\footnotesize
-\setlength{\tabcolsep}{2.3pt}
-\caption{One benchmark across conditions (a summary of stored results, produced by \texttt{scripts/46\_benchmark\_table.py}; no new simulation). Top: share of specimens in which ``$p>\theta$'' was certified at the exact null $p=\theta$ ($\alpha=0.05$), the larger of the values at $\theta=0.10$ and $\theta=0.20$ where both were run (400--1,000 specimens each); for BoneMarrowWSI, the rate pooled over all runs with $\theta_s=p_s$ and, in brackets, the largest rate in any specimen (75 and 83 specimens, 400 sampling orders each). Bottom: median cells to certify $p=0.15$ against $\theta=0.10$ (300--1,000 specimens); a specimen that never certifies counts as all of its cells. Specimens have 500 cells (100 fields of 5), about 1,300 cells with unequal fields, and a median of 105 real cells in BoneMarrowWSI. ``Stressed'': the assumption the condition tests (unit: the sampled unit is the analysed unit; target: the cell-weighted $p$). C: from a confirmatory run; X: exploratory. ---: not run, or not applicable. $^a$With unequal fields and in BoneMarrowWSI, ALPHA uses the bounded assorter (Proposition~\ref{prop:unequal}b) and the betting designs use the known counts (Proposition~\ref{prop:unequal}a). $^b$With equal fields this analysis coincides with ALPHA; with blasts enriched in small fields it certified falsely in every specimen. In BoneMarrowWSI, uniform betting needed a median of 97\% of the cells at a margin of 0.05; with the single reader as verifier, a margin of 0.03 gave 0.0003 [0.013]. The in-distribution mixture comes from a separate confirmatory run, in which uniform and classifier-driven betting needed 260 and 75 cells.}\label{tab:bench}
-\vspace{3pt}
+\setlength{\tabcolsep}{2.6pt}
+\caption{Validity and cost across conditions (summary of stored results). Top: share of specimens in which ``$p>\theta$'' was certified at the exact null $p=\theta$ ($\alpha=0.05$; larger of $\theta=0.10$ and $0.20$ where both were run; 400--1,000 specimens). BoneMarrowWSI: rate pooled over runs with $\theta_s=p_s$, with the largest specimen rate in brackets (75 and 83 specimens, 400 orders each). Bottom: median cells to certify $p=0.15$ against $\theta=0.10$; uncertified specimens count all their cells. Specimens hold 500 cells, about 1,300 with unequal fields, and a median of 105 real cells in BoneMarrowWSI. Stressed: the assumption the condition tests (unit: analysed unit equals sampled unit; target: cell-weighted $p$). C/X: confirmatory/exploratory run. ---: not run or not applicable. $^a$With unequal fields and in BoneMarrowWSI, ALPHA uses the bounded assorter and betting the known counts (Proposition~\ref{prop:unequal}). $^b$Coincides with ALPHA for equal fields; 1.00 with blasts enriched in small fields. Single reader with a margin of 0.03: 0.0003 [0.013].}\label{tab:bench}
 \begin{adjustbox}{max width=\linewidth}
 \begin{tabular}{@{}l cccc cc cc@{}}
 \toprule
@@ -446,19 +231,21 @@ Betting, 50\% mixture & 145 & --- & --- & --- & 285 & 220 & --- & ---\\
 
 \begin{figure}[!htbp]
 \centering\includegraphics[width=\linewidth]{figures/fig4_rq4.pdf}
-\caption{RQ4. (a) Median cells to certify $p>0.10$ in distribution (KU-Optofil, cross-fitted scores) and under acquisition shift (RV-PBS, KU-trained probe); 95\% bootstrap intervals. All designs keep false certification $\le0.014$. (b) False certification at $p=\theta$ when the cells of sampled fields are analysed as individual draws. Open markers: composites with scattered or hot-field arrangements (5 cells per field). Lines: Beta-binomial model (17 cells per field). Solid band and line: the bias-corrected clustering of real bone-marrow regions (excess intraclass correlation over its permutation null, 0.013 [0.002, 0.028]; exploratory). Hatched: 95\% CI of the raw estimate, shown only for comparison, which is biased upward. ICC values of 0 are plotted at $10^{-3}$.}\label{fig:rq4}
+\caption{Where the assumptions break (RQ4). (a) Median cells to certify $p>0.10$ in distribution (KU-Optofil) and under acquisition shift (RV-PBS); all designs keep false certification at or below 0.014. (b) False certification at $p=\theta$ when the cells of sampled fields are analysed as individual draws: composites with scattered or clustered arrangements (open markers) and a Beta-binomial model with 17 cells per field (lines). Solid band and line: bias-corrected clustering of real marrow regions (exploratory); hatched: the raw, upward-biased estimate, for comparison.}\label{fig:rq4}
 \end{figure}
+
+\subsection{Pre-registered hypotheses}
+Of the 20 pre-registered hypotheses, 17 were supported (Table~\ref{tab:hyp}).
 
 \begin{table}[!htbp]
 \centering\small
-\caption{Pre-registered hypotheses and verdicts. All confirmatory data were generated after the corresponding protocol was frozen (\ref{app:audit}). Type: E, an empirical claim; V, a check of the implementation or of a property that holds by theorem.}\label{tab:hyp}
-\begin{adjustbox}{max width=\linewidth}
-\begin{tabular}{@{}lllp{7.6cm}l@{}}
+\caption{Pre-registered hypotheses and verdicts. Type: E, an empirical claim; V, a check of the implementation or of a property that holds by theorem.}\label{tab:hyp}
+\begin{tabular}{@{}lllL{8.2cm}l@{}}
 \toprule
 RQ & ID & Type & Hypothesis (abridged) & Verdict\\
 \midrule
 1 & H1a & E & InfoDPP-PAC stop point unchanged across rarity levels & supported\\
-1 & H1b & E & Advantage over matched-cost uniform shrinks with dilution & supported (4/4)\\
+1 & H1b & E & Advantage over matched-cost uniform sampling shrinks with dilution & supported (4/4)\\
 1 & H1c & E & No advantage ($\pm0.05$) at $m\ge10$, $k=1$ & \textbf{not supported}\\
 2 & H1d & V & Uniform miss rate equals $1-n/N$ & supported\\
 1 & KT1 & E & Information gain and relevance are separable signals & supported\\
@@ -466,7 +253,7 @@ RQ & ID & Type & Hypothesis (abridged) & Verdict\\
 3 & H3b & E & Uncorrected adaptive selection invalid & supported\\
 3 & H3c & E & Classifier-driven sampling cheaper than uniform & supported\\
 3 & H3d & E & Cost decreases with the margin & supported\\
-4 & H4a & E & Blast recall drops under acquisition shift & supported\\
+4 & H4a & E & Blast sensitivity drops under acquisition shift & supported\\
 4 & H4b & E & False-positive rate rises under shift & \textbf{not supported}\\
 4 & H4c & V & Certificate valid with shifted side information & supported\\
 4 & H5a & V & Field-level tests valid under clustering & supported\\
@@ -479,120 +266,68 @@ RQ & ID & Type & Hypothesis (abridged) & Verdict\\
 4 & H7a & E & Blasts spatially clustered in real smears & supported\\
 \bottomrule
 \end{tabular}
-\end{adjustbox}
 \end{table}
 
 \section{Discussion}
-\paragraph{What is guaranteed, and by what.} Our results separate three quantities that are often reported together:
-\begin{itemize}
-\item \emph{Model confidence} about examined fields, which says nothing about unexamined ones.
-\item \emph{Information saturation}, which concerns the selector's representation of the specimen, not the decision-relevant evidence. Its association with that evidence can disappear, as it did here once cells were pooled into fields, even though the pooled representation still carried the evidence.
-\item \emph{Design-based certification}, which bounds the probability of a false threshold decision for the specific specimen, provided the selection probabilities are known and positive and the labels come from verification.
-\end{itemize}
-Only the third is a guarantee about what was not examined, and it held in every condition we tested, including a classifier that lost two thirds of its blast recall. It also held specimen by specimen on real marrow arrangements, where an invalid analysis looked nominal when its errors were pooled over specimens. Classifier quality determined only how quickly certification was reached, and could make it slower than uniform sampling. Any saving is measured in cells the expert verifies. Classifier-driven sampling needs a score for every field, so the whole specimen must still be imaged and scored; we did not measure imaging or computing cost.
+\subsection{What is guaranteed, and by what}
+Our results separate three quantities that are often reported together. \emph{Model confidence} about examined fields says nothing about unexamined ones. \emph{Information saturation} concerns the selector's representation of the specimen; its association with decision-relevant evidence disappeared once cells were pooled into fields, although the pooled representation still carried the evidence. \emph{Design-based certification} bounds the probability of a false threshold decision for the specific specimen, provided that selection probabilities are known and positive and that labels come from verification. Only the third is a guarantee about what was not examined, and it held in every condition we tested, specimen by specimen; the classifier affected only how quickly certification was reached. Table~\ref{tab:assump} lists what each guarantee assumes and what happened when the assumption was tested.
 
-\paragraph{Practical implications.}
-\begin{itemize}
-\item Certify a proportion against a stated threshold rather than the presence or absence of rare cells; the latter requires a near-census (Theorem~\ref{thm:minimax}). The cost of the former, in expert-verified cells, is governed mainly by the margin to the threshold: at a margin of 0.05, 165--420 cells with uniform sampling and 80--190 with classifier-driven sampling in specimens of 500 to 4,000 cells (Table~\ref{tab:mscale}). Close to the threshold it still grows with specimen size: within 0.02 of it, specimens of 2,000 or 4,000 cells needed 1,040--2,033 cells with uniform sampling and 660--2,043 with classifier-driven sampling.
-\item Record selection probabilities, and never analyse adaptively selected fields as if they had been sampled uniformly.
-\item Analyse at the unit that was sampled. Treating the cells of a sampled field as independent draws is anti-conservative whenever blasts cluster. The effect is modest in the evenly dispersed monolayer we measured and severe under strong clustering. When fields differ in size, do not average field proportions: weight fields by their cell counts if they are known, or use the bounded assorter of Proposition~\ref{prop:unequal}.
-\item Mixing a fixed uniform share into classifier-driven sampling limits, but does not remove, the efficiency loss under shift.
-\item Allow, and report, ``undetermined''. Near the threshold it is the usual honest outcome of a few hundred cells; a count that forces a call is then wrong in up to a third of specimens.
-\item Treat verifier error as part of the claim. A certificate is about the verifier's count; to make it a statement about the true proportion, test against the threshold plus a margin that bounds the verifier's error, established on separate data.
-\item Check validity per specimen. A false-certification rate averaged over specimens can be close to $\alpha$ while some specimens have several times that rate.
-\end{itemize}
+\begin{table}[!htbp]
+\centering\small
+\caption{What each guarantee assumes, and what happened when the assumption was tested.}\label{tab:assump}
+\begin{tabular}{@{}L{4.2cm}L{2.6cm}L{7.4cm}@{}}
+\toprule
+Assumption & Needed for & Test and result\\
+\midrule
+No location information & Theorem~\ref{thm:minimax} & Partly fails on composites; ranking helps on average, through a model (Proposition~\ref{prop:bridge})\\
+Selection probabilities known and positive & Validity & Uncorrected ranking: false certification 0.89--0.99\\
+Analysis unit equals sampled unit & Validity & Cells as draws: up to 0.34 per real specimen, 0.33--0.48 under strong clustering\\
+Target is the cell-weighted $p$ & Validity & Averaging proportions: 0.32--0.38; Proposition~\ref{prop:unequal} restores $\le0.005$\\
+Verified label equals truth & Validity for the true $p$ & Single reader: 0.28 (``above''), 0.63 (``below'')\\
+Accurate classifier, exchangeable errors & Efficiency only & Validity held under shift ($\le0.014$); saving reversed (1.77 times the cells)\\
+\bottomrule
+\end{tabular}
+\end{table}
 
-\paragraph{Limitations.}
-\begin{itemize}
-\item Most specimens are composites of single-cell images from one laboratory. A composite specimen mixes cells from several patients, so it is not a real patient's smear, and all blasts in Parts I and III come from 11 patients. Results varied across patient folds, and intervals over five folds or 11 patients are themselves imprecise. How large InfoDPP-PAC's residual advantage is depends on how the background is composed (pooled or single-host).
-\item Acquisition shift was tested on two external sources, neither with patient identifiers, so their intervals understate uncertainty. RV-PBS is small and was cropped by our own rule, which confounds stain and camera effects with framing.
-\item The confirmatory Part I runs use composites, which have no real geometry. The real-tile analysis uses small specimens (16--32 tiles) from one pediatric marrow cohort, with only 24 low-blast specimens.
-\item The real-smear spatial analysis uses pediatric bone-marrow aspirates, not peripheral blood. Its regions were chosen in the evenly dispersed monolayer, so clustering elsewhere in a smear may be larger. The specimens built from them are small (median 105 cells) and mostly high-blast, so specimens near the diagnostic thresholds are barely represented in the observed-validity analysis.
-\item The main analyses take expert labels as the truth. The verifier-error analysis uses one marrow cohort and reading rounds, not identified experts, and its margins were chosen in-sample and are direction-specific.
-\item The bone-marrow analyses validate the method on real arrangements and real reader labels; they do not establish clinical validity on peripheral blood, and the specimen-level validity analysis tests each specimen against its own proportion, not decisions at fixed diagnostic thresholds.
-\item Costs are counts of expert-verified cells. We did not measure imaging, classification or computing time.
-\item The analyses of population size, unequal fields, the field-level teacher, other saturation rules, real tiles, the second external source, verifier error, real arrangements, fixed budgets, confusable backgrounds and the prior guess were added after the pre-registered analyses and are exploratory.
-\item InfoDPP-PAC's unreported hyperparameters were calibrated to a reported cost, and no code was available, so our reimplementation may differ from the authors' configuration. The two other saturation rules, which have no such free parameters beyond their stopping thresholds, gave the same result.
-\item We used a single frozen encoder.
-\item We did not implement prediction-powered e-values \cite{csillag2025ppe}.
-\end{itemize}
+\subsection{Relation to previous work}
+R\"umke's analysis of the binomial variability of manual differentials \cite{rumke1978} implies imprecision for low-frequency cell types; our conventional-count baseline shows what it means at a diagnostic threshold, where a 100-cell count forces an answer that is wrong in up to a third of specimens. For the absence of rare events, Proposition~\ref{prop:uniform} and Theorem~\ref{thm:minimax} are finite-population, design-based counterparts of the ``rule of three'' \cite{hanley1983}, extended to every strategy without location information. Classification accuracy, the focus of work on automated blast recognition \cite{matek2019aml}, affected efficiency rather than validity in our results. The certificate of InfoDPP-PAC \cite{mittal2026infodpp} bounds residual information in a selection objective and should not be read as a statement about unexamined diagnostic evidence. The anytime-valid tests of Stark \cite{stark2023alpha} and Shekhar et al.\ \cite{shekhar2023rlfa}, developed for election audits, transferred to smear examination in our experiments; their assumptions were at risk in three places: the unit of analysis, the weighting of unequal fields and verifier error. Stratified tests \cite{spertus2024stratified} and prediction-powered inference \cite{angelopoulos2023ppi,csillag2025ppe} were not implemented.
 
-\section{Conclusion}
-When an adaptive system decides how much of a blood smear to examine, information saturation does not certify what remains unexamined. Without location information, certifying the absence of rare evidence requires examining nearly all of the specimen, whatever the strategy. Threshold decisions about the blast proportion, by contrast, can be certified with finite-sample, anytime-valid guarantees. A classifier can reduce the number of cells the expert must verify, but validity rests on the sampling design, the correct unit of analysis and weighting, and the reliability of verification. Extending this analysis to fully annotated peripheral-blood smears, and to verification by haematologists, is the most important next step.
+\subsection{Practical implications}
+First, certify a proportion against a stated threshold rather than the absence of rare cells, which requires a near-census; the cost is governed mainly by the margin, and its dependence on specimen size fades once specimens are large and the margin is not small. Second, record selection probabilities, analyse the unit that was sampled, and weight fields by their cell counts. Third, allow and report ``undetermined'', the honest outcome of a few hundred cells near the threshold. Fourth, treat verifier error as part of the claim: relating a certificate to the true proportion requires a separately established bound on verifier error.
 
-\section*{Data and code availability} All code, the pre-registration and its git history, the audit trail of \ref{app:audit} and the analysis outputs are available in the repository \url{https://github.com/Afridi-7/certified-adaptive-pbs}; a release will be archived on Zenodo with a DOI. KU-Optofil, BoneMarrowWSI-PediatricLeukemia and MLL23 are public datasets under CC BY 4.0. RV-PBS is publicly distributed by its authors without a stated licence and was used for research only.
+\subsection{Limitations}
+Most specimens are composites from one laboratory, and all KU-Optofil blasts come from 11 patients, so cost and miss-rate comparisons are imprecise. The spatial, tile and verifier analyses use small, mostly high-blast pediatric bone-marrow specimens, not peripheral blood; they validate the method on real arrangements and reader labels but do not establish clinical validity, and the specimen-level analysis tests each specimen against its own blast proportion, not fixed diagnostic thresholds. The external datasets lack patient identifiers, so their intervals understate uncertainty; reading rounds are not identified experts; and several analyses were added after the pre-registered ones and are exploratory. InfoDPP-PAC's unreported hyperparameters were calibrated to a cost, although two other saturation rules gave the same result. We used a single frozen encoder, and costs count expert-verified cells only, not imaging or computing time.
 
+\section{Conclusions}
+Information saturation does not certify what remains unexamined, and without location information certifying the absence of rare evidence requires examining nearly the whole specimen. Threshold decisions about the blast proportion can instead be certified with finite-sample, anytime-valid guarantees. A classifier can reduce the number of cells the expert must verify, but validity rests on the sampling design, the unit of analysis and weighting, and the reliability of verification. Fully annotated peripheral-blood smears and verification by identified haematologists are the most important next steps.
+
+\section*{Ethics statement}
+This study used only publicly available, de-identified datasets released under open licences (KU-Optofil, MLL23 and BoneMarrowWSI under CC BY 4.0; RV-PBS as distributed by its authors). No new data were collected from human participants and no participant was contacted, so ethical approval and informed consent were not required for this secondary analysis. [To be confirmed against the University of Debrecen's requirements.]
 
 \section*{CRediT authorship contribution statement}
-% To be confirmed by the authors.
+% To be confirmed by both authors.
 \textbf{Qudrat Ullah:} Conceptualization, Methodology, Software, Formal analysis, Investigation, Data curation, Visualization, Writing -- original draft. \textbf{Bal\'azs Harangi:} Supervision, Writing -- review \& editing.
 
 \section*{Declaration of competing interest}
-% To be confirmed by the authors.
 The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.
 
 \section*{Funding}
-[Funding statement to be added by the authors.]
+This research did not receive any specific grant from funding agencies in the public, commercial, or not-for-profit sectors. [Confirm; replace if a scholarship or grant supported the work.]
+
+\section*{Data and code availability}
+All code, the pre-registration with its git history, the audit trail and the analysis outputs are available at \url{https://github.com/Afridi-7/certified-adaptive-pbs}; a release will be archived on Zenodo with a DOI. KU-Optofil, BoneMarrowWSI-PediatricLeukemia and MLL23 are public datasets under CC BY 4.0. RV-PBS is publicly distributed by its authors without a stated licence and was used for research only.
+
+\section*{Supplementary material}
+The supplementary file gives the full methods (Section S1, including the InfoDPP-PAC reimplementation and all deviations), the complete results with all sensitivity and exploratory analyses (Sections S2 and S3), the proof of Theorem~\ref{thm:minimax} (Section S4) and the pre-registration audit trail (Section S5).
 
 \section*{Acknowledgements}
 [To be added.]
 
-% Elsevier policy: any use of generative AI or AI-assisted tools in preparing the manuscript (beyond basic grammar and
-% spelling checks) must be disclosed in a section titled "Declaration of Generative AI and AI-assisted technologies in
-% the writing process", placed directly above the references. To be completed by the authors before submission.
+% Elsevier policy (Guide for Authors, "Declaration of generative AI use"): if AI tools were used in preparing the
+% manuscript, a section titled "Declaration of generative AI and AI-assisted technologies in the manuscript preparation
+% process" must be added here, before the references. To be completed by the authors.
 
 \bibliographystyle{elsarticle-num}
 \bibliography{refs}
-
-\appendix
-\section{Proof of Theorem~\ref{thm:minimax}}\label{app:proof}
-Fix $x$ and a realisation $u$ of the examiner's independent randomness $U$.
-
-\emph{Step 1 (the all-negative path).} Consider the run in which every examined field is negative. Every input to the policy is then determined by $(x,u)$, so the run examines a fixed sequence $a_1(u),\dots,a_{n'}(u)$ with $n'\le n$. Let $A(u)$ be the set of these fields.
-
-\emph{Step 2 (the miss event is determined by $A(u)$).} If $C\cap A(u)=\emptyset$, every field on the all-negative path is negative under $C$, so the actual run follows that path and misses $C$. Otherwise, let $t$ be the first index with $a_t(u)\in C$. Up to step $t-1$ all observations are negative, so the actual run follows the all-negative path through step $t$, examines $a_t(u)\in C$, and does not miss. Hence $\Prb_\pi(M_n\mid x,C)=\Prb_U(C\cap A(U)=\emptyset)$.
-
-\emph{Step 3 (averaging over placements).} Let $C$ be uniform over the $k$-subsets, independent of $U$; Assumption~\ref{ass:A} makes every such $C$ admissible. For fixed $u$, the fraction of $k$-subsets disjoint from $A(u)$ is $\binom{N-|A(u)|}{k}/\binom{N}{k}\ge\binom{N-n}{k}/\binom{N}{k}=h(N,k,n)$, using $\binom{N-n}{k}/\binom{N}{k}=\binom{N-k}{n}/\binom{N}{n}$. Averaging over $U$ gives $\E_C\Prb_\pi(M_n\mid x,C)\ge h(N,k,n)$.
-
-\emph{Step 4 (worst case is at least the average).} $\max_C\Prb_\pi(M_n\mid x,C)\ge\E_C\Prb_\pi(M_n\mid x,C)\ge h(N,k,n)$. Uniform sampling achieves $h$ for every $C$ by Proposition~\ref{prop:uniform}.
-
-For a deterministic policy, $A$ is a single set with $|A|\le n\le N-k$. Placing $C$ inside $[N]\setminus A$ gives miss probability 1. \qed
-
-\section{Deviations from the protocol and from the reimplemented method}\label{app:dev}
-\begin{itemize}
-\item \textbf{InfoDPP-PAC.} We used DINOv2 ViT-S/14 instead of the paper's Phikon (H\&E) encoder, because there is no established open Wright--Giemsa encoder. $\tau$ was calibrated to the reported operating point, and $\rho=1$. A field is the mean of its cells' embeddings. The ``fixed-order'' baseline is not a spatial raster. The seed set has $m_0=5$ fields (the original $m_0\approx0.01n$ would give two of 200); seed fields fit the Gaussian process and are not counted as examined, and counting them changed no conclusion at the 2.4\% operating point (Section~\ref{sec:partI}).
-\item \textbf{Part III.} An early exploratory construction fed importance-weighted draws into ALPHA's unweighted null-mean update, which is not a valid supermartingale. It was withdrawn before the confirmatory protocol and replaced by the construction of Shekhar et al.\ \cite{shekhar2023rlfa}.
-\item \textbf{Part I analysis.} An exploratory batch-overwrite bug, found before the protocol was frozen, had caused early estimates to use three of five folds. It was corrected.
-\item \textbf{Real-smear spatial analysis.} The analyses were run with byte-identical frozen scripts, in a different compute environment because of time limits (SHA-256 hashes recorded). The bias of the ICC estimator was noticed after the run and is reported as exploratory.
-\item \textbf{Teacher.} InfoDPP-PAC's teacher $T(x_i)$ acts on the patch embedding. Our pre-registered runs used the largest cross-fitted cell-level score in a field, which presupposes cell detection. A field-level teacher trained on pooled embeddings was added afterwards (exploratory); it changed InfoDPP-PAC's miss rates by at most 0.04 and lowered the relevance AUC at $m=20$ from 0.896 to 0.827.
-\item \textbf{Sensitivity analyses.} The four pre-registered sensitivity analyses (seeds 20260402--20260405) were run after the main analyses, on 2026-10-19, with the frozen script. An earlier draft had instead cited exploratory runs that reused the main run's random streams. The $\tau$ sweep was run at $k=1$ only, because the protocol does not state its grid. The pre-registered patient-level bootstrap could not be computed from the frozen outputs, which do not record the source patient of each blast; fold-level intervals are reported instead, and the field-level-teacher episodes record patients.
-\item \textbf{Episode counts.} An earlier draft reported 15,000 E3.1 and 5,000 E3.2 specimens. The output files contain 18,000 and 4,500, as Amendment 3 specifies; only the reported totals change.
-\item \textbf{Typed dates.} Several freeze dates typed in the protocol text are wrong (for example 2026-09-26 for tags created on 2026-09-25). They are left unedited so that the text matches the tags; \ref{app:audit} gives the times from git.
-\item \textbf{InfoDPP-PAC operating point.} An earlier draft described 16.3\% as the share of the slide that InfoDPP-PAC examines. It is 16.3\% of a 300-patch budget, about 2.4\% of an average slide's patches (a ratio of reported averages, not the original configuration). The confirmatory calibration is unchanged, and the 2.4\% run is exploratory (seed 20261022).
-\item \textbf{InfoDPP-PAC notation.} The paper defines $K_S$ through the posterior kernel (its Eq.~3) and $\kappa_{ii}$ through the prior kernel. Our implementation uses the posterior kernel throughout, which we take to be the intended reading.
-\item \textbf{Pure information-gain rule.} Setting the relevance weight exactly to zero produces $0\cdot(-\infty)$ in the blended gain; the run uses a weight of $10^{-9}$.
-\item \textbf{Real-tile Part I.} Specimens of 16--32 tiles are too small for InfoDPP-PAC's seed rule ($m_0\approx0.01n$, floor 5 in our implementation); the floor was lowered to 2. $k$-center stopping is not cost-matched, so it is compared with uniform sampling at its own cost. The raster is row by row within a region, regions in random order.
-\item \textbf{Not implemented.} Prediction-powered e-values; haematologist verification.
-\end{itemize}
-
-\section{Pre-registration audit trail}\label{app:audit}
-Times are UTC. Push times are from the local record of pushes to the remote repository, which the hosting service records independently. Output times are file modification times, because result files are not under version control; they are weaker evidence. The frozen scripts and the modules they import are unchanged since their tags (checked with git); modules and options added afterwards, such as the unequal-weight betting test, are listed in the repository.
-
-\begin{center}\small
-\begin{adjustbox}{max width=\linewidth}
-\begin{tabular}{@{}llllr@{}}
-\toprule
-Tag & Commit & Pushed & First confirmatory output & Gap\\
-\midrule
-\texttt{prereg-v1} & b3f114d & 2026-09-25 10:14:53 & none (amended before any run) & --\\
-\texttt{prereg-v1.1} & db4463d & 2026-09-25 10:51:18 & Part I, 10:52:01 & 43\,s\\
-\texttt{prereg-v2} & fc4f1e8 & 2026-09-25 11:36:43 & Part III, 11:55:08; RV-PBS, 11:59:27 & 18\,min\\
-\texttt{prereg-v3} & f014352 & 2026-09-25 12:39:59 & E3.1, 12:41:27 & 1.5\,min\\
-\texttt{prereg-v4} & 40c838d & 2026-09-30 10:22:17 & BoneMarrowWSI, 10:26:58 & 4.7\,min\\
-\bottomrule
-\end{tabular}
-\end{adjustbox}
-\end{center}
-Content hashes of all confirmatory outputs are listed in \texttt{docs/PREREG\_AUDIT.md}. Re-running one Part I cell in a separate environment reproduced the stored episodes: miss indicators were identical, and two of 1,000 stop steps differed by one field because $\tau$ differed in the sixth significant digit.
 
 \end{document}
