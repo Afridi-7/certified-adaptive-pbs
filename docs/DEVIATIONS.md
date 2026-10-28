@@ -199,3 +199,32 @@ letter, title page and highlights. Nothing frozen was modified.
 - **Compact (JBHI) version.** To stay within 8 pages after the corrections, the assumptions table and the M-scaling
   table were replaced by text, the proof of Theorem 1 moved from the appendix into the text, and the malaria-protocol
   aside omitted; all three remain in main.tex and the CMPB article.
+
+## JBHI manuscript, 10 pages (2026-10-28)
+- The target journal is now IEEE JBHI. Two extra pages were agreed with the supervisor, so `paper/jbhi_compact.tex`
+  (10 pages) restores what the 8-page version left out: the M-scaling table (Table I) and the assumptions table
+  (Table V); the fixed-order and confidence-based baselines with their confirmatory numbers; recall at the stop point;
+  the bound for halting rules that ignore verified labels, stated with the observed mean stop (1 − 32.4/200 ≈ 0.84);
+  the field-teacher swap; raster, ranked scan and k-center stopping on real tiles; savings by specimen size, the effect
+  of ALPHA's prior guess and the cost at α = 0.01; error patterns by cell class and image quality; the caveats of the
+  real arrangements; the unequal-field bias in real regions; and the sensitivity intervals. The abstract follows the
+  JBHI format (at most 250 words, no abbreviations, a closing sentence on significance); spelling is American.
+- `paper/audit_jbhi_numbers.py` checks 169 statements and table cells of the JBHI text against `results/`; all pass
+  (`paper/audit_jbhi_numbers.md`).
+- Errors found by this audit, corrected in `main.tex` and the supplement as well:
+  - the single-host background intervals were rounded wrongly: the stored fold-level intervals [−0.381, −0.165] and
+    [−0.195, −0.099] give [−0.38, −0.16] and [−0.19, −0.10], not [−0.38, −0.17] and [−0.20, −0.10];
+  - the sentence on confidence-based stopping in `main.tex` ("median 8–41 fields", "0.78–0.88 at m ≥ 10") matched no
+    stored result. It now reports the confirmatory run (k = 1: median 10–33 fields, missed 0.74–0.90 against
+    0.77–0.92 for uniform sampling at the same cost) and the fixed order (0.83–0.85);
+  - "the saving vanished for M ≥ 2,000" (p = 0.22 against θ = 0.20) now reads "at most 3%" (2.8% at M = 2,000,
+    −0.5% at M = 4,000).
+- Wording in the JBHI text: the weighted observation has conditional mean at most the unsampled mass (equal when q_t
+  is positive on every unsampled field); errors by class and by image quality now give the stored values and include
+  brightness and sharpness.
+- `refs.bib`: pages of Stark (2023) added (641–679); the InfoDPP-PAC entry no longer carries an ambiguous version
+  date; Conformal Risk Control (Angelopoulos et al., ICLR 2024) added for the remark on α = 0.01. The CMPB PDF was
+  rebuilt for the reference list only.
+- Both audit scripts now count the tests with `--noconftest`, because the conftest hook rewrote
+  `results/validity_tests_v1/report.json` during collection. The full suite was rerun: 50 passed.
+

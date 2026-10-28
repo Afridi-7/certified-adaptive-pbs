@@ -403,7 +403,8 @@ check("methods.op", "to a median stop at 16.3\\% of the fields. The original run
 check("methods.seven", "about seven times", [("7", (48.9 / 300) / (48.9 / 2075))], note="supplement wording")
 try:
     import subprocess
-    out = subprocess.run([sys.executable, "-m", "pytest", "--collect-only", "-q", os.path.join(ROOT, "tests")], capture_output=True, text=True, cwd=ROOT).stdout
+    out = subprocess.run([sys.executable, "-m", "pytest", "--collect-only", "-q", "--noconftest", "-p", "no:cacheprovider", os.path.join(ROOT, "tests")],
+                         capture_output=True, text=True, cwd=ROOT, env=dict(os.environ, PYTHONPATH=os.path.join(ROOT, "src"))).stdout
     n_tests = int(re.search(r"(\d+) tests? collected", out).group(1))
     check("methods.tests", "A test suite of 50 deterministic checks", [("50", n_tests)])
 except Exception as e:

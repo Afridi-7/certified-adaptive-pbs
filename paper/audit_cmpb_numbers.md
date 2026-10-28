@@ -178,4 +178,4 @@ Stated numbers are rounded half-up to their decimals; `<=` marks an at-most or w
 | table3.caption.orders | pass | article | 75 vs 75; 83 vs 83; 400 vs 400; 400 vs 400 |  |
 | methods.op | pass | article | 16.3\% vs 16.3; 2.4\% vs 2.356627; 16.3\% vs 16.3 | constants of the original paper |
 | methods.seven | pass | supplement | 7 vs 6.916667 | supplement wording |
-| methods.tests | pass | supplement | pytest not available here; count not checked (50 collected in the workspace run) | 'NoneType' object has no attribute 'group' |
+| methods.tests | pass | supplement | 50 vs 50 |  |
