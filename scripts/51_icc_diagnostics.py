@@ -1,21 +1,11 @@
 """
-Audit correction C4 (2026-10-22; exploratory; RQ4): why is the permutation null of the pooled ANOVA ICC not centred at 0,
-and how large is within-region clustering in the low-blast regions that matter at the 10% and 20% thresholds?
+Why the permutation null of the pooled ANOVA ICC is not centred at 0, and clustering in low-blast ROIs (RQ4; exploratory).
 
-Data and definitions exactly as in scripts/23_bmwsi_clustering.py (PREREG Amendment 4): BoneMarrowWSI consensus labels,
-eligible ROIs, blasts = {lymphocytic, myelocytic, monocytic, unknown}_blast, scales S1 (2 x 2) and S2 (4 x 4).
-
-1. Mechanism. Under the within-ROI permutation null, for ROI r with n_r cells in k_r occupied subfields and label variance
-   S2_r = p_r (1 - p_r) n_r / (n_r - 1), E[SSB_r] = (k_r - 1) S2_r and E[SSW_r] = (n_r - k_r) S2_r exactly. The pooled
-   estimator divides sum SSB_r by sum (k_r - 1) and sum SSW_r by sum (n_r - k_r), so E0[MSB] weights S2_r by (k_r - 1)
-   and E0[MSW] by (n_r - k_r). If S2_r is smaller in cell-rich ROIs, E0[MSB] > E0[MSW] and the null mean is positive.
-   We report both weighted means, the ICC they imply, and the correlation of S2_r with n_r.
-2. A null-centred estimator. Weighting each ROI's within-subfield mean square by the same (k_r - 1) as its between mean
-   square gives E0[MSB] = E0[MSW]:  MSW* = sum (k_r - 1) MSW_r / sum (k_r - 1). ICC* = (MSB - MSW*) / (MSB + (n0 - 1) MSW*).
-   Its permutation null mean is reported as a check; CI by patient bootstrap (2,000 resamples).
-3. Low-blast ROIs: the same quantities restricted to ROIs with p_r <= 0.30, together with the excess of the pooled
-   estimator over its own permutation null (as in scripts/34_icc_excess.py).
-Seed 20261102 (new).
+1. Under the within-ROI null, E0[MSB] and E0[MSW] weight the ROI variances S2_r by (k_r - 1) and (n_r - k_r);
+   if S2_r falls with n_r the null mean is positive.
+2. Null-centred estimator: MSW* = sum (k_r - 1) MSW_r / sum (k_r - 1).
+3. The same for ROIs with p_r <= 0.30, with the excess over the permutation null.
+Definitions as in 23_bmwsi_clustering.py.
 """
 import json, os, sys
 import numpy as np, pandas as pd

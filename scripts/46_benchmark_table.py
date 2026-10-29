@@ -1,30 +1,10 @@
 """
-One benchmark table across conditions (summary of stored results; no new simulation). RQ3, RQ4.
+Benchmark table across conditions, from stored results only (RQ3, RQ4).
 
-Every Part III / RQ4 experiment reported its own designs and conditions. This script reads the stored episode files and
-puts the same two quantities side by side for every design and every condition in which it was run:
-  validity  share of specimens (or runs) in which "p > theta" was certified at the exact null p = theta, alpha = 0.05.
-            For composites: the larger of theta = 0.10 and theta = 0.20 where both were run (both are kept in the CSV).
-            For real arrangements and the single-reader verifier: pooled over specimens, with the largest per-specimen
-            rate (theta_s = p_s, one threshold per specimen).
-  cost      median cells examined to certify p = 0.15 against theta = 0.10 (margin 0.05); a specimen that never
-            certifies counts as all of its cells.
-Designs that were not run in a condition are left empty. Nothing here changes a stored result.
-
-Sources (all under results/):
-  in_dist      part3_theta010, part3_theta020 (confirmatory Part III); cells-as-draws from the scattered arrangement of
-               a3_spatial_theta0x0 (E3.1); the 50% mixture from a3_mixture_ku (E3.2)
-  clustered    a3_spatial_theta0x0, hot-field arrangement at density 1.0 (E3.1)
-  confusable   confusable_bg_v1, share 0.20 of confusable classes in the background
-  unequal      unequal_fields_v1, gamma = 0 (blasts independent of field size); ALPHA = bounded assorter, betting =
-               weighted test with known counts (Prop. 2b and 2a)
-  rvpbs        a3_mixture_rvpbs (E3.2)
-  mll23        mll23_shift_v1
-  real         real_arrangements_v1 (BoneMarrowWSI, theta_s = p_s); ALPHA = bounded assorter, betting = known counts
-  reader       verifier_error_v1 (first reader as verifier, consensus as truth; known-count betting)
-  rerun        baseline_reference_v1 (scripts/49, exploratory, added 2026-10-22): uniform ALPHA on the external cells and
-               the 50% mixture with hedged bets on all three sources, all designs on the same specimens. Entries from it
-               are marked $^c$ in the table (the hedged row carries the mark in its label).
+For every design and condition: validity (certification rate of p > theta at p = theta, alpha = 0.05) and
+cost (median cells to certify p = 0.15 vs theta = 0.10; uncertified specimens count all cells).
+Conditions: in-distribution, clustered, confusable background, unequal fields, RV-PBS, MLL23,
+real arrangements, single reader, and the paired re-run of 49_baseline_reference.py.
 
 Usage: python scripts/46_benchmark_table.py --out results/benchmark_v1
 """
@@ -125,7 +105,7 @@ for col, note in [("above_cert", "reader-0 labels, threshold theta_s"), ("above_
     add("reader" if col == "above_cert" else "reader_margin003", "bet_u", pooled=float(ve[col].mean()),
         max_spec=float(per.max()), n_runs=int(len(ve)), note=f"{note}; {per.size} specimens, {int((per > 0.05).sum())} above 0.05")
 
-# --- exploratory rerun on the same specimens (scripts/49; added 2026-10-22) ----------------------------------------------
+# --- exploratory rerun on the same specimens (scripts/49) ------------------------------------------------------------
 br = {src: pd.read_csv(f"{R}/baseline_reference_v1/episodes_{src}.csv") for src in ("ku", "mll23", "rvpbs")}
 def bsel(src, th, p): e = br[src]; return e[np.isclose(e.theta, th) & np.isclose(e.p, p)]
 for cond, src in [("rvpbs", "rvpbs"), ("mll23", "mll23")]:

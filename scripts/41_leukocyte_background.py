@@ -1,15 +1,9 @@
 """
-Background restricted to leukocytes (exploratory; found 2026-10-20). RQ3.
+Part III with a leukocyte-only background (RQ3; exploratory).
 
-Every Part III composite (scripts/12, 18, 19, 27, 28, 33) draws its non-blast cells from ALL non-blast KU-Optofil images of
-blast-free patients. That pool contains giant platelets, platelet clusters and erythroblasts, which a leukocyte
-differential does not count. The specimen's p is then blasts / all images, not blasts / leukocytes. Validity of the tests
-does not depend on what the units are, but (i) the clinical reading of p shifts and (ii) platelets are easy negatives for
-the classifier, which may flatter classifier-driven sampling.
-
-Here the background is restricted to leukocyte classes (giant_platelet, platelet_cluster and erythroblast removed) and the
-Part III designs are re-run as in scripts/33 (share 0): M = 500 (100 fields of 5); theta = 0.10 and 0.20; p = theta
-(validity, 1,000 specimens) and theta + 0.02, + 0.05 (cost, 400 specimens). Seed family 20261032.
+Earlier composites drew background from all non-blast images, including giant platelets, platelet clusters and
+erythroblasts, which a leukocyte differential does not count. Those classes are removed here and the
+Part III designs re-run as in 33_confusable_background.py (share 0).
 
 Usage: python scripts/41_leukocyte_background.py --out results/leukocyte_bg_v1 --seed 20261032
 """

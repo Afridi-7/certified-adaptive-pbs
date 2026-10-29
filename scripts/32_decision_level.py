@@ -1,22 +1,11 @@
 """
-Decision-level evaluation at fixed budgets (P1-5; exploratory). RQ3.
+Three-way decisions (above / below / undetermined) at fixed budgets (RQ3; exploratory).
 
-The draft compares a conventional 100-cell count with the certificate only at p = theta, where every call is a coin
-flip by construction. Here three procedures make a THREE-WAY decision ("above", "below", "undetermined") after a fixed
-budget of n cells, on the same simple random sample of cells, for specimens on either side of the threshold:
-
-  sequential   two one-sided ALPHA tests at alpha/2 each ("p > theta" and "p < theta"), run along the sample; decision
-               = whichever certified first within n cells, else "undetermined". Anytime-valid. ALPHA's prior guess eta0
-               for the alternative is set in advance to theta + 0.05 (above) and theta - 0.05 (below).
-  seq_default  the same with the default eta0 = (mu0 + u) / 2 of src/cadpbs/alpha.py, i.e. a prior guess of
-               p = 1/2 + theta/2 (0.55 for theta = 0.10, 0.60 for theta = 0.20) for the "above" test; very aggressive for
-               binary cell draws. Reported to show how much the prior guess matters.
-  fixed_exact  exact one-sided hypergeometric tests at alpha/2 each on the n cells, evaluated once at n. Valid for
-               this fixed n only (no optional stopping).
-  conventional "above" if the observed fraction exceeds theta, else "below". Never undetermined; no error control.
-
-Truth: "above" if p > theta, "below" if p < theta; at p = theta any decisive call is an error.
-Population: M = 2,000 cells (label-only; with uniform sampling of individual cells the classifier plays no role).
+On the same simple random sample of cells (M = 2,000):
+  sequential    two one-sided ALPHA tests at alpha/2, eta0 = theta +/- 0.05
+  seq_default   the same with alpha.py's default eta0
+  fixed_exact   one-sided hypergeometric tests at the fixed n
+  conventional  observed fraction vs theta, no error control
 
 Usage: python scripts/32_decision_level.py --out results/decision_level_v1 --seed 20261025
 """

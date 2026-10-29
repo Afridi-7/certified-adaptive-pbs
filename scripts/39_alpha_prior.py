@@ -1,19 +1,9 @@
 """
-ALPHA's prior guess for the alternative (exploratory; review item). RQ3.
+Sensitivity of ALPHA's cost to the prior guess eta0 (RQ3; exploratory).
 
-All Part III, E3.1, unequal-field and M-scaling runs called src/cadpbs/alpha.py with its default eta0 = (mu0 + u) / 2,
-i.e. a prior guess for the blast proportion of 1/2 + theta/2 (0.55 at theta = 0.10, 0.60 at theta = 0.20), shrunk
-towards the running sample mean with weight d = 20. The decision-level analysis (scripts/32) showed that for cell-level
-draws this default is far too aggressive. This script measures how much it matters for the Part III setting
-(M = 500 cells, N = 100 fields of 5, uniform field sampling), paired on the same sampling order:
-
-  alpha_default   eta0 = (0.5 + u) / 2                      (as in every reported ALPHA cost)
-  alpha_m05       eta0 = (theta + 0.05) / (2 theta)         (prior guess: p = theta + 0.05, fixed in advance)
-  alpha_m10       eta0 = (theta + 0.10) / (2 theta)         (prior guess: p = theta + 0.10)
-  bet_uniform     Shekhar et al. betting test, uniform field sampling (reference; no prior to choose)
-
-Any eta0 fixed in advance gives a valid test; the choice affects power only. p = theta (validity, 1,000 specimens) and
-theta + 0.02, + 0.05, + 0.10 (cost, 400 specimens). Seed family 20261030.
+Compares the default eta0 = (0.5 + u) / 2 used in the reported runs with guesses p = theta + 0.05 and
+theta + 0.10, and with uniform betting, on the same sampling orders. Any eta0 fixed in advance is valid;
+only power changes.
 
 Usage: python scripts/39_alpha_prior.py --out results/alpha_prior_v1 --seed 20261030
 """

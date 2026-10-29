@@ -1,24 +1,9 @@
 """
-Audit correction C1 (2026-10-22; exploratory; RQ3, RQ4): what is classifier-driven sampling's saving measured against?
+Paired comparison of all Part III designs against uniform ALPHA as the reference (RQ3, RQ4; exploratory).
 
-The confirmatory comparisons report classifier-driven (prop-MS) betting against uniform BETTING (approximate-Kelly bets,
-the frozen weighted_betting module). Uniform betting itself needs 1.03-1.83 times the cells of uniform ALPHA, so ratios
-against it overstate the saving relative to the best valid design that uses no classifier. This script runs, on the SAME
-specimens (paired):
-  alpha_uniform : ALPHA, uniform field sampling (frozen cadpbs.alpha)
-  bet_uniform   : approximate-Kelly betting, uniform sampling      (frozen cadpbs.weighted_betting_w, as in scripts/38)
-  bet_prop      : approximate-Kelly betting, prop-MS sampling      (idem)
-  hedge_uniform : hedged betting (average of fixed-fraction bets, src/cadpbs/hedged_betting.py), uniform sampling
-  hedge_prop    : hedged betting, prop-MS sampling
-  hedge_mix50   : hedged betting, 50% uniform / 50% prop-MS mixture
-Sources (specimens built exactly as in the confirmatory scripts):
-  ku    : KU-Optofil, cross-fitted scores; blasts from all 489, background from blast-free patients (scripts/12, 19)
-  mll23 : MLL23, probe trained on all KU-Optofil cells; atypical promyelocytes, smudge cells, normoblasts excluded (scripts/38)
-  rvpbs : RV-PBS crops, probe trained on all KU-Optofil cells (scripts/16, 19)
-Specimen: N = 100 fields x m = 5 cells, cells shuffled (scattered). Thresholds analysed separately: theta = 0.10 (ICC 2022)
-for every source; theta = 0.20 (WHO 5th ed.) for KU-Optofil. Exact null p = theta: 1,000 specimens; p > theta: 400 each.
-Per-specimen RNG: default_rng([20261101, source index, theta index, round(1000 p), episode]); seed family 20261101 is new.
-Uncertified specimens count all 500 cells, as in every earlier cost analysis. Costs are counts of expert-verified cells.
+Designs: ALPHA uniform; approximate-Kelly betting (uniform, prop-MS); hedged betting (uniform, prop-MS,
+50% mixture). Sources: KU-Optofil, MLL23, RV-PBS. N = 100 fields x 5 cells; theta = 0.10 (all) and 0.20
+(KU-Optofil). Costs are expert-verified cells; uncertified specimens count all 500.
 
 Usage: python scripts/49_baseline_reference.py --source ku --out results/baseline_reference_v1
 """

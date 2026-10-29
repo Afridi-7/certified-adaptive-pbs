@@ -1,25 +1,12 @@
 """
-Sensitivity of the Part I result to InfoDPP-PAC settings that the original paper does not report (exploratory). RQ1.
+Sensitivity of Part I to InfoDPP-PAC settings not reported in the original paper (RQ1; exploratory).
 
-Our reimplementation (src/cadpbs/infodpp.py, frozen) fixes several choices the paper leaves open: the constant rho in the
-concentration term of the halting rule (rho = 1), the RBF kernel length-scale (median heuristic), the observation-noise
-variance (sn2 = 0.01) and the floor of the random seed set (m0 = 5). Here each choice is varied one at a time:
-    rho in {0, 0.5, 2};  length-scale x {0.5, 2};  sn2 in {0.001, 0.1};  m0 in {2, 10}
-and the halting threshold tau is re-calibrated for every setting so that the median stop on blast-free specimens of
-other folds is 16.3% of the fields, exactly as in the confirmatory run. All settings are run on the SAME specimens and
-the same uniform-sampling orders (paired), with one critical field (k = 1) and m in {1, 5, 10, 20} cells per field.
-The frozen module is not changed: a different length-scale is passed through InfoDPPConfig.length_scale per specimen,
-and tau is calibrated with the same bisection as calibrate_tau.
-
-Question: do the conclusions survive these choices? (i) the advantage over uniform sampling of the same size shrinks
-with dilution; (ii) it is small at m = 20; (iii) the information-gain term loses its association with the critical
-field as m grows.
-
-Each setting is also compared with the main setting on the same specimens: exact McNemar tests of the InfoDPP-PAC miss
-indicator for every (setting, m), Holm-corrected over all of them.
+Varied one at a time: rho in {0, 0.5, 2}; length-scale x {0.5, 2}; sn2 in {0.001, 0.1}; m0 in {2, 10}.
+tau is recalibrated per setting to a 16.3% median stop; all settings run on the same specimens (k = 1,
+m in {1, 5, 10, 20}). Exact McNemar tests against the main setting, Holm-corrected.
 
 Usage: python scripts/48_infodpp_settings.py --out results/infodpp_settings_v1 --seed 20261040 --episodes 100
-       (--analyse_only recomputes the summary from an existing episodes.csv)
+       (--analyse_only recomputes the summary from episodes.csv)
 """
 import argparse, json, os, sys, time
 from dataclasses import asdict

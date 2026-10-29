@@ -172,7 +172,7 @@ def test_power_sanity():
     assert ra / reps > 0.9 and rb / reps > 0.9, (ra / reps, rb / reps)
 
 
-# ================================================================ added 2026-10-22 (audit item C5)
+# ================================================================
 # The control-variate branch of the frozen betting test, the defensive mixture sampler and the exploratory hedged bets
 # had no direct validity test. Same protocol as above: exact nulls, fixed seeds, Monte Carlo limit max_allowed(reps).
 from cadpbs.hedged_betting import hedged_betting_w, KAPPAS

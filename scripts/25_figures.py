@@ -1,11 +1,9 @@
 """
-Paper figures from the FROZEN confirmatory outputs (no new analysis; every number is read from results/).
-Two exploratory overlays, clearly labelled, were added on 2026-10-22 at the supervisor's request: the field-level teacher
-in Fig. 1(b) (results/kt1_field_teacher) and the bias-corrected clustering estimate in Fig. 4(b)
-(results/a4_bmwsi/icc_excess.json), with the raw estimate kept as a comparison.
-Usage: python scripts/25_figures.py  -> figures/fig1_partI.pdf/.png ... fig4_rq4.pdf/.png + figures/captions.md
-Colour roles (validated categorical slots, light mode): blue = uniform / field-level, orange = adaptive
-(InfoDPP-PAC, classifier-driven) or naive, aqua = mixture; grey = reference lines. Aqua is always direct-labelled.
+Paper figures from the confirmatory outputs in results/ (no new analysis). Exploratory overlays, labelled in the
+figures: the field-level teacher in Fig. 1(b) and the bias-corrected clustering estimate in Fig. 4(b).
+Colours: blue = uniform / field-level, orange = adaptive or naive, aqua = mixture, grey = reference.
+
+Usage: python scripts/25_figures.py  -> figures/fig1-4 (.pdf, .png) and figures/captions.md
 """
 import glob, json, os
 import numpy as np, pandas as pd

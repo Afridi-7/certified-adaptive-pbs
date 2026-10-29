@@ -1,14 +1,9 @@
 """
-RQ4 (exploratory): is classifier error exchangeable across cells, or does it depend on patient, morphology and
-image quality? Prediction-powered and control-variate methods treat the classifier as side information whose
-errors are not modelled per unit; certification remains VALID regardless (labels come from verification), but
-efficiency and any method that trusts predictions for unverified units depend on this structure.
+RQ4 (exploratory): does classifier error depend on patient, morphology and image quality?
 
-Operating point: threshold t giving 95% specificity on non-blast cells (cross-fitted scores).
-  - blast recall by source patient (11 patients)      -> homogeneity test (chi-square, exact Monte-Carlo p)
-  - false-positive rate by patient (blast-free)        -> dispersion vs a binomial with common rate
-  - false-positive rate by true cell class (morphology)
-  - within-class association of error with image-quality features (logistic regression, class fixed effects)
+Validity of the certificate does not depend on this (labels come from verification); efficiency does.
+At the 95%-specificity threshold: blast recall by patient, false-positive rate by patient and by cell class,
+and the within-class association of error with image-quality features.
 """
 import json, os
 import numpy as np, pandas as pd

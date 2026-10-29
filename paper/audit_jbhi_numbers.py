@@ -1,16 +1,6 @@
 """
-Audit of the numbers in the IEEE JBHI manuscript (paper/jbhi_compact.tex) against the stored results.
-
-Same rules as paper/audit_cmpb_numbers.py: every check names a passage of the manuscript (a LaTeX substring that must
-occur in jbhi_compact.tex) and the numbers it states, and recomputes each number from results/ (and the cell table of
-results/embeddings_v1). A stated number passes if the recomputed value, rounded half-up to the stated number of
-decimals, equals it; "a--b" ranges are checked as the rounded minimum and maximum; at-most and within claims ("<=") are
-checked as bounds. Tables I-III and V are compared cell by cell. Not checked: counts that describe the public datasets
-themselves (e.g. 41,621 MLL23 cells, 228 BoneMarrowWSI regions, 3,204 KU-Optofil cells without patient identifiers,
-from docs/data_audit_ku_optofil.md), constants of the original InfoDPP-PAC paper other than its operating point, design
-constants written into the scripts (30 consecutive fields, weight 0.25, 17 cells per field) and the push-to-output
-times of the pre-registration tags (docs/PREREG_AUDIT.md). Writes paper/audit_jbhi_numbers.md; exits non-zero if any
-check fails.
+Recomputes every number stated in paper/jbhi_compact.tex from results/, with the rules of audit_cmpb_numbers.py.
+Tables I-III and V are compared cell by cell. Writes paper/audit_jbhi_numbers.md; exits non-zero on any mismatch.
 
 Run from the repository root:  python paper/audit_jbhi_numbers.py
 """

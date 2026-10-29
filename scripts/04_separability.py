@@ -1,17 +1,10 @@
 """
-Step 4 (RQ1 crux): how distinct are blasts in the selector's embedding space?
+Separability of blasts in the selector's embedding space, at cell and field level (RQ1).
 
-The synthetic pilot showed the sign of the InfoDPP-PAC-vs-uniform gap is governed by the separability of
-critical evidence in the embedding used for selection, not by rarity alone. This script measures it, at
-the cell level and at the field level (a field = mean embedding of m cells), and asks the question that
-actually drives a diversity-based selector: ARE BLASTS OUTLIERS? (log-det/DPP selection prefers points far
-from what is already selected, so it helps only if blasts are far from the bulk.)
+A diversity-based selector only helps if critical fields are outliers, so this measures whether they are.
+Scores are cross-fitted over patient-grouped folds; bootstrap CIs are clustered on source patient.
 
-All classifier scores are cross-fitted over the patient-grouped folds, so no patient is scored by a model
-that saw it. Reported with bootstrap CIs clustered on SOURCE PATIENT (11 blast patients), because episodes
-that reuse the same patient's blasts are not independent.
-
-Outputs: results/separability_v1/{summary.json,by_class.csv,by_patient.csv,field_level.csv,quality.csv}
+Output: results/separability_v1/
 """
 import json, os, argparse
 import numpy as np, pandas as pd

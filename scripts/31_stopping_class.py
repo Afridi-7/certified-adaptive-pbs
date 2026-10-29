@@ -1,25 +1,10 @@
 """
-Information-saturation stopping as a CLASS of rules, and a bridge to Theorem 1 (P1-1; exploratory). RQ1, RQ2.
+Information-saturation stopping as a class of rules (RQ1, RQ2; exploratory).
 
-The draft's Part I tests one rule (InfoDPP-PAC). Here every rule below runs on the same composite specimens (the
-unchanged generator, N = 200 fields, mean-pooled), with a field-level teacher trained only on the other folds
-(as in scripts/26_kt1_field_teacher.py):
-
-  infodpp      InfoDPP-PAC with the field-level teacher (tau calibrated to the target cost on blast-free specimens)
-  gp_var       pure information-gain greedy (InfoDPP-PAC with lambda2 -> 0, set to 1e-9): uncertainty sampling, same
-               halting rule
-  kcenter      farthest-point (k-center greedy) selection, stops when the covering radius falls below r*, a coverage
-               (novelty) saturation rule; r* calibrated to the same target cost
-  uniform      uniform sampling at InfoDPP-PAC's cost in the same episode
-  ranked       fields in decreasing field-teacher score, at InfoDPP-PAC's cost (no guarantee; location information)
-
-Bridge (Proposition 3 in the paper). Under the model that the critical field's teacher score S_c ~ F1 and the N - 1
-non-critical scores are i.i.d. ~ F0, independent of S_c, a scan of the top n fields misses the single critical field with
-probability
-        P(miss) = E_{S_c ~ F1} [ P( Binomial(N - 1, 1 - F0(S_c)) >= n ) ]           (exact under the model)
-                ~ 1 - TPR(t*),   where FPR(t*) = n / (N - 1)                        (large-N approximation)
-The script stores, per episode, the critical score and the non-critical scores so the prediction can be compared
-with the observed miss of the ranked scan.
+Rules on the same composite specimens with a field-level teacher: InfoDPP-PAC, pure GP-variance greedy,
+k-center coverage stopping, and uniform / teacher-ranked scans at InfoDPP-PAC's cost.
+Also stores the scores needed to compare the ranked scan's miss rate with Proposition 3:
+    P(miss) = E_{S_c ~ F1}[ P(Binomial(N - 1, 1 - F0(S_c)) >= n) ].
 
 Usage: python scripts/31_stopping_class.py --out results/stopping_class_v1 --seed 20261024
 """

@@ -1,23 +1,15 @@
 """
-Part III (RQ3): how many cells must be examined to CERTIFY a threshold decision?
+Part III (RQ3): cells examined to certify p > theta over the finite population of one specimen.
 
-Assertion: blast proportion p > theta, over the finite population of M = N*m cells of one specimen.
-theta is stated per run (WHO-HAEM5 2022 uses 20% for most AML contexts; the ICC 2022 uses 10% for the
-MDS/AML boundary). This certifies a statement about a finite population of cells; it does not establish
-diagnostic validity, and the two classification systems are never merged.
+theta is set per run (WHO 5th ed. 2022: 20%; ICC 2022: 10%); the two systems are not merged.
+Fields are the sampling unit; an expert verifies every cell of a sampled field.
 
-Sampling designs (fields are the sampling unit; an expert verifies every cell of a sampled field):
-  uniform   : SRSWOR, pi_t = 1/(N-t+1)                                   -> ALPHA applies directly
-  bet_*     : Shekhar et al. (2023) importance-weighted betting test, valid for ANY predictable sampling rule:
-              bet_uniform (uniform q), bet_prop (q proportional to the classifier's predicted blast content,
-              their prop-MS), bet_prop_cv (prop-MS plus their control variate).
-              [An earlier 'prio_ht' design was WITHDRAWN: it fed importance-weighted draws into ALPHA's
-               unweighted null-mean update, which is not a valid construction. See docs/certification_v1.md.]
-  prio_naive: the same prioritised order, but the assorter used AS IF the sample were uniform
-              (the error we want to measure: adaptive selection without probability correction)
-
-Also reported: the fixed-convention baselines (examine the first 100 / 200 / 500 cells and call
-p_hat > theta), at their own error rates, which is what the certified procedure has to be compared against.
+Designs:
+  uniform     SRSWOR + ALPHA
+  bet_*       Shekhar et al. (2023) weighted betting: uniform, prop-MS, prop-MS + control variate
+  prio_naive  prioritised order analysed as if uniform (invalid; measures the error)
+  conv*       first 100 / 200 / 500 cells, call p_hat > theta (no guarantee)
+A former 'prio_ht' design was withdrawn as invalid; see docs/certification_v1.md.
 """
 import argparse, json, os, sys, time
 import numpy as np, pandas as pd

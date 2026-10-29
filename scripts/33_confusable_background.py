@@ -1,15 +1,7 @@
 """
-Confusable background composition (P1-7; exploratory). RQ3, RQ4.
-
-Part III backgrounds were drawn from blast-free patients, mostly segmented neutrophils and lymphocytes. In AML/MDS blood,
-immature granulocytes and reactive lymphocytes are common, and these are the classes the probe most often mistakes for
-blasts (false-positive rates at the fixed threshold: metamyelocyte 0.37, myelocyte 0.24, reactive lymphocyte 0.19).
-Here a share s in {0, 0.10, 0.20} of the non-blast cells of each specimen is drawn from those three classes (any
-identified patient; scores are cross-fitted, so this adds no leakage), the rest as in Part III.
-
-Designs as in scripts/28_m_scaling.py: ALPHA-uniform, betting-uniform, betting with classifier-driven sampling (prop-MS).
-Specimens: M = 500 cells (N = 100 fields of 5). theta = 0.10 (ICC 2022) and 0.20 (WHO 2022); p = theta (validity,
-1,000 specimens) and theta + 0.02, theta + 0.05 (cost, 400 specimens).
+Confusable background (RQ3, RQ4; exploratory): a share s in {0, 0.1, 0.2} of non-blast cells drawn from
+metamyelocytes, myelocytes and reactive lymphocytes, the classes most often mistaken for blasts.
+Designs as in 28_m_scaling.py; M = 500, theta in {0.10, 0.20}.
 
 Usage: python scripts/33_confusable_background.py --out results/confusable_bg_v1 --seed 20261026
 """

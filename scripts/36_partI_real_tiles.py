@@ -1,17 +1,12 @@
 """
-Part I on REAL image tiles with real geometry (P1-2; exploratory). RQ1, RQ2.
+Part I on real BoneMarrowWSI tiles (RQ1, RQ2; exploratory).
 
-Input  : data/bmwsi_tiles/tiles.csv + tiles_embeddings_dinov2_vits14.npy, produced by notebooks/35_bmwsi_tiles_colab.ipynb
-         (4 x 4 tiles of every fully annotated BoneMarrowWSI ROI, embedded with the same frozen DINOv2 ViT-S/14).
-         data/bmwsi/cells.csv for the consensus labels.
-Unit   : a tile (about 56 um). Critical tile = holds at least one blast (definitions as in scripts/23_bmwsi_clustering.py).
-Specimen: one patient = all tiles of their eligible ROIs (N = 16 per ROI). Real arrangement, real dilution (each tile image
-         contains its nucleated cells, erythrocytes and background), no compositing.
-Teacher: logistic regression on tile embeddings, label = critical, cross-fitted over 5 patient-grouped folds.
-Rules at matched cost (InfoDPP-PAC's stop k* in each run): InfoDPP-PAC (tau calibrated to 16.3% of N on blast-free specimens
-         of other folds), uniform, raster (row by row from the top-left of a random ROI, then the next ROI), ranked by the
-         teacher, and k-center coverage stopping (own cost). The uniform miss is also compared with h(N, k, n) (Theorem 1).
+Unit: 4 x 4 tile of an ROI (~56 um); critical = contains a blast. Specimen: one patient's tiles.
+Teacher: logistic regression on tile embeddings, cross-fitted over patient-grouped folds.
+Rules at InfoDPP-PAC's cost: InfoDPP-PAC, uniform, raster, teacher-ranked; k-center at its own cost.
+Uniform misses are compared with h(N, k, n) (Theorem 1).
 
+Input: data/bmwsi_tiles/ (notebook 35), data/bmwsi/cells.csv
 Usage: python scripts/36_partI_real_tiles.py --tiles data/bmwsi_tiles --out results/partI_real_tiles_v1 --seed 20261028
 """
 import argparse, json, os, sys

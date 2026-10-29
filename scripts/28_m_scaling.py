@@ -1,20 +1,9 @@
 """
-Population size and certification cost (P0-4 of the 2026-10-19 review; exploratory, not pre-registered). RQ3.
+Certification cost vs population size, M = 500 to 4,000 cells (RQ3; exploratory).
 
-Question. Part III used specimens of M = 500 cells, so every cost is capped at 500 and "near the boundary any valid
-design approaches a census" may be a property of M = 500. Here the Part III designs are re-run at M = 500, 1,000,
-2,000 and 4,000 cells (m = 5 cells per field, N = M / 5 fields), on fresh seeds.
-
-Designs (paired on the same specimen):
-  alpha_uniform  ALPHA, uniform field sampling (Stark 2023)
-  bet_uniform    Shekhar et al. betting test, uniform field sampling
-  bet_prop       Shekhar et al. betting test, classifier-driven (prop-MS) sampling
-  conv100/200/500  first n cells of the uniform order; call "above" if their blast fraction exceeds theta (no guarantee)
-Levels alpha = 0.05 (primary) and 0.01; both are read off the same wealth path (bets do not depend on alpha).
-
-Blasts. Without replacement from the 489 KU-Optofil blasts when the specimen needs at most 489; otherwise WITH
-replacement, flagged blast_reuse = 1. Reuse duplicates images and scores: it does not change the uniform designs (they
-see labels only) but makes classifier-driven sampling's side information less diverse.
+Designs (paired): ALPHA uniform, betting uniform, betting prop-MS, conventional first-n counts.
+alpha = 0.05 (primary) and 0.01, read off the same wealth path.
+When a specimen needs more than the 489 KU-Optofil blasts they are drawn with replacement (flag blast_reuse).
 
 Usage: python scripts/28_m_scaling.py --out results/m_scaling_v1 --seed 20261021
 """

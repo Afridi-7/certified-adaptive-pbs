@@ -1,26 +1,11 @@
 """
-Observed validity on REAL cell arrangements (P1-3; exploratory, not pre-registered). RQ3, RQ4.
+Validity on real cell arrangements, BoneMarrowWSI (RQ3, RQ4; exploratory).
 
-Amendment 4 measured blast clustering in real smears and then used a Beta-binomial MODEL to infer what it does to the
-cell-level mis-analysis. Here the model is replaced by the real specimens themselves.
+Specimen = one patient's eligible ROIs; field = 4 x 4 subregion (unequal sizes). theta_s = the specimen's own
+p_s, so every certification is false and the rejection rate measures validity (theta_s is not a clinical threshold).
 
-Specimen  = one BoneMarrowWSI patient: all nucleated cells, with their real positions and consensus labels, in the
-            patient's eligible fully annotated ROIs (definitions as in scripts/23_bmwsi_clustering.py).
-Field     = a 4 x 4 subregion of an ROI (about 56 um; median about 4-5 cells). Fields have UNEQUAL sizes; empty
-            subregions are not fields.
-Threshold = the specimen's own blast proportion, theta_s = p_s. Every specimen is then an exact null of H0: p <= theta,
-            so ANY certification is false. Validity of a design-based test does not depend on what theta means
-            clinically, so this tests validity on real arrangements. (theta_s is not a diagnostic threshold.)
-Repeats   = n_orders independent random sampling orders per specimen: the sampling design is the only randomness.
-
-Designs (each stops at certification or at census):
-  field_known    Shekhar et al. weighted betting, weights m_i / M, uniform field sampling (Prop. 2a). Valid.
-  field_assort   ALPHA on the bounded assorter with m_max = largest 4x4 count in the data (Prop. 2b). Valid.
-  cell_srs       ALPHA on individually sampled cells (simple random sampling of cells). Valid, but not what a
-                 microscope does; included as the reference.
-  naive_cell     uniform FIELD sampling, cells of sampled fields analysed as if drawn individually (H5b mis-analysis).
-  naive_fmean    ALPHA on field proportions (mean of proportions; Section 5 / Prop. 2 warning).
-Also: cost (fraction of cells examined) at theta_s = p_s - 0.05 for specimens with p_s >= 0.10.
+Designs: field_known (weighted betting, known counts), field_assort (ALPHA, bounded assorter), cell_srs
+(reference), naive_cell and naive_fmean (invalid analyses).
 
 Usage: python scripts/30_real_arrangement_validity.py --out results/real_arrangements_v1 --seed 20261023
 """

@@ -1,12 +1,6 @@
 """
-Impact of a rule missing from our ALPHA implementation (found by scripts/44_crosscheck_shangrla.py, 2026-10-20).
-
-The reference implementation (SHANGRLA) also rejects as soon as the verified sample already contains more blasts than
-the null allows in the whole specimen (sample total > theta * M): the null is then false with certainty. The frozen
-src/cadpbs/alpha.py rejects in that situation only when a further positive field is drawn, so it can stop later. This
-never affects validity (it is conservative), and it cannot occur at p = theta. Here we measure how much it inflated the
-reported ALPHA costs: the Part III / population-size setting (m = 5 cells per field, N = M / 5 fields, uniform field
-sampling), 400 specimens per cell, same orders for both rules. The frozen module is not changed.
+Effect of the deterministic rejection rule (sample total > theta * M) that SHANGRLA applies and the frozen
+alpha.py does not. The rule never affects validity; this measures how much its absence inflated ALPHA costs.
 
 Usage: python scripts/45_alpha_deterministic_rule.py --out results/alpha_detrule_v1 --seed 20261036
 """

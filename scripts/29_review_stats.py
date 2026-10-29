@@ -1,15 +1,8 @@
 """
-Statistical re-reporting for the 2026-10-19 review (P0-5). Reads existing outputs only; generates no new data.
+Additional statistics from stored outputs (no new data): fold-level intervals for the Part I contrasts,
+critical-evidence recall at the stop point, Part III cost ratios with bootstrap intervals, sensitivity analyses,
+and the field-level-teacher kill-test.
 
-  1. Part I: fold-level t intervals (4 df) and sign counts for the H1b contrasts and the H1c differences, from the frozen
-     confirmatory episodes (results/confirm_v1/episodes.csv).
-  2. Part I: critical-evidence recall at the stop point for every (m, k): a pre-registered primary outcome that the
-     draft did not report.
-  3. Part III: effect sizes for the cost comparisons as ratios of medians with episode-bootstrap intervals, split into
-     the effect of the sampler (classifier-driven vs uniform betting) and of the test (uniform betting vs uniform ALPHA).
-  4. Pre-registered sensitivity analyses (results/sensconf_*): InfoDPP-PAC minus uniform at k = 1 with fold t intervals.
-  5. Kill-test 1 with the field-level teacher (results/kt1_field_teacher): AUCs with fold t intervals; k = 1 misses with
-     patient-level bootstrap intervals.
 Output: results/review_stats_v1.json
 """
 import json, os

@@ -1,31 +1,14 @@
 """
-Verifier error from real reader labels (P1-4; exploratory). RQ4.
+Verifier error from real reader labels, BoneMarrowWSI (RQ4; exploratory).
 
-Every certificate in the paper assumes perfect verification (beta = 0): the verifier's label is the truth. BoneMarrowWSI
-publishes the label of each annotation session: session 0 = the first reader's label for every cell, session 1 = the
-second reader's; later sessions were asked only when earlier readers disagreed. Which person read which cell is not
-recorded (dataset documentation, Zenodo 10.5281/zenodo.14933087).
+The certificates assume perfect verification. Truth = consensus label; verifier = reader 0 (session 0).
+(1) Reader agreement on blast status (reader 0 vs reader 1, and each vs consensus), patient bootstrap.
+(2) Certification with reader 0 as verifier at theta_s = consensus p_s (every certification is false).
+(3) Weakened guarantee: valid test of p_reader > theta + beta0 (1 - theta) when false blast calls are bounded
+    by beta0 times the true non-blasts (and symmetrically); beta0, beta1 are plug-in estimates.
+(4) Fixed margins d in {0.01, 0.02, 0.03, 0.05}.
 
-Input : data/bmwsi_sessions/annotations_sessions.csv.gz (notebooks/42_bmwsi_sessions_colab.ipynb) and data/bmwsi/cells.csv,
-        data/bmwsi/rois.csv. Definitions (EXCL, BLAST, eligible ROIs, 4x4 fields) as in scripts/30_real_arrangement_validity.py.
-Truth : the consensus label. A box counts as a nucleated cell for a reader if that reader's label is not in EXCL.
-
-(1) Reader agreement on blast status. For boxes labelled by readers 0 and 1, the two-by-two table of blast / non-blast
-    calls, and each reader against the consensus. A reader-vs-consensus comparison is biased towards agreement, because
-    the consensus is built from the same readers; the reader-0 vs reader-1 table is not. Patient-bootstrap intervals.
-(2) Certification with a single reader as the verifier. Specimens and fields as in scripts/30 (one patient, 4 x 4
-    subregions, real positions). The verifier reports reader 0's labels; the test (Shekhar et al. weighted betting with
-    known counts, Prop. 2a, uniform field sampling) uses the reader's counts. theta_s = consensus p_s, so the specimen is
-    an exact null of H0: p <= theta_s for the truth and every certification of "p > theta_s" is false; symmetrically
-    for "p < theta_s". 400 sampling orders per specimen.
-(4) Fixed inflation. The same tests with the threshold moved by a margin d in {0.01, 0.02, 0.03, 0.05} against the
-    direction of the claim (certify p_reader > theta + d, or p_reader < theta - d): how much margin a single reader needs.
-(3) Weakened guarantee. If the verifier's false blast calls in the specimen number at most beta0 * (number of true
-    non-blasts), then p_reader <= p + beta0 (1 - p), so testing p_reader > theta + beta0 (1 - theta) is valid for
-    p > theta (missed blasts only make it conservative); symmetrically, testing p_reader < theta (1 - beta1) is valid for
-    p < theta if missed blasts are at most beta1 * (true blasts). Here beta0, beta1 are plug-in values from the reader-0
-    vs reader-1 table (an illustration: they are estimated on the same data).
-
+Input: data/bmwsi_sessions/annotations_sessions.csv.gz (notebook 42), data/bmwsi/
 Usage: python scripts/43_verifier_error.py --sessions data/bmwsi_sessions/annotations_sessions.csv.gz --out results/verifier_error_v1 --seed 20261034
 """
 import argparse, json, os, sys, time

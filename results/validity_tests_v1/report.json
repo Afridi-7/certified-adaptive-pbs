@@ -1,7 +1,7 @@
 {
  "exitstatus": 0,
  "alpha": 0.05,
- "python": "3.13.16",
+ "python": "3.13.18",
  "numpy": "2.5.3",
  "scipy": "1.18.1",
  "results": [

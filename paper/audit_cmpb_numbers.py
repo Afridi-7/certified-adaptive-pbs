@@ -1,18 +1,10 @@
 """
-Audit of the numbers in the CMPB article (paper/cmpb.tex) against the stored results.
-Updated 2026-10-22 after the full audit: new passages, the uniform-ALPHA cost reference (results/baseline_reference_v1),
-hedged bets, 200-cell counts, the null-centred ICC (results/icc_diagnostics_v1) and the verifier sign counts. A passage
-that moved to the supplement (paper/cmpb_supplement.tex) is searched there; the report says where it was found.
+Recomputes every number stated in paper/cmpb.tex (and its supplement) from results/.
 
-Every check names a passage of the article (a LaTeX substring that must occur in cmpb.tex) and the numbers it states,
-and recomputes each number from the files in results/ (and the cell table of results/embeddings_v1). A stated number
-passes if the recomputed value, rounded half-up to the stated number of decimals, equals it. Ranges ("a--b") are checked
-as the rounded minimum and maximum. The table of conditions (Table 3) is compared row by row with the output of
-scripts/46_benchmark_table.py. Claims of the form "at most" or "within" are checked as bounds. Not checked: counts that
-describe the public datasets themselves (e.g. 41,621 MLL23 cells, 228 BoneMarrowWSI regions), constants of the original
-InfoDPP-PAC paper other than its operating point, and design constants written into the scripts (e.g. 30 consecutive
-fields, 17 cells per field in the Beta-binomial model). Writes paper/audit_cmpb_numbers.md and exits non-zero if any
-check fails.
+Each check names a LaTeX passage and its numbers; a number passes if the recomputed value, rounded half-up to the
+stated decimals, matches. Ranges are checked at both ends, "at most"/"within" claims as bounds, and Table 3 row by row
+against scripts/46_benchmark_table.py. Not checked: dataset descriptors, InfoDPP-PAC constants other than its operating
+point, and design constants. Writes paper/audit_cmpb_numbers.md; exits non-zero on any mismatch.
 
 Run from the repository root:  python paper/audit_cmpb_numbers.py
 """

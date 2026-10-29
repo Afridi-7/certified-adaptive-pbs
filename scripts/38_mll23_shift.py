@@ -1,19 +1,12 @@
 """
-Second acquisition-shift source: MLL23 (P1-8; exploratory). RQ4. Mirrors the pre-registered RV-PBS analysis
-(scripts/16_external_analysis.py) and the defensive mixture (scripts/19_mixture_confirm.py) on a larger external source.
+Acquisition shift on MLL23 (RQ4; exploratory); mirrors 16_external_analysis.py and 19_mixture_confirm.py.
 
-Input : data/mll23/mll23_embeddings_dinov2_vits14.npy + mll23_cells.csv (notebooks/37_mll23_embeddings_colab.ipynb).
-Probe : identical to scripts/16: logistic regression (standardised, C = 0.1, balanced) trained on ALL KU-Optofil cells;
-        threshold fixed at the KU cross-fitted 95%-specificity value t = 0.0310392350137264.
-Labels: blast = the myeloblast class. Excluded from specimens: atypical promyelocytes (class promyelocyte_atypical; blast
-        equivalents in acute promyelocytic leukaemia under WHO 2022 and ICC 2022, which our labels do not count), smudge
-        cells and normoblasts (not counted in a leukocyte differential). The 2026-10-19 version matched the wrong class
-        name ("atypical_promyelocyte") and would have kept atypical promyelocytes as background; fixed 2026-10-20.
-Uncertainty: bootstrap over images (the release may carry no patient identifiers; then intervals are too narrow).
-Certification: specimens of N = 100 fields x 5 cells from MLL23 cells; theta = 0.10 (ICC 2022); designs uniform,
-        classifier-driven (prop-MS) and the 50% mixture, Shekhar et al. betting test; p = 0.10 (validity, 1,000 specimens),
-        0.15 and 0.20 (cost, 400 specimens).
+Probe as in script 16 (trained on all KU-Optofil cells, threshold fixed at t = 0.0310392350137264).
+Blast = myeloblast. Excluded from specimens: atypical promyelocytes, smudge cells, normoblasts.
+Uncertainty is bootstrapped over images (no patient identifiers), so intervals may be too narrow.
+Certification: N = 100 fields x 5 cells, theta = 0.10; uniform, prop-MS and 50% mixture.
 
+Input: data/mll23/ (notebook 37)
 Usage: python scripts/38_mll23_shift.py --mll data/mll23 --out results/mll23_shift_v1 --seed 20261029
 """
 import argparse, json, os, sys

@@ -1,22 +1,12 @@
 """
-Unequal-weight version of weighted_betting.py (added 2026-10-19 for P0-3; the frozen module is left unchanged).
+Weighted betting test with general weights (Shekhar, Xu, Lipton, Liang & Ramdas, UAI 2023, Thm. 1).
 
-Shekhar, Xu, Lipton, Liang & Ramdas (UAI 2023, PMLR 216:1932-1941), Sec. 2, Thm. 1, with GENERAL weights pi(i) > 0,
-sum_i pi(i) = 1, and values f(i) in [0, 1]:
-  m*      = sum_i pi(i) f(i)                       (here: the cell-level blast proportion p when pi(i) = m_i / M and
-                                                    f(i) = B_i / m_i, i.e. field i holds m_i cells, B_i of them blasts)
-  Z_t     = pi(I_t) f(I_t) / q_t(I_t)              E[Z_t | F_{t-1}] = sum over unsampled i of pi(i) f(i)
-  mu_t(m) = m - sum_{s<t} pi(I_s) f(I_s)           null mass that may remain
-  W_t     = prod_s (1 + lambda_s (Z_s + beta_s U_s - mu_s))
-One-sided H0: m* <= m0. With lambda_s >= 0, predictable, and 1 + lambda_s * (lower bound of the bracket) >= 0, W is a
-non-negative test supermartingale under H0 for ANY predictable q_t that is positive on every unsampled unit (Ville).
-Equal weights pi = 1/N recover weighted_betting.betting_test exactly.
-
-Two regimes for unequal field sizes (see scripts/27_unequal_fields.py):
-  (a) cell counts m_i of all fields are known before verification (e.g. a nucleus detector counts cells, only their
-      classes need an expert): use pi(i) = m_i / M, f(i) = B_i / m_i. This module.
-  (b) counts of unsampled fields are unknown, only an upper bound m_max is known: use the bounded assorter
-      a_i = (B_i - theta m_i + theta m_max) / m_max in [0, 1] with equal weights and null mean theta.
+Weights pi(i) > 0 summing to 1, values f(i) in [0, 1], m* = sum_i pi(i) f(i); for fields of unequal size use
+pi(i) = m_i / M and f(i) = B_i / m_i, so m* is the cell-level blast proportion.
+    Z_t = pi(I_t) f(I_t) / q_t(I_t),   mu_t = m0 - sum_{s<t} pi(I_s) f(I_s),
+    W_t = prod_s (1 + lambda_s (Z_s + beta_s U_s - mu_s)).
+Under H0: m* <= m0, W is a non-negative test supermartingale for any predictable q_t positive on unsampled units.
+Equal weights reproduce weighted_betting.betting_test.
 """
 import numpy as np
 
@@ -39,7 +29,7 @@ def betting_test_w(f, pi, S, sampler, m0, alpha=0.05, c=0.75, use_cv=False, rng=
     """f in [0,1]^N (revealed by verification), pi > 0 summing to 1, S side information.
     Returns dict(stop=first draw at which H0 is rejected at `alpha` or -1, stops={a: draw} for extra levels, cells
     order). Extra levels in `alphas` reuse the same wealth path (the bets do not depend on alpha).
-    return_path=True (added 2026-10-20 for the reference cross-check; no effect on the test) also returns the per-step
+    return_path=True (no effect on the test) also returns the per-step
     bets `lam`, bracket values `Y`, sampling probabilities `q_drawn` and the log-wealth path `logW`."""
     rng = rng or np.random.default_rng()
     f = np.asarray(f, float); pi = np.asarray(pi, float); S = np.asarray(S, float); N = len(f)

@@ -1,23 +1,12 @@
 """
-InfoDPP-PAC's random seed set at the 2.4% operating point (exploratory; prompted by the 2026-10-22 supervisor review). RQ1.
+InfoDPP-PAC seed-set accounting at the 2.4% operating point (RQ1; exploratory).
 
-Question. At about 2.4% of a 200-field specimen InfoDPP-PAC stops after about 5 fields, which equals the floor of its
-random seed set (m0 = max(5, round(0.01 N)) = 5 in src/cadpbs/infodpp.py). How many fields does the greedy rule choose
-after initialisation, and does the conclusion depend on whether the seed fields are counted as examined?
+At this operating point the stop is close to the seed-set size (m0 = 5). Compares the paper's accounting
+(seed fields not counted as examined) with counting them, uniform sampling at n + |D0| on the same permutation.
+The episode loop reproduces 05_killtests.py's random stream (verify with --check).
 
-Accounting in the paper (and in scripts/05_killtests.py). The seed fields D0 are drawn uniformly at random and scored by
-the teacher to fit the Gaussian process; they are NOT counted as examined. Cost n = number of fields the greedy rule
-selects (k_star), and a miss means no critical field among those n. Uniform sampling is evaluated at the same n.
-
-Alternative accounting (this script). Count the seed as examined: InfoDPP-PAC examines D0 plus its n selections, and
-uniform sampling is evaluated at n + |D0| (the same random permutation, so the comparison stays paired).
-
-The episode loop is copied from scripts/05_killtests.py (frozen, not modified) with the same random-number stream, so
-with the same arguments the first accounting reproduces the stored episodes of results/sens_op_paperpool exactly
-(checked with --check). KT1 AUCs are not recomputed (they consume no random numbers).
-
-Usage: python scripts/47_infodpp_seed_accounting.py --out results/infodpp_seed_v1 --seed 20261022 --episodes 200 \
-           --k_list 1 2 5 --target_frac 0.024 [--check results/sens_op_paperpool/episodes.csv]
+Usage: python scripts/47_infodpp_seed_accounting.py --out results/infodpp_seed_v1 --seed 20261022 --episodes 200
+       --k_list 1 2 5 --target_frac 0.024 [--check results/sens_op_paperpool/episodes.csv]
 """
 import argparse, json, os, sys, time
 import numpy as np, pandas as pd

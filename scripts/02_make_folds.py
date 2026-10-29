@@ -1,22 +1,12 @@
 """
-Step 2: build the clean cell table and the patient-grouped cross-fitting folds (RQ1, RQ3 foundations).
+Clean cell table and patient-grouped cross-fitting folds for KU-Optofil.
 
-Why folds instead of the provided split: the provided patient-level test split contains only 3 blast-positive
-patients (86 blasts) and the validation split has none. Critical-evidence experiments need every blast patient
-to be evaluable by a model that never saw that patient. So we use K patient-grouped folds: each cell is embedded
-and scored by the model trained on the other K-1 folds.
+The provided split is not usable: its test split has only 3 blast-positive patients, and the folder
+train/val/test split is not patient-level. Each cell is instead scored by a model trained on the other folds.
+Excluded: patient_id == 'unknown' (3,204 cells, cannot be grouped) and 4 duplicate '... - Copy.jpg' files.
 
-Exclusions (logged):
-  - patient_id == 'unknown' (3,204 cells, filename prefixes EO_/VLY_/BL_/...; no patient grouping possible,
-    so they cannot be placed in folds without leakage risk; source unverified)
-  - files on disk not listed in metadata (4 '... - Copy.jpg' exact duplicates)
-The folder train/val/test split is NOT patient-level (265/276 patients span folders) and is never used.
-
-Output: data/ku_optofil/cells.csv  (image_name, rel_path, patient_id, cell_type, is_blast, fold, provided_split)
-        rel_path is relative to the DATASET ROOT (the directory that directly contains train/ val/ test/),
-        e.g. "train/Blast/1604468629_006.jpg". The root itself is detected and logged, so the table stays
-        valid whether the zip was extracted to <data>/dataset or <data>/dataset/dataset.
-        results/folds_v1/config.json, summary.csv
+Output: data/ku_optofil/cells.csv (rel_path relative to the dataset root, which is detected and logged);
+        results/folds_v1/{config.json, summary.csv}
 """
 import os, json, argparse
 import numpy as np, pandas as pd

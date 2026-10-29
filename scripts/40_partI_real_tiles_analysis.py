@@ -1,13 +1,8 @@
 """
-Patient-level analysis of the Part I real-tile run (P1-2; exploratory). RQ1, RQ2.
+Patient-level analysis of the real-tile Part I run (RQ1, RQ2; exploratory).
+Miss rates averaged per patient, paired differences, percentile bootstrap over patients.
 
-Input : results/partI_real_tiles_v1/runs.csv (scripts/36_partI_real_tiles.py, seed 20261028).
-Unit of inference: the patient (= specimen). Each patient's miss rate is averaged over its 200 runs; differences between
-rules are paired within patient; 95% intervals are percentile bootstraps over patients (4,000 resamples, seed 20261031).
-k-center stops at its own cost, so it is compared with uniform sampling at that cost, h(N, k, n_kcenter) (Theorem 1).
-Also: how often a rule's miss rate in a single specimen is at least 0.95 (near-deterministic failure), and the teacher's
-tile-level AUC within the rare specimens.
-
+Input: results/partI_real_tiles_v1/runs.csv
 Usage: python scripts/40_partI_real_tiles_analysis.py
 """
 import json

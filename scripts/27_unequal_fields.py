@@ -1,25 +1,12 @@
 """
-Unequal field sizes (P0-3 of the 2026-10-19 review; exploratory, not pre-registered). RQ3, RQ4.
+Unequal field sizes (RQ3, RQ4; exploratory).
 
-Problem. The paper's field-level tests average the field blast PROPORTIONS. With unequal field sizes that is the mean of
-field proportions, not the cell-level blast proportion p = sum_i B_i / sum_i m_i, unless proportion and size are
-unrelated. Real fields are unequal (BoneMarrowWSI quadrants: see Part A).
-
-Two valid constructions, both checked here:
-  (a) COUNTS KNOWN for every field before verification (e.g. a nucleus detector counts cells; only classes need the
-      expert): Shekhar et al. weighted test with pi_i = m_i / M and f_i = B_i / m_i (src/cadpbs/weighted_betting_w.py).
-  (b) COUNTS UNKNOWN, only an a-priori bound m_max >= m_i: the bounded assorter
-          a_i = (B_i - theta * m_i + theta * m_max) / m_max  in [0, 1],
-          mean_i a_i > theta  <=>  sum_i B_i > theta * sum_i m_i  <=>  p > theta,
-      with equal weights, so ALPHA and the equal-weight betting test apply unchanged.
-Compared against the NAIVE analysis: ALPHA on the field proportions B_i / m_i with null 1/2 after scaling, i.e. treating
-the mean of field proportions as p.
-
-Part A (real data, BoneMarrowWSI): distribution of nucleated-cell counts per 2x2 quadrant of an ROI, and the bias of
-the mean of quadrant proportions relative to the ROI proportion (patient bootstrap).
-Part B (simulation): N fields with sizes drawn from the Part A quadrant distribution, filled with KU-Optofil cells
-(blasts without replacement, cross-fitted scores). Blasts are placed with cell weight m_field^(-gamma):
-gamma = 0 (independent of size), gamma = 1 (small fields enriched: about equal blasts per field regardless of size).
+With unequal fields the mean of field proportions is not the cell-level proportion p. Two valid constructions:
+  (a) counts known before verification: weighted betting with pi_i = m_i / M, f_i = B_i / m_i
+  (b) only a bound m_max known: assorter a_i = (B_i - theta m_i + theta m_max) / m_max in [0, 1]
+compared with the naive analysis on field proportions.
+Part A: field-size distribution and mean-of-proportions bias on BoneMarrowWSI quadrants.
+Part B: simulation with blasts weighted by m_field^(-gamma), gamma in {0, 1}.
 
 Usage: python scripts/27_unequal_fields.py --out results/unequal_fields_v1 --seed 20261020
 """

@@ -1,32 +1,11 @@
 """
-Pilot simulation for Kill-test 2 (RQ1): does information-saturation stopping miss rare critical fields
-more often than matched-cost uniform / raster examination, and does the gap widen with rarity?
+Pilot simulation for Kill-test 2 (RQ1) on abstract synthetic fields (no images).
 
-STATUS: PILOT on abstract synthetic fields (no images). The info-saturation stopper here is a
-GENERIC GP information-gain-saturation rule, NOT the InfoDPP-PAC rule. It will be replaced by a
-faithful reimplementation of InfoDPP-PAC Eqs. 1-8 (arXiv:2608.23574) once those are transcribed.
+The stopper here is a generic GP information-gain saturation rule, not InfoDPP-PAC (see src/cadpbs/infodpp.py).
 
-Specimen model
-  N fields on an R x C grid. k of them are "critical" (contain decision-changing evidence).
-  Each field has a feature vector x in R^d. Non-critical: x ~ N(0, I). Critical: x ~ N(s*u, I),
-  u a fixed unit vector; s = feature separability of critical evidence (s=0: invisible to encoder).
-  Arrangement: 'scattered' (uniform positions) or 'clustered' (k nearest grid cells to a random centre).
-
-Policies (all log order, selection probabilities, stop step)
-  exhaustive     : examine all N.
-  raster         : row-major order, fixed budget n.
-  uniform        : uniform random order w/o replacement, fixed budget n; P(select field i at step t | past)=1/(N-t).
-  confidence     : uniform order; stop at first field with classifier p>=tau (call positive) or after m
-                   consecutive fields with p<=1-tau (call negative).
-  infosat        : greedy max GP posterior variance (log-det / pivoted-Cholesky; deterministic given features);
-                   stop when info gain 0.5*log(1+var/sn2) < eps for w consecutive steps.
-
-Metrics (positive specimens)
-  miss   : no critical field examined when stopping (premature stop)
-  recall : fraction of the k critical fields examined
-  n_stop : fields examined
-Matched-cost comparison: uniform and raster evaluated at the SAME n the adaptive rule used in that episode
-(paired design -> McNemar on miss indicators).
+Specimen: N fields on a grid, k critical. Features x ~ N(0, I), critical x ~ N(s u, I); scattered or clustered.
+Policies: exhaustive, raster, uniform, confidence-based, info-saturation.
+Metrics: miss (no critical field examined), recall, fields examined; uniform and raster at matched cost (paired).
 """
 import argparse, json, time
 import numpy as np

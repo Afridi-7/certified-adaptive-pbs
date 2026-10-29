@@ -1,12 +1,8 @@
 """
-Bias-corrected clustering estimate (P1-9; exploratory). RQ4.
+Clustering as the excess of the pooled ANOVA ICC over its permutation-null mean (RQ4; exploratory).
+The pooled ICC is biased upward for binary data in small unequal subfields, so the null mean is recomputed
+inside every patient-bootstrap sample. Definitions are imported from 23_bmwsi_clustering.py.
 
-The pooled ANOVA ICC used in Amendment 4 is biased upward for binary data in small, unequal subfields: its permutation
-null mean is 0.018 at the quadrant scale (S1) and 0.056 at the 4x4 scale (S2), not 0. The estimand here is the EXCESS of
-the observed ICC over the mean of its permutation null (blast labels permuted within each ROI, positions fixed), with a
-patient-bootstrap interval that recomputes the null mean inside every bootstrap sample.
-
-Definitions, data and the ICC estimator are imported unchanged from scripts/23_bmwsi_clustering.py (frozen at prereg-v4).
 Usage: python scripts/34_icc_excess.py --out results/a4_bmwsi/icc_excess.json --seed 20261027
 """
 import argparse, json, os, runpy, sys

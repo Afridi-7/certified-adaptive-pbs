@@ -1,21 +1,12 @@
 """
-Hedged betting test for a finite-population weighted mean under arbitrary predictable sampling without replacement
-(added 2026-10-22, exploratory; the frozen modules weighted_betting.py and weighted_betting_w.py are unchanged).
+Hedged betting test for a finite-population weighted mean under predictable sampling without replacement.
 
-Setting as in Shekhar, Xu, Lipton, Liang & Ramdas (UAI 2023, Thm. 1): weights pi(i) > 0 summing to 1, field values
-f(i) in [0, 1], target m* = sum_i pi(i) f(i). At step t a field I_t is drawn from a predictable distribution q_t (positivity on
-every unsampled field is needed for power and for lower-tail tests, not for the validity of this test, because f >= 0;
-see tests/test_validity.py::test_above_certificate_valid_without_positivity), and
-    Z_t  = pi(I_t) f(I_t) / q_t(I_t)                 E[Z_t | F_{t-1}] = sum over unsampled i of pi(i) f(i)
-    mu_t = m0 - sum_{s<t} pi(I_s) f(I_s)             (null mass that may remain under H0: m* <= m0)
-Under H0, E[Z_t - mu_t | F_{t-1}] = m* - m0 <= 0.
-
-Each component k uses the fixed fraction kappa_k in (0, 1) and the predictable bet lambda_t = kappa_k / mu_t, so
-    W_t^(k) = prod_{s<=t} (1 + kappa_k (Z_s / mu_s - 1)) >= prod (1 - kappa_k) > 0
-is a non-negative test supermartingale under H0 (Z_s >= 0). The equally weighted average W_t = mean_k W_t^(k) is again a
-test supermartingale, so rejecting H0 when W_t >= 1/alpha has false-certification probability <= alpha at any stopping
-time (Ville). If the sampled mass already exceeds m0, H0 is false with certainty (logical rule, as in the frozen code).
-The grid of fractions is fixed in advance and does not depend on the data.
+Setting of Shekhar, Xu, Lipton, Liang & Ramdas (UAI 2023, Thm. 1): weights pi(i) summing to 1, values f(i) in [0, 1],
+H0: sum_i pi(i) f(i) <= m0. With
+    Z_t  = pi(I_t) f(I_t) / q_t(I_t),    mu_t = m0 - sum_{s<t} pi(I_s) f(I_s),
+each component W^(k) = prod_s (1 + kappa_k (Z_s / mu_s - 1)) is a non-negative test supermartingale under H0,
+and so is their average. Reject when the average reaches 1/alpha (Ville). The grid kappa_k is fixed in advance.
+Positivity of q_t is needed for power, not for validity of this upper-tail test (f >= 0).
 """
 import numpy as np
 

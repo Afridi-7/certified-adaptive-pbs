@@ -1,23 +1,13 @@
 """
-Cross-check of our test statistics against the reference implementation of ALPHA (SHANGRLA, P. B. Stark et al.).
+Cross-check of alpha.py and weighted_betting_w.py against SHANGRLA's NonnegMean (P. B. Stark et al.).
+SHANGRLA is AGPL-3.0 and is not included; pass the folder containing NonnegMean.py with --shangrla.
 
-Why: every validity claim in the paper rests on two pieces of code, src/cadpbs/alpha.py (ALPHA, Stark 2023) and
-src/cadpbs/weighted_betting_w.py (Shekhar et al. 2023). This script compares them, on identical inputs, with
-`NonnegMean` from SHANGRLA (github.com/pbstark/SHANGRLA, shangrla/core/NonnegMean.py; AGPL-3.0, so it is NOT copied
-into this repository). Download that one file and pass its folder with --shangrla.
+  A  full ALPHA procedure vs alpha_mart with matching shrink-trunc parameters
+  B  ALPHA update alone, with the same predictable eta sequence
+  C  equal-weight uniform betting vs betting_mart with lambda'_t = lambda_t (N - t + 1) / N
+Steps where either code hits a boundary case are counted separately.
 
-Checks (R random cases each; populations, sizes, thresholds and orders drawn at random; null and alternative cases):
-  A  ALPHA, our full procedure vs SHANGRLA alpha_mart with the shrink-trunc estimator set to our parameters
-     (d = 20, f = 0, start eta0, c ~ 0): agreement of the first draw at which p <= alpha, and of the p-value path.
-  B  ALPHA supermartingale update alone: SHANGRLA alpha_mart fed with the same predictable eta sequence as ours
-     (re-derived from the documented formula), so that only the term and null-mean update are compared.
-  C  Betting (Shekhar et al.), equal weights and uniform sampling: our log-wealth path vs SHANGRLA betting_mart with
-     the bets lambda'_t = lambda_t (N - t + 1) / N (the same martingale in SHANGRLA's parametrisation, because
-     Z_t - mu_t = (N - t + 1)/N * (x_t - m_t) when q_t is uniform).
-Steps at which either code enters a special case (null mean of the remainder <= 0 or >= u) are excluded from path
-comparisons and counted separately.
-
-Usage: python -I scripts/44_crosscheck_shangrla.py --shangrla /path/to/folder_with_NonnegMean.py --R 2000 --seed 20261035
+Usage: python -I scripts/44_crosscheck_shangrla.py --shangrla /path/to/folder --R 2000 --seed 20261035
 """
 import argparse, hashlib, json, os, sys
 import numpy as np

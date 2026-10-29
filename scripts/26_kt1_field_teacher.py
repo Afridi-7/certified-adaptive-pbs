@@ -1,24 +1,11 @@
 """
-Kill-test 1 re-analysis with a FIELD-LEVEL teacher (P0-2 of the 2026-10-19 review; exploratory, not pre-registered).
+Kill-test 1 with a field-level teacher (RQ1; exploratory).
 
-Problem fixed. In 05_killtests.py the selector sees a field only through the MEAN of its cell embeddings, but the
-"teacher relevance" is bank.p[cells].max(1): the maximum of the cross-fitted CELL-level blast scores. That relevance
-signal presupposes a detector that finds and classifies every cell, which the selector's representation does not
-assume (PREREG section 1). It is also a deviation from InfoDPP-PAC, whose teacher T(x_i) acts on the patch embedding.
-
-What this script does, for every evaluation fold f and dilution m:
-  1. Trains a field-level teacher T_f: logistic regression on POOLED field embeddings (same pooling as the selector),
-     using composite fields built ONLY from the other four folds (patient-grouped, so no patient is seen in training
-     and evaluation). Positive training field = 1 blast + (m - 1) blast-free cells; negative = m blast-free cells.
-  2. Builds evaluation specimens with the unchanged generator (make_specimen, N = 200 fields).
-  3. Records, per episode, the AUC for critical vs non-critical fields of
-       - the information gain before selection (dinfo0; independent of the teacher),
-       - the original max-of-cell-scores relevance (cell-level oracle),
-       - the field-level teacher (same information as the selector).
-  4. Runs InfoDPP-PAC with the FIELD-level teacher (tau recalibrated with it on blast-free specimens of other folds)
-     and records the miss at k critical fields for InfoDPP-PAC, uniform at the same cost, and (exploratory) a
-     relevance-ranked scan by the field-level teacher at the same cost.
-  5. Stores the source patient of every critical blast, so that patient-level bootstrap intervals are possible.
+The teacher in 05_killtests.py uses the max of cell-level scores, which the selector's mean-pooled field
+representation does not have access to. Here the teacher is a logistic regression on pooled field embeddings,
+trained on composites from the other folds. Per episode: AUC of information gain, cell-level relevance and the
+field-level teacher for critical vs non-critical fields; InfoDPP-PAC (tau recalibrated) vs uniform and
+teacher-ranked scan at matched cost; source patient of each critical blast.
 
 Usage: python scripts/26_kt1_field_teacher.py --out results/kt1_field_teacher --seed 20261019
 """

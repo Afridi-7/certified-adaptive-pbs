@@ -34,8 +34,10 @@ results/**
 # OS / editor
 .DS_Store
 Thumbs.db
-.vscode/*
-!.vscode/settings.json
+.vscode/
+*_backup.tex
+figures/_check/
+results/*smoke*/
 
 # small JSON summaries of results (added 2026-10-20)
 !results/**/summary.json
