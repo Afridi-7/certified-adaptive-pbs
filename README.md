@@ -37,7 +37,7 @@ paper/        main.tex (full preprint); cmpb.tex (Computer Methods and Programs 
               highlights and cmpb_submission/Figure_1-4; audit_cmpb_numbers.py (checks the article's numbers against
               results/); jbhi_compact.tex (8-page IEEE version); refs.bib
 src/cadpbs/   package code: samplers, stopping rules (InfoDPP-PAC re-implementation), ALPHA, weighted betting,
-              hedged betting (hedged_betting.py, exploratory, added 2026-10-22)
+              hedged betting (hedged_betting.py, exploratory)
 scripts/      numbered analysis steps (01_ ... 51_); each writes results/<run>/ with config.json
 notebooks/    Google Colab notebooks for the GPU and download steps (03, 15, 21, 35, 37, 42)
 tests/        validity test suite (pytest)
