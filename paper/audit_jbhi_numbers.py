@@ -304,6 +304,13 @@ check("rq4.classical.cv", "needed 0.85--0.95 times the cells of ALPHA in distrib
 sr_valid = max(v["rate"] for src in SR for k_, v in SR[src]["validity"].items() if k_.endswith(("_hedge_mix50", "_cv_uniform", "_hedge_strata", "_cv_mix50")))
 check("rq4.classical.strata", "Sampling within four score strata needed 0.56--0.73 in distribution, 0.74--0.85 on MLL23 and 0.92--1.50 on RV-PBS, and the mixture with the control variate 0.56--0.75, 0.71--0.85 and 0.90--1.23; all kept false certification $\\le0.035$",
       rng("0.56--0.73", s3[0]) + rng("0.74--0.85", s3[1]) + rng("0.92--1.50", s3[2]) + rng("0.56--0.75", c3[0]) + rng("0.71--0.85", c3[1]) + rng("0.90--1.23", c3[2]) + [("<=0.035", sr_valid)])
+# reverse direction: probe trained on MLL23, applied to KU-Optofil (scripts/55_reverse_direction.py; exploratory)
+RD = J("reverse_direction_v1", "summary.json")
+def rdr(src, th, p): return RD["ratios"][f"{src}_theta{th:.2f}_p{p:.2f}_hedge_prop_over_alpha_uniform"]["ratio"]
+check("rq4.reverse", "needed 0.44--0.62 times the cells of ALPHA in distribution with hedged bets and 0.88--1.00 times when applied unchanged to KU-Optofil, where its false-positive rate rose from 0.05 to 0.46 at a sensitivity of 0.998 (AUC 0.956); false certification stayed $\\le0.037$",
+      rng("0.44--0.62", [rdr("mll23_in", t, p) for t, p in KU_ALT]) + rng("0.88--1.00", [rdr("ku_shift", .10, p) for p in (0.12, 0.15, 0.20)])
+      + [("0.05", RD["descriptive"]["mll23_in"]["fp"]), ("0.46", RD["descriptive"]["ku_shift"]["fp"]), ("0.998", RD["descriptive"]["ku_shift"]["sensitivity"]),
+         ("0.956", RD["descriptive"]["ku_shift"]["auc"]), ("<=0.037", max(v["rate"] for v in RD["validity"].values()))])
 # resolvable margin of a fixed count (scripts/52_resolvable_margin.py; exact)
 RM = pd.read_csv(R("resolvable_margin_v1", "summary.csv"))
 def rm(th, n, col): return float(RM[np.isclose(RM.M, 2000) & np.isclose(RM.theta, th) & (RM.n == n) & np.isclose(RM.power, 0.8)][col].iloc[0])

@@ -40,7 +40,7 @@ paper/        main.tex (full preprint); cmpb.tex (Computer Methods and Programs 
 src/cadpbs/   package code: samplers, stopping rules (InfoDPP-PAC re-implementation), ALPHA, weighted betting,
               hedged betting (hedged_betting.py, exploratory), control variate and score strata
               (cv_hedged_betting.py, exploratory)
-scripts/      numbered analysis steps (01_ ... 54_); each writes results/<run>/ with config.json
+scripts/      numbered analysis steps (01_ ... 55_); each writes results/<run>/ with config.json
 notebooks/    Google Colab notebooks for the GPU and download steps (03, 15, 21, 35, 37, 42)
 tests/        validity test suite (pytest)
 verify/       numerical checks of the power analysis and the calibration budget

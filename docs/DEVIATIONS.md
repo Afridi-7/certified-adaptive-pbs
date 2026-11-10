@@ -264,3 +264,20 @@ letter, title page and highlights. Nothing frozen was modified.
   full-field digital morphology (Katz et al., Int. J. Lab. Hematol. 2021) was added to the Introduction; the two
   results above were added to Sections V-B and V-C. Still 10 pages; `paper/audit_jbhi_numbers.py` gained four checks.
   `main.tex` and the CMPB files are unchanged and do not contain these additions.
+- **Reverse-direction replication (RQ3, RQ4; added later on 2026-11-10).** `scripts/55_reverse_direction.py` (seed
+  family 20261111; `results/reverse_direction_v1`) exchanges the roles of the two large sources: the same probe is
+  cross-fitted on MLL23 (in distribution) and, trained on all MLL23 cells, applied unchanged to KU-Optofil (shift);
+  specimens and designs as in `scripts/53`. The script was fixed before the run and run once.
+  - MLL23 has no patient identifiers, so its five folds are random by cell (stratified by class): cells of one patient
+    fall in training and test folds, and the in-distribution result is optimistic compared with the patient-grouped
+    folds of KU-Optofil. The run tests whether the pattern is specific to KU-Optofil; it adds no independent patients.
+  - Probe: out-of-fold AUC 0.991 and sensitivity 0.961 at 95% specificity on MLL23; on KU-Optofil at the same
+    threshold, sensitivity 0.998 but false-positive rate 0.463 (AUC 0.956). The shift in this direction raises false
+    positives; in the original direction it lowered sensitivity (0.63 and 0.34) with a nearly unchanged
+    false-positive rate.
+  - Cells relative to uniform ALPHA, hedged classifier-driven sampling: 0.44–0.62 in distribution (MLL23), 0.88–1.00
+    under shift (KU-Optofil); hedged 50% mixture 0.65–0.84 and 0.88–1.00. False certification at p = θ at most 0.037.
+    The saving in distribution replicates and is largely lost under shift, without the large excess seen on RV-PBS
+    (up to 2.67), where blasts were missed: a classifier that over-calls blasts samples nearly uniformly, whereas one
+    that misses blasts gives them small selection probabilities and large weights.
+  - One sentence was added to Section V-C of the JBHI text; `paper/audit_jbhi_numbers.py` gained one check.
