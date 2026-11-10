@@ -228,3 +228,39 @@ letter, title page and highlights. Nothing frozen was modified.
 - Both audit scripts now count the tests with `--noconftest`, because the conftest hook rewrote
   `results/validity_tests_v1/report.json` during collection. The full suite was rerun: 50 passed.
 
+## Review of 2026-11-10 (three exploratory additions; nothing frozen modified)
+- **Range that a fixed count cannot resolve (RQ3).** `scripts/52_resolvable_margin.py` (exact hypergeometric
+  calculation; no simulation, no seed; `results/resolvable_margin_v1`): for n cells drawn uniformly from M and two exact
+  one-sided tests at α/2 each (the `fixed_exact` procedure of `scripts/32`), the largest p < θ and the smallest p > θ
+  at which the correct decision has probability at least 0.8 (and 0.9), for θ = 0.10, 0.20 (and 0.01, 0.02),
+  M = 500–4,000 and the binomial limit. The JBHI text reports M = 2,000 at 80% power in whole percent (200 cells:
+  5–16% and 13–28%; 500: 7–14% and 16–25%; 1,000: 8–12% and 17–23%). Assumes individually sampled cells and no
+  classification error.
+- **Classical uses of the scores (RQ3, RQ4).** `src/cadpbs/cv_hedged_betting.py` adds (i) hedged betting with a
+  prediction control variate, U_t = π S / q_t − Σ π S, bets κ / (μ_t + c U_max,t), averaged over κ and
+  c ∈ {0, 0.25, 0.5}, and (ii) score-stratified sampling (four strata at the score quartiles, uniform within a stratum,
+  selection probability proportional to the root of the stratum's mean score). `scripts/53_shift_robust_designs.py`
+  (seed family 20261110) runs them with uniform ALPHA and the hedged designs of `scripts/49` on the same specimens,
+  built as in `scripts/49`, for KU-Optofil, MLL23 and RV-PBS (`results/shift_robust_v1`).
+  - All design choices (the grid of c, averaging over c instead of a follow-the-leader choice, which was tried and was
+    worse than no control variate, four strata, root allocation) were fixed on synthetic specimens
+    (`results/shift_robust_v1_synthetic`: a two-normal score model matched to each source's reported AUC, sensitivity
+    and false-positive rate, with one steepness parameter chosen so that the stored KU-Optofil medians of `scripts/49`
+    are reproduced) before the first run on real cells. The run on real cells was made once.
+  - Results, cells relative to uniform ALPHA (in distribution; MLL23; RV-PBS): control variate with uniform sampling
+    0.85–1.25; 0.94–1.15; 0.96–1.25 (0.85–0.95 in distribution at margins up to 0.05); four score strata 0.56–0.73;
+    0.74–0.85; 0.92–1.50; 50% mixture with the control variate 0.56–0.75; 0.71–0.85; 0.90–1.23; hedged 50% mixture
+    0.62–0.81; 0.77–0.85; 0.93–1.27. False certification at p = θ was at most 0.041 (uniform ALPHA) and at most 0.035
+    for the new designs (1,000 specimens each).
+  - The hedged 50% mixture needed up to 1.27 [1.13, 1.41] times the cells of ALPHA on RV-PBS at p = 0.15 on these
+    specimens, against 1.15 in the run of `scripts/49` (uniform ALPHA: median 150 against 165 cells). "At most 1.15
+    under shift" therefore describes that run only; the JBHI text now gives both ranges.
+- **Validity checks.** `scripts/54_cv_validity_checks.py` (`results/cv_validity_v1/report.json`): 47 exact-null
+  settings (oracle, anti-oracle, misleading, random, constant and noisy scores; scattered and packed arrangements;
+  unequal field sizes; uniform, mixture and stratified sampling), 1,000 specimens each: largest false-certification
+  rate 0.032; with c = 0 the test reproduces `hedged_betting_w` draw for draw. The script is kept outside `tests/`
+  (it takes about five minutes), so `pytest -q tests` is still the 50-check suite cited in the papers.
+- **JBHI text.** The abstract's sentence on certifying absence now names one critical field; a reference for
+  full-field digital morphology (Katz et al., Int. J. Lab. Hematol. 2021) was added to the Introduction; the two
+  results above were added to Sections V-B and V-C. Still 10 pages; `paper/audit_jbhi_numbers.py` gained four checks.
+  `main.tex` and the CMPB files are unchanged and do not contain these additions.

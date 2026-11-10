@@ -95,6 +95,7 @@ version numbers some propositions and tables differently.
 | `m_scaling` | X | L | Population size table | `python scripts/28_m_scaling.py --out results/m_scaling_v1 --seed 20261021` |
 | `alpha_prior` | X | M | ALPHA prior guess | `python scripts/39_alpha_prior.py --out results/alpha_prior_v1 --seed 20261030` |
 | `decisions` | X | M | Decisions at fixed budgets (table) | `python scripts/32_decision_level.py --out results/decision_level_v1 --seed 20261025` |
+| `resolvable_margin` | X | S | Range a fixed count cannot resolve (exact; review 2026-11-10) | `python scripts/52_resolvable_margin.py --out results/resolvable_margin_v1` |
 | `confusable` | X | M | Confusable backgrounds | `python scripts/33_confusable_background.py --out results/confusable_bg_v1 --seed 20261026` |
 | `leukocyte` | X | M | Leukocyte-only background | `python scripts/41_leukocyte_background.py --out results/leukocyte_bg_v1 --seed 20261032` |
 | `detrule` | X | M | Impact of the rule missing from the frozen ALPHA | `python scripts/45_alpha_deterministic_rule.py --out results/alpha_detrule_v1 --seed 20261036` |
@@ -112,6 +113,8 @@ version numbers some propositions and tables differently.
 | `mll23_embeddings` | D | GPU | MLL23 embeddings | Colab: `notebooks/37_mll23_embeddings_colab.ipynb` |
 | `mll23` | X | S | Second external source (MLL23) | `python scripts/38_mll23_shift.py --mll data/mll23 --out results/mll23_shift_v1 --seed 20261029` |
 | `baseline_reference` | X | M | Cost reference (uniform ALPHA), hedged bets; Fig. 4a; reference-design table (audit 2026-10-22) | `python scripts/49_baseline_reference.py --source ku --out results/baseline_reference_v1`<br>`python scripts/49_baseline_reference.py --source mll23 --out results/baseline_reference_v1`<br>`python scripts/49_baseline_reference.py --source rvpbs --out results/baseline_reference_v1` |
+| `shift_robust` | X | M | Classical uses of the scores: control variate, score strata (review 2026-11-10) | `python scripts/53_shift_robust_designs.py --source ku --out results/shift_robust_v1`<br>`python scripts/53_shift_robust_designs.py --source mll23 --out results/shift_robust_v1`<br>`python scripts/53_shift_robust_designs.py --source rvpbs --out results/shift_robust_v1` |
+| `cv_validity` | X | M | Validity checks of the control-variate test and the stratified sampler (review 2026-11-10) | `python scripts/54_cv_validity_checks.py --out results/cv_validity_v1` |
 | `icc_diagnostics` | X | M | Null bias of the pooled ICC, null-centred ICC, low-blast regions (audit 2026-10-22) | `python scripts/51_icc_diagnostics.py` |
 | `sessions_download` | D | GPU | Reader labels (no GPU needed) | Colab: `notebooks/42_bmwsi_sessions_colab.ipynb` |
 | `verifier` | X | M | Imperfect verification; Remark 2 | `python scripts/43_verifier_error.py --sessions data/bmwsi_sessions/annotations_sessions.csv.gz --out results/verifier_error_v1 --seed 20261034` |

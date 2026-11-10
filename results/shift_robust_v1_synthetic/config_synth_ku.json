@@ -1,0 +1,27 @@
+{
+ "config": {
+  "source": "synth_ku",
+  "out": "results/shift_robust_v1_synthetic",
+  "seed": 20261110,
+  "n_null": 1000,
+  "n_alt": 400,
+  "n_boot": 4000,
+  "k": 3.0,
+  "designs": [
+   "alpha_uniform",
+   "hedge_uniform",
+   "hedge_prop",
+   "hedge_mix50",
+   "cv_uniform",
+   "cv_mix50",
+   "hedge_strata",
+   "cv_strata"
+  ]
+ },
+ "env": {
+  "python": "3.13.18",
+  "numpy": "2.5.3",
+  "scipy": "1.18.1",
+  "pandas": "3.0.5"
+ }
+}

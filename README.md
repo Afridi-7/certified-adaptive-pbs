@@ -28,7 +28,8 @@ python reproduce.py verify <step id> ...                                    # re
 the exact null (uniform, adversarial and adaptive samplers; the control variate, the uniform mixture and the exploratory
 hedged bets; a sampler that is not positive on every unsampled field; equal and unequal fields; imperfect verifier with a
 margin), that the four invalid analyses the paper warns against do not, and the Part II results. The last report is in
-`results/validity_tests_v1/report.json`.
+`results/validity_tests_v1/report.json`. `python scripts/54_cv_validity_checks.py` (about 5 min) runs the same kind of
+checks for the exploratory control-variate test and the stratified sampler (`results/cv_validity_v1/report.json`).
 
 ## Layout
 ```
@@ -37,8 +38,9 @@ paper/        main.tex (full preprint); cmpb.tex (Computer Methods and Programs 
               highlights and cmpb_submission/Figure_1-4; audit_cmpb_numbers.py (checks the article's numbers against
               results/); jbhi_compact.tex (8-page IEEE version); refs.bib
 src/cadpbs/   package code: samplers, stopping rules (InfoDPP-PAC re-implementation), ALPHA, weighted betting,
-              hedged betting (hedged_betting.py, exploratory)
-scripts/      numbered analysis steps (01_ ... 51_); each writes results/<run>/ with config.json
+              hedged betting (hedged_betting.py, exploratory), control variate and score strata
+              (cv_hedged_betting.py, exploratory)
+scripts/      numbered analysis steps (01_ ... 54_); each writes results/<run>/ with config.json
 notebooks/    Google Colab notebooks for the GPU and download steps (03, 15, 21, 35, 37, 42)
 tests/        validity test suite (pytest)
 verify/       numerical checks of the power analysis and the calibration budget

@@ -75,7 +75,7 @@ check("abs.cells", "Using pre-registered simulations from 28,280 expert-labeled 
 check("abs.patients99", "annotated bone-marrow regions from 99 patients", [("99", tiles.patient.nunique())])
 check("abs.miss", "with one critical field among 200 ten-cell fields, it missed 76\\% of positive specimens, against 85\\% for random sampling",
       [("76\\%", miss[10]), ("85\\%", umiss[10])])
-check("abs.absence", "any strategy must examine 95\\% of the fields to certify absence at a 5\\% error level", [("95\\%", f1)])
+check("abs.absence", "certifying that one critical field is absent at a 5\\% error level requires examining 95\\% of the fields", [("95\\%", f1)])
 check("abs.sens", "cut blast sensitivity from 0.91 to 0.63 and 0.34",
       [("0.91", ext["H4a_recall_drops"]["ku_recall"]), ("0.63", mll["recall"]), ("0.34", ext["H4a_recall_drops"]["rv_recall"])])
 check("abs.cost", "needed 0.45 to 0.75 times the verified cells of uniform sampling in distribution, and 1.3 to 3.0 times under shift at margins of 0.05 to 0.10",
@@ -290,6 +290,28 @@ mixk = [brr("ku", t, p, "hedge_mix50")["ratio"] for t, p in KU_ALT]
 mixm = [brr("mll23", .10, p, "hedge_mix50")["ratio"] for p in (0.12, 0.15, 0.20)]; mixv = [brr("rvpbs", .10, p, "hedge_mix50")["ratio"] for p in (0.12, 0.15, 0.20)]
 check("rq4.hedged", "with hedged bets it needed 0.61--0.81 times the cells of ALPHA in distribution, 0.77--0.82 on MLL23 and 0.95--1.15 on RV-PBS",
       rng("0.61--0.81", mixk) + rng("0.77--0.82", mixm) + rng("0.95--1.15", mixv))
+# classical uses of the scores (scripts/53_shift_robust_designs.py; exploratory, seed family 20261110)
+SR = {src: J("shift_robust_v1", f"summary_{src}.json") for src in ("ku", "mll23", "rvpbs")}
+def srr(src, th, p, num): return SR[src]["ratios"][f"theta{th:.2f}_p{p:.2f}_{num}_over_alpha_uniform"]["ratio"]
+def sr3(num): return ([srr("ku", t, p, num) for t, p in KU_ALT], [srr("mll23", .10, p, num) for p in (0.12, 0.15, 0.20)], [srr("rvpbs", .10, p, num) for p in (0.12, 0.15, 0.20)])
+m3, s3, c3 = sr3("hedge_mix50"), sr3("hedge_strata"), sr3("cv_mix50")
+check("rq4.classical.mix", "400 new specimens per point, on which the hedged mixture needed 0.62--0.81, 0.77--0.85 and 0.93--1.27",
+      [("400", J("shift_robust_v1", "config_ku.json")["config"]["n_alt"])] + rng("0.62--0.81", m3[0]) + rng("0.77--0.85", m3[1]) + rng("0.93--1.27", m3[2]))
+cvu_in = [srr("ku", t, p, "cv_uniform") for t, p in KU_ALT if p - t <= 0.05 + 1e-9]
+cvu_sh = [srr(s_, .10, p, "cv_uniform") for s_ in ("mll23", "rvpbs") for p in (0.12, 0.15, 0.20)]
+check("rq4.classical.cv", "needed 0.85--0.95 times the cells of ALPHA in distribution at margins up to 0.05 and 0.94--1.25 times under shift",
+      rng("0.85--0.95", cvu_in) + rng("0.94--1.25", cvu_sh))
+sr_valid = max(v["rate"] for src in SR for k_, v in SR[src]["validity"].items() if k_.endswith(("_hedge_mix50", "_cv_uniform", "_hedge_strata", "_cv_mix50")))
+check("rq4.classical.strata", "Sampling within four score strata needed 0.56--0.73 in distribution, 0.74--0.85 on MLL23 and 0.92--1.50 on RV-PBS, and the mixture with the control variate 0.56--0.75, 0.71--0.85 and 0.90--1.23; all kept false certification $\\le0.035$",
+      rng("0.56--0.73", s3[0]) + rng("0.74--0.85", s3[1]) + rng("0.92--1.50", s3[2]) + rng("0.56--0.75", c3[0]) + rng("0.71--0.85", c3[1]) + rng("0.90--1.23", c3[2]) + [("<=0.035", sr_valid)])
+# resolvable margin of a fixed count (scripts/52_resolvable_margin.py; exact)
+RM = pd.read_csv(R("resolvable_margin_v1", "summary.csv"))
+def rm(th, n, col): return float(RM[np.isclose(RM.M, 2000) & np.isclose(RM.theta, th) & (RM.n == n) & np.isclose(RM.power, 0.8)][col].iloc[0])
+check("rq3.margin", "in a 2,000-cell specimen, with 80\\% power, a 200-cell count leaves proportions between 5\\% and 16\\% undetermined around the 10\\% threshold and between 13\\% and 28\\% around the 20\\% threshold; 500 cells leave 7--14\\% and 16--25\\%, and 1,000 cells 8--12\\% and 17--23\\%",
+      [("5\\%", rm(.10, 200, "p_lo")), ("16\\%", rm(.10, 200, "p_up")), ("13\\%", rm(.20, 200, "p_lo")), ("28\\%", rm(.20, 200, "p_up")),
+       ("7\\%", rm(.10, 500, "p_lo")), ("14\\%", rm(.10, 500, "p_up")), ("16\\%", rm(.20, 500, "p_lo")), ("25\\%", rm(.20, 500, "p_up")),
+       ("8\\%", rm(.10, 1000, "p_lo")), ("12\\%", rm(.10, 1000, "p_up")), ("17\\%", rm(.20, 1000, "p_lo")), ("23\\%", rm(.20, 1000, "p_up"))],
+      note="edges of the range in which the correct decision has probability below 0.8")
 H5b = A3["H5b_naive_cell_analysis_breaks_under_clustering"]["cells"]; h5a = max(c["rate"] for c in A3["H5a_field_level_valid_all_arrangements"]["cells"].values())
 h5c = [v["medians"][a] / v["medians"]["scattered"] for v in A3["H5c_cost_rises_with_clustering"]["cells"].values() for a in ("hot0.6", "hot1.0")]
 check("rq4.cluster", "under the strongest clustering it certified falsely in 0.327 ($\\theta=0.10$) and 0.478 ($\\theta=0.20$) of boundary specimens (H5b), whereas field-level designs stayed valid ($\\le0.042$, H5a), although clustering raised the cost of uniform field sampling 1.6 to 2.2-fold",
