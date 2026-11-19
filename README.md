@@ -35,7 +35,8 @@ checks for the exploratory control-variate test and the stratified sampler (`res
 ## Layout
 ```
 paper/        jbhi_compact.tex (10-page IEEE JBHI version) and jbhi_supplement.tex (its supplementary material), with
-              audit_jbhi_numbers.py (checks the numbers of both against results/); main.tex (full preprint); refs.bib
+              audit_jbhi_numbers.py (checks the numbers of both against results/); main.tex (longer version, October
+              2026, without the November analyses); refs.bib
 src/cadpbs/   package code: samplers, stopping rules (InfoDPP-PAC re-implementation), ALPHA, weighted betting,
               hedged betting (hedged_betting.py, exploratory), control variate and score strata
               (cv_hedged_betting.py, exploratory)

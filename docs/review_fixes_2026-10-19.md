@@ -14,7 +14,7 @@ changes a pre-registered verdict. Paper edits are in `paper/main.tex`. The previ
     on data not analysed before.
   - Table 2 gains a Type column, E (empirical claim) or V (implementation check). V marks H1a, H1d, H3a, H4c, H5a and H6a.
   - Corrected total of confirmatory specimens: 67,500.
-- **Still to do (you).**
+- **Still to do (author).**
   - Archive the repository and the result folders on Zenodo at submission.
   - Make the GitHub repository public, or give reviewers access.
   - Do not re-create the lightweight tags `prereg-v3` and `prereg-v4`.

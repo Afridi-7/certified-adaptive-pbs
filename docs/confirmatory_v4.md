@@ -2,8 +2,7 @@
 
 Protocol: `docs/PREREG.md` Amendment 4, frozen as git tag `prereg-v4` before these analyses were run.
 
-**Where it ran.** The two frozen scripts were run unmodified in the cloud workspace, because the analysis exceeds the
-local shell's 3-minute limit. Script SHA-256:
+**Where it ran.** The two frozen scripts were run unmodified on a cloud Linux machine. Script SHA-256:
 - `23_bmwsi_clustering.py`: 2223ef5e…d91c
 - `24_bmwsi_bridge_sim.py`: 970b3ebc…20e6
 

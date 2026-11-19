@@ -1,14 +1,14 @@
 # Project status — Week 1 (2026-09-19)
 
-Scope this session: W1–2 of the timeline (source verification, derivation checks, pre-registration inputs) plus a first synthetic pilot of Kill-test 2 (RQ1). Code: `sim/pilot.py`, `verify/part2_and_budget.py`, `verify/mcnemar_power.py`.
+Scope: W1–2 of the timeline (source verification, derivation checks, pre-registration inputs) plus a first synthetic pilot of Kill-test 2 (RQ1). Code: `sim/pilot.py`, `verify/part2_and_budget.py`, `verify/mcnemar_power.py`.
 
 ## 1. Source verification
 
 | Item | Status | Notes |
 |---|---|---|
-| InfoDPP-PAC, arXiv:2608.23574 | Exists. Mittal, Srivastava, Chauhan, submitted 7 Jul 2026. No code link on the arXiv page. | **Eqs. 1–8 NOT yet transcribed** (fetch was rate-limited all session). The abstract describes: teacher-seeded GP relevance, log-det DPP diversity, submodular greedy, concentration-based adaptive stopping; evaluated on **gastrointestinal WSIs**, not blood smears; "83.7% fewer patches … retaining 97.9% of full-budget composite selection quality". The quotes used in the proposal (certificate "does not bound the generalisation error of a classifier"; stopping uses only the IG term; coverage 0.169 vs 0.266) still have to be checked against the full text. |
+| InfoDPP-PAC, arXiv:2608.23574 | Exists. Mittal, Srivastava, Chauhan, submitted 7 Jul 2026. No code link on the arXiv page. | **Eqs. 1–8 not yet transcribed.** The abstract describes: teacher-seeded GP relevance, log-det DPP diversity, submodular greedy, concentration-based adaptive stopping; evaluated on **gastrointestinal WSIs**, not blood smears; "83.7% fewer patches … retaining 97.9% of full-budget composite selection quality". The quotes used in the proposal (certificate "does not bound the generalisation error of a classifier"; stopping uses only the IG term; coverage 0.169 vs 0.266) still have to be checked against the full text. |
 | KU-Optofil, Zenodo 10.5281/zenodo.17333317 | Exists. Yarıkan et al., CC BY 4.0, v2 15 Oct 2025. Files: `dataset.zip` (564.7 MB), `metadata.csv` (1.7 MB), `metadata_with_patient_level_splits.csv` (2.3 MB). | Descriptor: Yarıkan et al., *Sci. Data* (2026), doi 10.1038/s41597-026-06761-y. The cell count (31,489), the 13 classes, the crop size, and whether field coordinates exist have **not yet been confirmed** from the files. Zenodo is blocked from the cloud sandbox, so download it on the local machine. A patient-level split file exists: **use it**, because it avoids patient leakage between classifier training and the composite-field evaluation. |
-| RV-PBS, Shekhar et al., Spertus et al., Csillag et al., Rümke | Not yet checked | Next session. |
+| RV-PBS, Shekhar et al., Spertus et al., Csillag et al., Rümke | Not yet checked | Checked later. |
 
 **Design consequence (important):** KU-Optofil appears to be a *single-cell* dataset. "Fields" are therefore **composites** that we build. Composite fields contain no real spatial dependence, stain-drift structure or slide-level clustering, so RQ4 (assumption violations) **cannot** be answered on KU-Optofil. RQ4 has to rely on RV-PBS or other real whole-field data, and that makes the "secondary, underpowered" external set more important than the proposal currently suggests. This is a methodological vulnerability that should be addressed in the pre-registration.
 

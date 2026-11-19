@@ -1,6 +1,6 @@
 # Reproducing the paper
 
-This file explains how to regenerate every number, table and figure of `paper/main.tex` (full preprint) and
+This file explains how to regenerate every number, table and figure of `paper/main.tex` (longer October version) and
 `paper/jbhi_compact.tex` (10-page IEEE JBHI version).
 `reproduce.py` wraps the same commands.
 
