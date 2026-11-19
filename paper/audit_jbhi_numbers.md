@@ -103,7 +103,7 @@ Stated numbers are rounded half-up to their decimals; `<=` marks an at-most or w
 | rq4.stain | pass | yes | 95% intervals of within-class log-odds per SD exclude 0 for contrast, brightness, green, blue and sharpness: {"q_contrast": [0.463, 1.305], "q_brightness": [0.307, 1.027], "q_g": [0.452, 2.367], "q_b": [-1.353, -0.404], "q_blur_lapvar": [0.094, 0.301]} |  |
 | rq4.classes | pass | yes | 0.26 vs 0.2647; 0.33 vs 0.3333; 0.19 vs 0.1907; 0.20 vs 0.2 | four highest class rates: metamyelocyte 0.333, myelocyte 0.265, reactive_lymphocyte 0.200, basophil 0.191 |
 | rq4.lowrecall | pass | yes | <=0.007 vs 0.006667; 2.3 vs 2.333333 |  |
-| rq4.shift | pass | yes | 0.340 vs 0.339869; 0.250 vs 0.25; 0.421 vs 0.421493; 0.63 vs 0.630723; 0.62 vs 0.620054; 0.64 vs 0.640614; 0.786 vs 0.785579; 0.915 vs 0.915341; 0.058 vs 0.058431; 0.060 vs 0.059592; 0.050 vs 0.05 |  |
+| rq4.shift | pass | yes | 0.91 vs 0.9059; 0.340 vs 0.339869; 0.250 vs 0.25; 0.421 vs 0.421493; 0.63 vs 0.630723; 0.62 vs 0.620054; 0.64 vs 0.640614; 0.786 vs 0.785579; 0.915 vs 0.915341; 0.058 vs 0.058431; 0.060 vs 0.059592; 0.050 vs 0.05 |  |
 | rq4.shift_valid | pass | yes | <=0.034 vs 0.034 |  |
 | rq4.ratios | pass | yes | 1.30 vs 1.30303; 1.18 vs 1.180494; 1.37 vs 1.371069; 1.46 vs 1.461538; 1.36 vs 1.357143; 1.75 vs 1.75; 1.67 vs 1.666667; 1.53 vs 1.527778; 1.75 vs 1.75; 3.00 vs 3.0; 2.79 vs 2.785714; 3.33 vs 3.333333 |  |
 | rq4.h6d | pass | yes | 1.77 vs 1.772727 |  |

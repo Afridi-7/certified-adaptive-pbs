@@ -273,8 +273,8 @@ def low_recall():
     hi_ = c4[(c4.group != "low_recall") & np.isclose(c4.p, 0.15)].prop_cells.median(); lo_ = c4[(c4.group == "low_recall") & np.isclose(c4.p, 0.15)].prop_cells.median()
     return [("<=0.007", max(lr.uniform_cert.mean(), lr.prop_cert.mean())), ("2.3", lo_ / hi_)]
 optional("rq4.lowrecall", "Certification stayed valid with blasts drawn only from low-recall patients ($\\le0.007$), at 2.3 times the cost", low_recall)
-check("rq4.shift", "blast sensitivity fell to 0.340 [0.250, 0.421] on RV-PBS (H4a) and 0.63 [0.62, 0.64] on MLL23 (AUC 0.786 and 0.915), while its false-positive rate barely rose (0.058 and 0.060 against 0.050",
-      [("0.340", ext["H4a_recall_drops"]["rv_recall"]), ("0.250", ext["H4a_recall_drops"]["ci95"][0]), ("0.421", ext["H4a_recall_drops"]["ci95"][1]),
+check("rq4.shift", "blast sensitivity fell from 0.91 to 0.340 [0.250, 0.421] on RV-PBS (H4a) and 0.63 [0.62, 0.64] on MLL23 (AUC 0.786 and 0.915), while its false-positive rate barely rose (0.058 and 0.060 against 0.050",
+      [("0.91", ext["H4a_recall_drops"]["ku_recall"]), ("0.340", ext["H4a_recall_drops"]["rv_recall"]), ("0.250", ext["H4a_recall_drops"]["ci95"][0]), ("0.421", ext["H4a_recall_drops"]["ci95"][1]),
        ("0.63", mll["recall"]), ("0.62", mll["recall_ci95"][0]), ("0.64", mll["recall_ci95"][1]), ("0.786", ext["descriptive"]["auc"]), ("0.915", mll["auc"]),
        ("0.058", ext["H4b_fp_rises"]["rv_fp"]), ("0.060", mll["fp"]), ("0.050", ext["H4b_fp_rises"]["ku_fp"])])
 A3 = J("a3_decisions.json")
@@ -330,7 +330,7 @@ CL = J("a4_bmwsi", "clustering.json"); IX = J("a4_bmwsi", "icc_excess.json")
 check("rq4.icc", "the bias-corrected intraclass correlation was 0.013 [0.002, 0.028] and 0.043 [0.018, 0.067] (exploratory), a design effect of about 1.2 for 5-cell fields",
       [("0.013", IX["S1"]["excess"]), ("0.002", IX["S1"]["excess_ci95"][0]), ("0.028", IX["S1"]["excess_ci95"][1]),
        ("0.043", IX["S2"]["excess"]), ("0.018", IX["S2"]["excess_ci95"][0]), ("0.067", IX["S2"]["excess_ci95"][1]), ("1.2", 1 + 4 * IX["S2"]["excess"])])
-check("rq4.regions", "In 116 exhaustively annotated marrow regions of 75 patients", [("116", CL["n_rois"]), ("75", CL["n_patients"])])
+check("rq4.regions", "In 116 annotated marrow regions of 75 patients eligible under the pre-registered rule (at least 20 nucleated cells, both blasts and non-blasts)", [("116", CL["n_rois"]), ("75", CL["n_patients"])])
 check("rq4.perm", "permutation $p=0.024$ at the quadrant and $0.0005$ at the $4\\times4$ scale", [("0.024", CL["primary"]["S1"]["perm_p"]), ("0.0005", CL["primary"]["S2"]["perm_p"])])
 n_sp = sum(len(pd.read_csv(f)) for d in ("a3_spatial_theta010", "a3_spatial_theta020") for f in glob.glob(R(d, "ep_*.csv")))
 check("rq4.cluster_n", "in synthetic arrangements (18,000 specimens)", [("18000", n_sp)], note="all three arrangements, both thresholds")
