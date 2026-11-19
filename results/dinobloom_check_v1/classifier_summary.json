@@ -1,0 +1,30 @@
+{
+ "encoder": {
+  "dinov2": {
+   "ku_oof_auc": 0.978798214749166,
+   "ku_threshold_95spec": 0.0310392350137264,
+   "ku_sensitivity_95spec": 0.9059304703476483,
+   "mll23_auc": 0.9153410483124601,
+   "mll23_sensitivity_at_ku_threshold": 0.630722751568673,
+   "mll23_fp_at_ku_threshold": 0.05959245066790818,
+   "rvpbs_auc": 0.7855139829999891,
+   "rvpbs_sensitivity_at_ku_threshold": 0.32679738562091504,
+   "rvpbs_fp_at_ku_threshold": 0.05676126878130217
+  },
+  "dinobloom": {
+   "ku_oof_auc": 0.9852791788899894,
+   "ku_threshold_95spec": 0.01232281353314945,
+   "ku_sensitivity_95spec": 0.9488752556237219,
+   "rvpbs_auc": 0.7027944177114362,
+   "rvpbs_sensitivity_at_ku_threshold": 0.2549019607843137,
+   "rvpbs_fp_at_ku_threshold": 0.04006677796327212
+  }
+ },
+ "env": {
+  "python": "3.13.18",
+  "numpy": "2.5.3",
+  "scipy": "1.18.1",
+  "pandas": "3.0.5",
+  "sklearn": "1.9.1"
+ }
+}

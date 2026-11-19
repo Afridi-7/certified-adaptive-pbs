@@ -182,15 +182,16 @@ STEPS = [
                 "data/mll23/mll23_cells.csv", "data/mll23/mll23_embeddings_dinov2_vits14.npy"],
          cmds=[S("scripts/55_reverse_direction.py", "--out", "{out}")], out="results/reverse_direction_v1", compare=["summary.json"]),
     dict(id="dinobloom_embed", group="rq4", status="D", cost="GPU",
-         paper="DinoBloom-S embeddings for the encoder robustness check (exploratory; not yet in the paper)", needs=[],
+         paper="DinoBloom-S embeddings for the encoder check (exploratory; Supplement S6)", needs=[],
          colab="notebooks/57_dinobloom_embeddings_colab.ipynb", cmds=[], out="results/dinobloom_v1", compare=[]),
     dict(id="dinobloom_check", group="rq4", status="X", cost="M",
-         paper="Encoder robustness check with DinoBloom-S (exploratory; not yet in the paper)",
-         needs=["results/dinobloom_v1/ku_cells_features.csv", "results/dinobloom_v1/rvpbs_cells.csv", "results/dinobloom_v1/mll23_cells.csv"],
+         paper="Encoder check with DinoBloom-S, Section V-D and Supplement S6 (exploratory)",
+         needs=["results/dinobloom_v1/ku_cells_features.csv", "results/dinobloom_v1/rvpbs_cells.csv"],
          cmds=[S("scripts/57_dinobloom_check.py", "--part", "classifier", "--out", "{out}"),
-               S("scripts/57_dinobloom_check.py", "--part", "part1", "--encoder", "dinov2", "--out", "{out}"),
-               S("scripts/57_dinobloom_check.py", "--part", "part1", "--encoder", "dinobloom", "--out", "{out}")] +
-              [S("scripts/57_dinobloom_check.py", "--part", "part3", "--encoder", "dinobloom", "--source", src, "--out", "{out}") for src in ("ku", "mll23", "rvpbs")],
+               S("scripts/57_dinobloom_check.py", "--part", "part1", "--encoder", "dinov2", "--episodes", "400", "--out", "{out}"),
+               S("scripts/57_dinobloom_check.py", "--part", "part1", "--encoder", "dinobloom", "--episodes", "400", "--out", "{out}")] +
+              [S("scripts/57_dinobloom_check.py", "--part", "part3", "--encoder", "dinov2", "--source", src, "--check_replication", "--out", "{out}") for src in ("ku", "rvpbs")] +
+              [S("scripts/57_dinobloom_check.py", "--part", "part3", "--encoder", "dinobloom", "--source", src, "--out", "{out}") for src in ("ku", "rvpbs")],
          out="results/dinobloom_check_v1", compare=[]),
     dict(id="icc_diagnostics", group="rq4", status="X", cost="M",
          paper="Null bias of the pooled ICC, null-centred ICC, low-blast regions (audit 2026-10-22)",

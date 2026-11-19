@@ -169,6 +169,33 @@ H7a & E & Blasts clustered in real smears & yes\\
 \end{tabular}
 \end{table}
 
+\section{A hematology-specific encoder (RQ1, RQ3, RQ4)}
+To test whether the conclusions depend on the general-purpose encoder, we re-embedded the same KU-Optofil and RV-PBS cells with DinoBloom-S \cite{koch2024dinobloom}, a ViT-S/14 trained self-supervised on blood and bone-marrow single-cell images, keeping the preprocessing, row order and patient-grouped probe of the DINOv2 run (exploratory). MLL23 was not re-embedded: DinoBloom's training data include images from the same laboratory, possibly MLL23 itself, so it would not be an independent shift for this encoder. Both encoders were run on the same specimens: in Part~I, 2,000 new specimens per field size with one critical field among $N=200$ fields; in Part~III, the specimens of the rerun of Section~V-C. Validity does not depend on the encoder; costs and the selector's behavior may.
+
+The hematology-specific encoder separated blasts better in distribution and worse on the phone-camera images of RV-PBS (Table~\ref{tab:dinobloom}). InfoDPP-PAC stopped after the same number of fields and missed the critical field less often, but still in 59--78\% of specimens with 5 to 20 cells per field, against 83--85\% for uniform sampling of the same size. Classifier-driven betting needed fewer cells than with DINOv2 in distribution and more on RV-PBS, and every design kept false certification at or below 0.040. A better encoder lowered the cost where the classifier was accurate and raised it where it was not; no conclusion of the manuscript changed.
+
+\begin{table}[t]
+\centering\footnotesize
+\caption{The two encoders on the same specimens (exploratory). Probe refitted on all KU-Optofil cells, as in the rerun of Section~V-C; RV-PBS sensitivity and false-positive (FP) rate at the KU-Optofil (KU) 95\%-specificity threshold. Miss: one critical field among 200 fields of $m$ cells (2,000 specimens per $m$); difference from uniform sampling with a fold-level $t$ interval. Ratios: median cells over those of uniform ALPHA ($\theta=0.10$: $p=0.12,0.15,0.20$; $\theta=0.20$: $p=0.22,0.25,0.30$; RV-PBS: $\theta=0.10$ only). FC: largest false-certification rate at $p=\theta$ over the six designs.}\label{tab:dinobloom}
+\setlength{\tabcolsep}{2.5pt}
+\begin{tabular}{@{}L{3.05cm}cc@{}}
+\toprule
+ & DINOv2 & DinoBloom-S\\
+\midrule
+KU-Optofil AUC; sensitivity & 0.979; 0.91 & 0.985; 0.95\\
+RV-PBS AUC; sensitivity; FP rate & 0.786; 0.33; 0.057 & 0.703; 0.25; 0.040\\
+InfoDPP-PAC miss, $m=1,5,10,20$ & 0.30, 0.69, 0.75, 0.80 & 0.18, 0.59, 0.70, 0.78\\
+Uniform miss, same sizes & 0.85, 0.85, 0.83, 0.84 & 0.85, 0.85, 0.83, 0.84\\
+InfoDPP-PAC median stop (fields) & 33 & 32--33\\
+Difference from uniform, $m=20$ & $-0.04$ $[-0.10,0.02]$ & $-0.07$ $[-0.13,-0.01]$\\
+Classifier-driven betting, KU-Optofil & 0.45--0.77 & 0.36--0.73\\
+Classifier-driven betting, RV-PBS & 0.97, 1.67, 3.00 & 1.01, 1.82, 3.08\\
+Hedged 50\% mixture, KU; RV-PBS & 0.61--0.81; 0.95--1.15 & 0.59--0.78; 0.97--1.24\\
+FC, KU-Optofil; RV-PBS & 0.034; 0.028 & 0.034; 0.040\\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \bibliographystyle{IEEEtran}
 \bibliography{refs}
 \end{document}

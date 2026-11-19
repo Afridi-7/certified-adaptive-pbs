@@ -54,3 +54,4 @@ results/*smoke*/
 !results/**/report.json
 !results/**/summary_*.json
 !results/**/config_*.json
+!results/dinobloom_check_v1/*.json

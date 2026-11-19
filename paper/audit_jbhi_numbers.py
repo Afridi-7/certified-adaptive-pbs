@@ -1,6 +1,6 @@
 """
 Recomputes every number stated in paper/jbhi_compact.tex and its supplement, paper/jbhi_supplement.tex, from results/.
-Tables I-IV of the manuscript and S1-S4 of the supplement are compared cell by cell. Writes paper/audit_jbhi_numbers.md;
+Tables I-IV of the manuscript and S1-S5 of the supplement are compared cell by cell. Writes paper/audit_jbhi_numbers.md;
 exits non-zero on any mismatch.
 
 Run from the repository root:  python paper/audit_jbhi_numbers.py
@@ -534,6 +534,44 @@ for run in ["none", "none_refit"] + pats:
     mi = " & ".join(f"{lo_miss(run, m):.3f}" for m in (1, 5, 10, 20))
     row = f"{lab} & {left} & {mi} & {min(r_):.2f}--{max(r_):.2f} & {'--' if run == 'none' else f'{dmax:.2f}'} & {v:.3f}\\\\"
     OUT.append(dict(id=f"tableS3.{lab.split()[0] if run in pats else run}", ok=row in SUPP, in_doc=True, detail=row, note="recomputed row"))
+
+# ------------------------------------------------------------------ added 2026-11-19: DinoBloom-S check (scripts/57_dinobloom_check.py; exploratory)
+DBD = "dinobloom_check_v1"
+DCL = J(DBD, "classifier_summary.json")["encoder"]
+DP1 = {e: J(DBD, f"part1_summary_{e}.json")["by_m"] for e in ("dinov2", "dinobloom")}
+DP3 = {(e, s_): J(DBD, f"part3_summary_{e}_{s_}.json") for e in ("dinov2", "dinobloom") for s_ in ("ku", "rvpbs")}
+DKU = [f"theta{t:.2f}_p{p:.2f}" for t, p in KU_ALT]
+DRV = ["theta0.10_p0.12", "theta0.10_p0.15", "theta0.10_p0.20"]
+MS = ("1", "5", "10", "20")
+def d_rat(e, s_, num, keys): return [DP3[(e, s_)]["ratios"][f"{k_}_{num}_over_alpha_uniform"]["ratio"] for k_ in keys]
+def d_fc(e, s_): return max(v["rate"] for v in DP3[(e, s_)]["validity"].values())
+def f_(x, places): return str(Decimal(repr(float(x))).quantize(Decimal(1).scaleb(-places), rounding=ROUND_HALF_UP))
+def f_rng(v, places): a_, b_ = f_(min(v), places), f_(max(v), places); return a_ if a_ == b_ else f"{a_}--{b_}"
+db_info = [DP1["dinobloom"][m]["infodpp_miss"] * 100 for m in ("5", "10", "20")]
+db_uni = [DP1["dinobloom"][m]["uniform_miss"] * 100 for m in ("5", "10", "20")]
+check("rq4.dinobloom", "InfoDPP-PAC still missed the critical field in 59--78\\% of specimens at $m\\ge5$; classifier-driven betting needed 0.36--0.73 times the cells of uniform ALPHA in distribution and 1.01--3.08 times on RV-PBS",
+      rng("59--78", db_info) + rng("0.36--0.73", d_rat("dinobloom", "ku", "bet_prop", DKU)) + rng("1.01--3.08", d_rat("dinobloom", "rvpbs", "bet_prop", DRV)))
+check("supp.dinobloom_n", "in Part~I, 2,000 new specimens per field size", [("2000", min(DP1[e][m]["n"] for e in DP1 for m in MS)), ("2000", max(DP1[e][m]["n"] for e in DP1 for m in MS))])
+check("supp.dinobloom_text", "but still in 59--78\\% of specimens with 5 to 20 cells per field, against 83--85\\% for uniform sampling of the same size",
+      rng("59--78", db_info) + rng("83--85", db_uni))
+check("supp.dinobloom_fc", "every design kept false certification at or below 0.040", [("<=0.040", max(d_fc(e, s_) for e in ("dinov2", "dinobloom") for s_ in ("ku", "rvpbs")))])
+def d_rows(e):
+    c, p1 = DCL[e], DP1[e]
+    d20 = p1["20"]; dci = d20["diff_ci95"]
+    med = [p1[m]["median_stop_fields"] for m in MS]
+    return [f"{f_(c['ku_oof_auc'], 3)}; {f_(c['ku_sensitivity_95spec'], 2)}",
+            f"{f_(c['rvpbs_auc'], 3)}; {f_(c['rvpbs_sensitivity_at_ku_threshold'], 2)}; {f_(c['rvpbs_fp_at_ku_threshold'], 3)}",
+            ", ".join(f_(p1[m]["infodpp_miss"], 2) for m in MS), ", ".join(f_(p1[m]["uniform_miss"], 2) for m in MS),
+            f_rng(med, 0), f"${f_(d20['diff'], 2)}$ $[{f_(dci[0], 2)},{f_(dci[1], 2)}]$",
+            f_rng(d_rat(e, "ku", "bet_prop", DKU), 2), ", ".join(f_(x, 2) for x in d_rat(e, "rvpbs", "bet_prop", DRV)),
+            f"{f_rng(d_rat(e, 'ku', 'hedge_mix50', DKU), 2)}; {f_rng(d_rat(e, 'rvpbs', 'hedge_mix50', DRV), 2)}",
+            f"{f_(d_fc(e, 'ku'), 3)}; {f_(d_fc(e, 'rvpbs'), 3)}"]
+labels = ["KU-Optofil AUC; sensitivity", "RV-PBS AUC; sensitivity; FP rate", "InfoDPP-PAC miss, $m=1,5,10,20$", "Uniform miss, same sizes",
+          "InfoDPP-PAC median stop (fields)", "Difference from uniform, $m=20$", "Classifier-driven betting, KU-Optofil",
+          "Classifier-driven betting, RV-PBS", "Hedged 50\\% mixture, KU; RV-PBS", "FC, KU-Optofil; RV-PBS"]
+for lab, a_, b_ in zip(labels, d_rows("dinov2"), d_rows("dinobloom")):
+    row = f"{lab} & {a_} & {b_}\\\\"
+    OUT.append(dict(id=f"tableS5.{lab.split()[0].replace('$', '')}", ok=row in SUPP, in_doc=True, detail=row, note="recomputed row"))
 
 # ------------------------------------------------------------------ validity statement of the abstract
 valid = {"part3": max(h3a), "clustering": h5a, "population size": v05, "rerun": allvalid, "unequal": cons,

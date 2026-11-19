@@ -321,3 +321,28 @@ letter, title page and highlights. Nothing frozen was modified.
   (`paper/jbhi_supplement.tex`). References added: DinoBloom, sequential attention-based sampling (NeurIPS 2025), CLSI
   H20 (3rd ed., 2026), Brown et al. 2010 (slidemakers), the EHA/ELN recommendations (Haematologica 2026) and Lehmann
   and Romano (Proposition 4). `paper/audit_jbhi_numbers.py` reads both files: 217 checks.
+
+## DinoBloom-S check, run (2026-11-19, evening; exploratory)
+
+- **Embeddings.** `notebooks/57_dinobloom_embeddings_colab.ipynb`, run by the author in Colab; output in
+  `results/dinobloom_v1` (embeddings and cell tables not tracked; `config.json` tracked). Weights: Zenodo record
+  10908163, `DinoBloom-S.pth`, SHA-256 c2f7990b...8e44; every model parameter filled, nothing left over. KU-Optofil
+  (28,280 cells; same zip, SHA-256 97fc42d9...0b0ea) and RV-PBS (752 crops) in the row order of the DINOv2 run,
+  checked by `scripts/57_dinobloom_check.py`.
+- **Deviations from the plan.** (1) The notebook ran on a CPU runtime (float32), not on a GPU with float16 autocast as
+  the DINOv2 run did; this changes the numerics of the forward pass only. (2) MLL23 was not embedded: the notebook
+  rebuilt the MLL23 index (so `config.json` lists 36,529 MLL23 rows) but no MLL23 embeddings were saved, and MLL23 is
+  left out of the check. DinoBloom's training data include images from the same laboratory (possibly MLL23 itself), so
+  MLL23 would not be an independent shift for this encoder. (3) Part I was run with `--episodes 400` (2,000 specimens
+  per field size) instead of the script default of 100, decided before the DinoBloom arm was run; the DINOv2 arm uses
+  the same seeds and specimens.
+- **Checks.** With `--encoder dinov2 --check_replication`, Part III reproduces `results/baseline_reference_v1` episode
+  by episode for KU-Optofil and RV-PBS. Output: `results/dinobloom_check_v1` (summaries tracked, episode tables not).
+- **Results (DINOv2 vs DinoBloom-S, same specimens).** Probe on KU-Optofil: AUC 0.979 vs 0.985, sensitivity at 95%
+  specificity 0.91 vs 0.95. RV-PBS at the KU-Optofil threshold: AUC 0.786 vs 0.703, sensitivity 0.33 vs 0.25.
+  Part I (one critical field among 200): InfoDPP-PAC missed 0.30/0.69/0.75/0.80 vs 0.18/0.59/0.70/0.78 at 1/5/10/20
+  cells per field (uniform sampling 0.83-0.85 with either encoder); median stop 33 vs 32-33 fields. Part III:
+  classifier-driven betting needed 0.45-0.77 vs 0.36-0.73 times the cells of uniform ALPHA in distribution and
+  0.97-3.00 vs 1.01-3.08 on RV-PBS; false certification at p = theta at most 0.040. No conclusion of the paper changed.
+- **Paper.** Supplement Section S6 and Table S5; one sentence in Section V-D; Section IV-C now says DinoBloom-S served
+  only as a robustness check; the Limitations sentence on the encoder updated. Audit: 231 checks.

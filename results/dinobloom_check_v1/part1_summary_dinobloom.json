@@ -1,0 +1,55 @@
+{
+ "encoder": "dinobloom",
+ "seed": 20261119,
+ "episodes_per_fold": 400,
+ "by_m": {
+  "1": {
+   "n": 2000,
+   "infodpp_miss": 0.178,
+   "uniform_miss": 0.8505,
+   "diff": -0.6725,
+   "diff_ci95": [
+    -0.8135942308096669,
+    -0.5314057691903331
+   ],
+   "median_stop_fields": 32.0,
+   "mean_stop_fields": 32.292
+  },
+  "5": {
+   "n": 2000,
+   "infodpp_miss": 0.592,
+   "uniform_miss": 0.8475,
+   "diff": -0.25549999999999995,
+   "diff_ci95": [
+    -0.3497663424341598,
+    -0.16123365756584007
+   ],
+   "median_stop_fields": 32.0,
+   "mean_stop_fields": 32.5445
+  },
+  "10": {
+   "n": 2000,
+   "infodpp_miss": 0.703,
+   "uniform_miss": 0.832,
+   "diff": -0.129,
+   "diff_ci95": [
+    -0.15229154486794924,
+    -0.10570845513205077
+   ],
+   "median_stop_fields": 33.0,
+   "mean_stop_fields": 32.6565
+  },
+  "20": {
+   "n": 2000,
+   "infodpp_miss": 0.776,
+   "uniform_miss": 0.8425,
+   "diff": -0.0665,
+   "diff_ci95": [
+    -0.12513494478799186,
+    -0.00786505521200815
+   ],
+   "median_stop_fields": 32.0,
+   "mean_stop_fields": 32.2345
+  }
+ }
+}

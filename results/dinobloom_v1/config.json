@@ -1,0 +1,48 @@
+{
+ "notebook": "57_dinobloom_embeddings_colab.ipynb",
+ "created_utc": "2026-11-19T21:14:18Z",
+ "encoder": "DinoBloom-S (ViT-S/14), Koch et al., MICCAI 2024",
+ "weights_source": "https://zenodo.org/records/10908163/files/DinoBloom-S.pth?download=1",
+ "weights_sha256": "c2f7990b003e89bcece80e379fb8fe0ba2ec392ce19b286e8a294abd99568e44",
+ "load_check": {
+  "missing": [],
+  "unexpected": []
+ },
+ "img_size": 224,
+ "mean": [
+  0.485,
+  0.456,
+  0.406
+ ],
+ "std": [
+  0.229,
+  0.224,
+  0.225
+ ],
+ "dtype_saved": "float16",
+ "dim": 384,
+ "seed": 20260919,
+ "ku": {
+  "n": 28280,
+  "zip_sha256": "97fc42d9cd0e15299e9a4091e286a3f390ce97483fe291d821a3bf2fb858b0ea",
+  "probe_pooled_auc": 0.9852791788899894,
+  "probe_threshold_95spec": 0.012322813533149481
+ },
+ "rvpbs": {
+  "n": 752,
+  "zip_sha256": "42d195b1e5a49229b517bbe2780e72688f9b08fc09252e049866df6bcb749100"
+ },
+ "mll23": {
+  "n": 36529,
+  "zenodo": "10.5281/zenodo.14277609",
+  "skipped": [
+   "normoblast.zip",
+   "promyelocyte_atypical.zip",
+   "smudge_cell.zip"
+  ]
+ },
+ "torch": "2.14.1+cpu",
+ "python": "3.13.18",
+ "gpu": "cpu",
+ "note": "Identical cells, row order and preprocessing as embeddings_v1 (DINOv2); only the encoder differs. Exploratory."
+}
