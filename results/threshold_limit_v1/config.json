@@ -1,0 +1,12 @@
+{
+ "config": {
+  "out": "results/threshold_limit_v1",
+  "seed": 20261119,
+  "reps": 20000
+ },
+ "env": {
+  "python": "3.13.18",
+  "numpy": "2.5.3",
+  "scipy": "1.18.1"
+ }
+}

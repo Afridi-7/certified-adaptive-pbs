@@ -1,6 +1,7 @@
 """
-Recomputes every number stated in paper/jbhi_compact.tex from results/.
-Tables I-III and V are compared cell by cell. Writes paper/audit_jbhi_numbers.md; exits non-zero on any mismatch.
+Recomputes every number stated in paper/jbhi_compact.tex and its supplement, paper/jbhi_supplement.tex, from results/.
+Tables I-IV of the manuscript and S1-S4 of the supplement are compared cell by cell. Writes paper/audit_jbhi_numbers.md;
+exits non-zero on any mismatch.
 
 Run from the repository root:  python paper/audit_jbhi_numbers.py
 """
@@ -11,7 +12,9 @@ import numpy as np, pandas as pd
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 R = lambda *p: os.path.join(ROOT, "results", *p)
-TEX = open(os.path.join(ROOT, "paper", "jbhi_compact.tex"), encoding="utf-8").read()
+MAIN = open(os.path.join(ROOT, "paper", "jbhi_compact.tex"), encoding="utf-8").read()
+SUPP = open(os.path.join(ROOT, "paper", "jbhi_supplement.tex"), encoding="utf-8").read()
+TEX = MAIN + "\n" + SUPP
 J = lambda *p: json.load(open(R(*p)))
 OUT = []
 
@@ -71,14 +74,14 @@ def dl(th, p, n, proc, col): return float(DL[np.isclose(DL.theta, th) & np.isclo
 near = [(0.10, 0.08), (0.10, 0.12), (0.20, 0.18), (0.20, 0.22)]
 RAS = J("real_arrangements_v1", "summary.json"); RA = RAS["validity"]
 
-check("abs.cells", "Using pre-registered simulations from 28,280 expert-labeled cells", [("28280", len(cells))])
+check("abs.cells", "Using simulations, partly pre-registered, from 28,280 expert-labeled cells", [("28280", len(cells))])
 check("abs.patients99", "annotated bone-marrow regions from 99 patients", [("99", tiles.patient.nunique())])
-check("abs.miss", "with one critical field among 200 ten-cell fields, it missed 76\\% of positive specimens, against 85\\% for random sampling",
+check("abs.miss", "with one critical field among 200 ten-cell fields it missed 76\\% of positive specimens, against 85\\% for equal-size random sampling",
       [("76\\%", miss[10]), ("85\\%", umiss[10])])
-check("abs.absence", "certifying that one critical field is absent at a 5\\% error level requires examining 95\\% of the fields", [("95\\%", f1)])
+check("abs.absence", "certifying that one critical field is absent at a 5\\% error level requires examining 95\\% of fields", [("95\\%", f1)])
 check("abs.sens", "cut blast sensitivity from 0.91 to 0.63 and 0.34",
       [("0.91", ext["H4a_recall_drops"]["ku_recall"]), ("0.63", mll["recall"]), ("0.34", ext["H4a_recall_drops"]["rv_recall"])])
-check("abs.cost", "needed 0.45 to 0.75 times the verified cells of uniform sampling in distribution, and 1.3 to 3.0 times under shift at margins of 0.05 to 0.10",
+check("abs.cost", "needed 0.45 to 0.75 times the verified cells of uniform sampling in distribution, and 1.3 to 3.0 times under shift (margins 0.05 to 0.10)",
       rng("0.45 to 0.75", pva, " to ") + rng("1.3 to 3.0", shiftr, " to "))
 check("abs.count200", "a 200-cell count was wrong in up to 27\\% of specimens", [("27\\%", max(dl(t, p, 200, "conventional", "wrong") for t, p in near))])
 check("abs.real", "exceeded the nominal error in 27 of 75 real specimens", [("27", RA["naive_cell"]["n_patients_rate_gt_alpha"]), ("75", RAS["n_patients"])])
@@ -108,9 +111,9 @@ try:
                          capture_output=True, text=True, cwd=ROOT, env=dict(os.environ, PYTHONPATH=os.path.join(ROOT, "src"))).stdout
     n_tests = sum(1 for l in out.splitlines() if "::" in l)
     if n_tests == 0: raise RuntimeError("no tests collected (is pytest installed?)")
-    check("stats.tests", "a suite of 50 deterministic tests", [("50", n_tests)])
+    check("stats.tests", "a suite of 56 deterministic tests", [("56", n_tests)])
 except Exception as e:
-    OUT.append(dict(id="stats.tests", ok="a suite of 50 deterministic tests" in TEX, in_doc=True, detail="pytest not available; not counted", note=str(e)[:60]))
+    OUT.append(dict(id="stats.tests", ok="a suite of 56 deterministic tests" in TEX, in_doc=True, detail="pytest not available; not counted", note=str(e)[:60]))
 
 # ------------------------------------------------------------------ RQ1
 med = E.groupby(["m", "k"]).infodpp_n.median()
@@ -121,7 +124,7 @@ check("rq1.auc_info", "fell from 0.778 at $m=1$ to 0.593, 0.552 and 0.525 at $m=
       [("0.778", auc[1]), ("0.593", auc[5]), ("0.552", auc[10]), ("0.525", auc[20])])
 FT = pd.read_csv(R("kt1_field_teacher", "episodes.csv")); fta = FT.groupby("m").auc_rel_field.mean()
 check("rq1.auc_field", "kept 0.978, 0.925, 0.882 and 0.827", [("0.978", fta[1]), ("0.925", fta[5]), ("0.882", fta[10]), ("0.827", fta[20])])
-check("rq1.auc_cell", "the pre-registered cell-level teacher gave 0.977 at $m=1$ to 0.896 at $m=20$", [("0.977", aucr[1]), ("0.896", aucr[20])])
+check("rq1.auc_cell", "used the cell-level teacher, which gave 0.977 at $m=1$ to 0.896 at $m=20$", [("0.977", aucr[1]), ("0.896", aucr[20])])
 check("rq1.miss", "InfoDPP-PAC missed the critical field in 0.315, 0.681, 0.759 and 0.805",
       [(s, miss[m]) for s, m in zip(["0.315", "0.681", "0.759", "0.805"], [1, 5, 10, 20])])
 check("rq1.uniform", "uniform sampling of the same size missed 0.822, 0.830, 0.846 and 0.828",
@@ -422,7 +425,7 @@ for line in hyp.splitlines():
     ids += [(h, m_.group(2), m_.group(3) == "yes") for h in part]
 nE = sum(1 for _, t, _ in ids if t == "E"); nEs = sum(1 for _, t, s in ids if t == "E" and s); nV = sum(1 for _, t, _ in ids if t == "V")
 check("hyp.count", "Of the 15 pre-registered empirical hypotheses 12 were supported, and the 5 implementation checks passed",
-      [("15", nE), ("12", nEs), ("5", nV), ("20", len(ids))], note="counted from Table IV")
+      [("15", nE), ("12", nEs), ("5", nV), ("20", len(ids))], note="counted from Supplement Table S4")
 ext_v = {"H1a": dec1["H1a"]["supported"], "H1b": dec1["H1b"]["supported"], "H1c": dec1["H1c"]["supported"], "H1d": dec1["H1d"]["supported"], "KT1": dec1["KT1"]["supported"],
          "H4a": ext["H4a_recall_drops"]["supported"], "H4b": ext["H4b_fp_rises"]["supported"], "H4c": ext["H4c_validity_under_shift"]["supported"], "H7a": CL["H7a_clustering_S1"]["supported"]}
 for t in P3.values():
@@ -445,17 +448,104 @@ check("table5.shift", "Validity held under shift ($\\le0.034$); cost relative to
 check("fig4.caption", "(exploratory rerun, 400 specimens per point); all designs kept false certification $\\le0.034$", [("<=0.034", allvalid)])
 check("disc.27", "a 200-cell count that forces a call was wrong in up to 27\\% of specimens", [("27\\%", max(dl(t, p, 200, "conventional", "wrong") for t, p in near))])
 
+# ------------------------------------------------------------------ added 2026-11-19: absence counts, tie rule, Proposition 4, leave-one-patient-out
+from scipy.stats import hypergeom
+def n_abs(N, k, a): return next(n for n in range(N + 1) if comb(N - n, k) / comb(N, k) <= a)
+def n_closed(N, k, a): return int(np.ceil(N * (1 - a ** (1 / k)) - 1e-9))
+check("rq2.counts", "950 of 1,000 at $\\alpha=0.05$, and still 258 for $k=10$ (Supplement, Fig.~S1)", [("950", n_abs(1000, 1, .05)), ("258", n_abs(1000, 10, .05))])
+check("supp.s1", "this is 950 fields for $k=1$, 450 for $k=5$ and 258 for $k=10$; the sufficient closed form $N(1-\\alpha^{1/k})$ gives 950, 451 and 259",
+      [(s_, n_abs(1000, k, .05)) for s_, k in (("950", 1), ("450", 5), ("258", 10))] + [(s_, n_closed(1000, k, .05)) for s_, k in (("950", 1), ("451", 5), ("259", 10))])
+def conv_wrong(th, p, n, M=2000):   # count with ties at theta*n called "above", as in WHO 2022 and ICC 2022
+    X = hypergeom(M, round(p * M), n); above = X.sf(np.ceil(th * n - 1e-9) - 1)
+    return above if p < th else 1 - above
+check("rq3.tie", "counting exactly $\\theta n$ as above, as both classifications do, gives 15--25\\% for 200 cells (exact calculation)",
+      rng("15\\%--25\\%", [conv_wrong(t, p, 200) for t, p in near]))
+TL = J("threshold_limit_v1", "summary.json"); TLC = J("threshold_limit_v1", "config.json")["config"]
+zb = {k: v["bound"] for k, v in TL["zones"].items()}; ze = {k: v["exact_test"] for k, v in TL["zones"].items()}
+dz52 = max(abs(zb[f"theta{th:.2f}_n{n}"][j] - rm(th, n, col)) for th in (0.10, 0.20) for n in (200, 500, 1000) for j, col in ((0, "p_lo"), (1, "p_up")))
+OUT.append(dict(id="rq3.limit", ok=dz52 * 100 < 0.5, in_doc="its limit differs from these ranges by less than half a percentage point" in TEX,
+                detail=f"largest difference between the limit and the ranges of scripts/52 at n = 200, 500, 1,000: {dz52 * 100:.2f} percentage points", note=""))
+t2 = TL["table2"]; ratio_e = [v["exact_test_exact"] / v["bound"] for v in t2.values()]; ratio_s = [v["sequential_simulated"] / v["bound"] for v in t2.values()]
+seq_dl = max(abs(v["sequential_simulated"] - dl(float(k[5:9]), float(k[11:15]), int(k.split("_n")[1]), "sequential", "correct")) for k, v in t2.items())
+check("rq3.limit_t2", "the exact test reached 0.636--0.995 of the largest possible probability of a correct call and sequential ALPHA 0.290--0.882",
+      rng("0.636--0.995", ratio_e) + rng("0.290--0.882", ratio_s) + [("0", seq_dl)], note="12 off-threshold settings of Table II; sequential values identical to results/decision_level_v1")
+OUT.append(dict(id="abs.limit", ok=max(ratio_e) <= 1 + 1e-12 and max(ratio_s) <= 1 and TL["checks"]["max_rate_minus_bound"] <= 0,
+                in_doc="no valid procedure decides more often than the best exact test on as many cells" in TEX,
+                detail=f"exact test / limit <= {max(ratio_e):.3f}; sequential ALPHA / limit <= {max(ratio_s):.3f}; valid sequential test minus limit <= {TL['checks']['max_rate_minus_bound']:.3f}", note="Proposition 4"))
+# Supplement, Section S2
+dz_all = max(abs(zb[k][j] - ze[k][j]) for k in zb for j in (0, 1)); dz200 = max(abs(zb[k][j] - ze[k][j]) for k in zb if not k.endswith("_n100") for j in (0, 1))
+check("supp.limit_diff", "the two differ by at most 0.6 percentage points, and by at most 0.45 for $n\\ge200$", [("<=0.6", dz_all * 100), ("<=0.45", dz200 * 100)])
+for th in (0.10, 0.20):
+    for n in (100, 200, 500, 1000):
+        b, e = zb[f"theta{th:.2f}_n{n}"], ze[f"theta{th:.2f}_n{n}"]
+        row = f"{th:.2f} & {n:,} & {100 * b[0]:.2f}--{100 * b[1]:.2f} & {100 * e[0]:.2f}--{100 * e[1]:.2f}\\\\".replace(",", "{,}")
+        OUT.append(dict(id=f"tableS1.{th:.2f}_{n}", ok=row in SUPP, in_doc=True, detail=row, note="recomputed row"))
+def r3(x): return str(Decimal(repr(float(x))).quantize(Decimal("0.001"), rounding=ROUND_HALF_UP))
+for th, ps in ((0.10, (0.08, 0.12, 0.15)), (0.20, (0.18, 0.22, 0.25))):
+    for p in ps:
+        cells_ = [f"{r3(t2[f'theta{th:.2f}_p{p:.2f}_n{n}'][c])}" for n in (200, 500) for c in ("bound", "exact_test_exact", "sequential_simulated")]
+        row = f"{th:.2f} & {p:.2f} & " + " & ".join(cells_) + "\\\\"
+        OUT.append(dict(id=f"tableS2.{th:.2f}_{p:.2f}", ok=row in SUPP, in_doc=True, detail=row, note="recomputed row"))
+FD = TL["fields"]
+check("supp.fields", "were 3.14 and 4.22 for $c=5$ at $p=0.15$ and $0.20$ (design effect 5.0 \\cite{kish1965}), 2.11 for $c=3$ at $p=0.15$ (2.65), 1.47 and 1.50 for $c=2$ (1.47 and 1.25), and 0.47 and 0.28 for $c=1$ (0.29 and 0)",
+      [(s_, FD[k]["ratio"]) for s_, k in (("3.14", "c5_p0.15"), ("4.22", "c5_p0.20"), ("2.11", "c3_p0.15"), ("1.47", "c2_p0.15"), ("1.50", "c2_p0.20"), ("0.47", "c1_p0.15"), ("0.28", "c1_p0.20"))] +
+      [(s_, FD[k]["design_effect"]) for s_, k in (("5.0", "c5_p0.15"), ("5.0", "c5_p0.20"), ("2.65", "c3_p0.15"), ("1.47", "c2_p0.15"), ("1.25", "c2_p0.20"), ("0.29", "c1_p0.15"), ("0", "c1_p0.20"))])
+src59 = open(os.path.join(ROOT, "scripts", "59_threshold_limit.py"), encoding="utf-8").read()
+mr = re.search(r"Mr, Br, nr = (\d+), (\d+), (\d+)", src59); SQ = [v for k, v in TL["checks"].items() if k.startswith("seq_")]
+check("supp.checks", "($\\chi^2$ test $p=0.53$; 20,000 runs with $M=30$, $B=9$, $n=8$). A valid sequential betting test (size 0.021--0.028) certified within $n$ cells in 0.26--0.55 of runs against bounds of 0.60--0.85 in four small populations, never above the bound",
+      [("0.53", TL["checks"]["reduction_chisq_p"]), ("20000", TLC["reps"]), ("30", int(mr.group(1))), ("9", int(mr.group(2))), ("8", int(mr.group(3)))] +
+      rng("0.021--0.028", [v["size"] for v in SQ]) + rng("0.26--0.55", [v["certified_by_n"] for v in SQ]) + rng("0.60--0.85", [v["bound"] for v in SQ]) +
+      [("4", len(SQ)), ("<=0", max(0.0, TL["checks"]["max_rate_minus_bound"]))])
+try:
+    n_lim = sum(1 for l in out.splitlines() if "test_limit.py::" in l)
+    check("supp.tests6", "Six deterministic tests of these statements are in the repository", [("6", n_lim)])
+except NameError:
+    OUT.append(dict(id="supp.tests6", ok="Six deterministic tests" in SUPP, in_doc=True, detail="pytest not available; not counted", note=""))
+# leave-one-blast-patient-out (scripts/58_leave_one_patient_out.py; exploratory, seed families 20261101 and 20261120)
+LO = J("lopo_v1", "summary.json"); LOC = J("lopo_v1", "config.json")["config"]; LR = LO["runs"]; BC = LO["blast_counts"]
+pats = sorted([k_ for k_ in LR if k_ not in ("none", "none_refit")], key=lambda p_: (BC[p_], p_))
+KEY3 = [f"theta{t:.2f}_p{p:.2f}" for t, p in KU_ALT]
+def lo_ratio(run): return [LR[run]["part3"][k_]["bet_prop_over_alpha"] for k_ in KEY3]
+def lo_miss(run, m): return LR[run]["part1"][str(m)]["infodpp_miss"]
+dmiss = max(abs(lo_miss(p_, m) - lo_miss("none", m)) for p_ in pats for m in (1, 5, 10, 20))
+n1 = [LR[r]["part1"][str(m)]["n"] for r in LR for m in (1, 5, 10, 20)]
+lo_all = [x for p_ in pats for x in lo_ratio(p_)]
+dratio = max(abs(a - b) for p_ in pats for a, b in zip(lo_ratio(p_), lo_ratio("none")))
+fcmax = max(v["rate"] for r in LR for v in LR[r]["part3_validity"].values())
+base_same = max(abs(LR["none"]["part3"][k_]["median_cells"][d] - BR["ku"]["median_cells"][k_][d]) for k_ in KEY3 for d in LR["none"]["part3"][k_]["median_cells"])
+check("rq1.lopo", "Leaving out any one of the 11 blast-positive patients, with the probe refitted without that patient's cells (exploratory; 500 new specimens per setting), changed InfoDPP-PAC's miss rate with one critical field by at most 0.032 at every field size",
+      [("11", len(pats)), ("500", min(n1)), ("500", max(n1)), ("<=0.032", dmiss)])
+check("rq3.lopo", "kept classifier-driven betting at 0.45--0.79 times the cells of uniform ALPHA (0.45--0.77 with all patients); at single margins the ratio moved by up to 0.19, and false certification stayed $\\le0.036$",
+      rng("0.45--0.79", lo_all) + rng("0.45--0.77", lo_ratio("none")) + [("0.19", dratio), ("<=0.036", fcmax), ("0", base_same)],
+      note="bet_prop over alpha_uniform at the six KU settings; the run without exclusion reproduces results/baseline_reference_v1 (largest median difference 0)")
+check("supp.lopo", "KU-Optofil holds blasts from 11 patients (1--88 blast cells each, 489 in total)", [("11", len(BC))] + rng("1--88", list(BC.values())) + [("489", sum(BC.values())), ("489", int(cells.is_blast.sum()))])
+check("supp.lopo_design", "(its specimen construction and seeds; 1,000 specimens at $p=\\theta$ and 400 per setting above it). Refitting with every patient reproduced the stored probe (correlation $>0.9999$)",
+      [("1000", LOC["n_null"]), ("400", LOC["n_alt"])], note=f"probe correlation {LR['none_refit']['probe_drift_vs_stored']['corr']:.6f}")
+OUT[-1]["ok"] &= LR["none_refit"]["probe_drift_vs_stored"]["corr"] > 0.9999
+check("supp.lopo_text", "InfoDPP-PAC's miss rate changed by at most 0.032 at every field size, classifier-driven betting needed 0.45--0.79 times the cells of uniform ALPHA (0.45--0.77 with every patient), and false certification at $p=\\theta$ stayed at most 0.036 for every design",
+      [("<=0.032", dmiss)] + rng("0.45--0.79", lo_all) + rng("0.45--0.77", lo_ratio("none")) + [("<=0.036", fcmax)])
+um = [LR[r]["part1"][str(m)]["uniform_miss"] for r in LR for m in (1, 5, 10, 20)]
+check("supp.lopo_caption", "uniform sampling of the same size missed 0.814--0.856", rng("0.814--0.856", um))
+for run in ["none", "none_refit"] + pats:
+    r_ = lo_ratio(run); dmax = max(abs(a - b) for a, b in zip(r_, lo_ratio("none")))
+    lab = {"none": "None (stored probe)", "none_refit": "None (refitted)"}.get(run, f"P{pats.index(run) + 1}" if run in pats else run)
+    left = "0" if run in ("none", "none_refit") else str(BC[run])
+    v = max(x["rate"] for x in LR[run]["part3_validity"].values())
+    mi = " & ".join(f"{lo_miss(run, m):.3f}" for m in (1, 5, 10, 20))
+    row = f"{lab} & {left} & {mi} & {min(r_):.2f}--{max(r_):.2f} & {'--' if run == 'none' else f'{dmax:.2f}'} & {v:.3f}\\\\"
+    OUT.append(dict(id=f"tableS3.{lab.split()[0] if run in pats else run}", ok=row in SUPP, in_doc=True, detail=row, note="recomputed row"))
+
 # ------------------------------------------------------------------ validity statement of the abstract
 valid = {"part3": max(h3a), "clustering": h5a, "population size": v05, "rerun": allvalid, "unequal": cons,
          "real (known counts)": RA["field_known"]["pooled_rate"], "real (assorter)": RA["field_assort"]["pooled_rate"]}
 spec = {k: RA[k]["n_patients_signif_gt_alpha"] for k in ("field_known", "field_assort", "cell_srs")}
 OUT.append(dict(id="abs.valid", ok=max(valid.values()) <= 0.05 and all(v == 0 for v in spec.values()),
-                in_doc="Valid tests kept false certification within the nominal level" in TEX,
+                in_doc="Valid tests kept false certification below 5\\% under acquisition shifts" in TEX,
                 detail=f"largest pooled rate of a valid design at an exact null {max(valid.values()):.3f}; specimens significantly above 0.05: {spec}", note=json.dumps({k: round(v, 3) for k, v in valid.items()})))
 
 # ------------------------------------------------------------------ report
 bad = [o for o in OUT if not o["ok"]]
-lines = ["# Audit of numbers in paper/jbhi_compact.tex (IEEE JBHI manuscript) against results/", "",
+lines = ["# Audit of numbers in paper/jbhi_compact.tex and paper/jbhi_supplement.tex (IEEE JBHI manuscript) against results/", "",
          f"{len(OUT)} checks, {len(OUT) - len(bad)} passed, {len(bad)} failed. Generated by `paper/audit_jbhi_numbers.py`.", "",
          "Stated numbers are rounded half-up to their decimals; `<=` marks an at-most or within claim checked as a bound.", "",
          "| Check | Result | Passage found | Stated vs recomputed | Note |", "|---|---|---|---|---|"]

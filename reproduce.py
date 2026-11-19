@@ -1,5 +1,5 @@
 """
-Reproduce the results of the paper (paper/main.tex and paper/jbhi_compact.tex).
+Reproduce the results of the paper (paper/main.tex, paper/jbhi_compact.tex and its supplement paper/jbhi_supplement.tex).
 
     python reproduce.py list [--group G] [--markdown]   what exists, which paper item it feeds, what it needs
     python reproduce.py check [--shangrla DIR]           data-free checks: validity tests, Part II exact checks,
@@ -112,6 +112,13 @@ STEPS = [
          cmds=[S("scripts/32_decision_level.py", "--out", "{out}", "--seed", "20261025")], out="results/decision_level_v1", compare=["summary.csv"]),
     dict(id="resolvable_margin", group="partIII", status="X", cost="S", paper="Range a fixed count cannot resolve (exact; review 2026-11-10)", needs=[],
          cmds=[S("scripts/52_resolvable_margin.py", "--out", "{out}")], out="results/resolvable_margin_v1", compare=["summary.csv"]),
+    dict(id="threshold_limit", group="partIII", status="X", cost="S",
+         paper="Proposition 4: limit for threshold certification; Supplement S2, Tables S1-S2 (review 2026-11-19)", needs=["results/decision_level_v1/summary.csv"],
+         cmds=[S("scripts/59_threshold_limit.py", "--out", "{out}")], out="results/threshold_limit_v1", compare=["summary.json"]),
+    dict(id="lopo", group="partIII", status="X", cost="M",
+         paper="Leaving out each blast-positive patient (Part I and Part III); Supplement S3, Table S3 (review 2026-11-19)",
+         needs=["results/embeddings_v1/cells_features.csv", "results/embeddings_v1/embeddings_dinov2_vits14.npy"],
+         cmds=[S("scripts/58_leave_one_patient_out.py", "--out", "{out}")], out="results/lopo_v1", compare=["summary.json"]),
     dict(id="confusable", group="partIII", status="X", cost="M", paper="Confusable backgrounds", needs=["results/embeddings_v1/cells_features.csv"],
          cmds=[S("scripts/33_confusable_background.py", "--out", "{out}", "--seed", "20261026")], out="results/confusable_bg_v1", compare=["summary.csv"]),
     dict(id="leukocyte", group="partIII", status="X", cost="M", paper="Leukocyte-only background", needs=["results/embeddings_v1/cells_features.csv"],
@@ -174,6 +181,17 @@ STEPS = [
          needs=["results/embeddings_v1/cells_features.csv", "results/embeddings_v1/embeddings_dinov2_vits14.npy",
                 "data/mll23/mll23_cells.csv", "data/mll23/mll23_embeddings_dinov2_vits14.npy"],
          cmds=[S("scripts/55_reverse_direction.py", "--out", "{out}")], out="results/reverse_direction_v1", compare=["summary.json"]),
+    dict(id="dinobloom_embed", group="rq4", status="D", cost="GPU",
+         paper="DinoBloom-S embeddings for the encoder robustness check (exploratory; not yet in the paper)", needs=[],
+         colab="notebooks/57_dinobloom_embeddings_colab.ipynb", cmds=[], out="results/dinobloom_v1", compare=[]),
+    dict(id="dinobloom_check", group="rq4", status="X", cost="M",
+         paper="Encoder robustness check with DinoBloom-S (exploratory; not yet in the paper)",
+         needs=["results/dinobloom_v1/ku_cells_features.csv", "results/dinobloom_v1/rvpbs_cells.csv", "results/dinobloom_v1/mll23_cells.csv"],
+         cmds=[S("scripts/57_dinobloom_check.py", "--part", "classifier", "--out", "{out}"),
+               S("scripts/57_dinobloom_check.py", "--part", "part1", "--encoder", "dinov2", "--out", "{out}"),
+               S("scripts/57_dinobloom_check.py", "--part", "part1", "--encoder", "dinobloom", "--out", "{out}")] +
+              [S("scripts/57_dinobloom_check.py", "--part", "part3", "--encoder", "dinobloom", "--source", src, "--out", "{out}") for src in ("ku", "mll23", "rvpbs")],
+         out="results/dinobloom_check_v1", compare=[]),
     dict(id="icc_diagnostics", group="rq4", status="X", cost="M",
          paper="Null bias of the pooled ICC, null-centred ICC, low-blast regions (audit 2026-10-22)",
          needs=["data/bmwsi/cells.csv", "data/bmwsi/rois.csv"],
@@ -196,11 +214,11 @@ STEPS = [
                 "results/kt1_field_teacher/episodes.csv", "results/a4_bmwsi/icc_excess.json",
                 "results/baseline_reference_v1/episodes_ku.csv"],
          cmds=[S("scripts/25_figures.py")], out=None, compare=[]),
-    dict(id="audit_jbhi", group="paper", status="C", cost="S", paper="Numbers of the JBHI article checked against results/ (paper/audit_jbhi_numbers.md)",
+    dict(id="audit_jbhi", group="paper", status="C", cost="S", paper="Numbers of the JBHI article and its supplement checked against results/ (paper/audit_jbhi_numbers.md)",
          needs=["results/confirm_v1", "results/part3_theta010", "results/part3_theta020", "results/decision_level_v1",
                 "results/m_scaling_v1", "results/benchmark_v1", "results/real_arrangements_v1", "results/verifier_error_v1",
                 "results/baseline_reference_v1", "results/shift_robust_v1", "results/resolvable_margin_v1",
-                "results/reverse_direction_v1"],
+                "results/reverse_direction_v1", "results/threshold_limit_v1", "results/lopo_v1"],
          cmds=[S("paper/audit_jbhi_numbers.py")], out=None, compare=[]),
 ]
 BY_ID = {s["id"]: s for s in STEPS}

@@ -281,3 +281,43 @@ letter, title page and highlights. Nothing frozen was modified.
     (up to 2.67), where blasts were missed: a classifier that over-calls blasts samples nearly uniformly, whereas one
     that misses blasts gives them small selection probabilities and large weights.
   - One sentence was added to Section V-C of the JBHI text; `paper/audit_jbhi_numbers.py` gained one check.
+
+## Review of 2026-11-19 (two exploratory analyses, one proposition, one pending check; nothing frozen modified)
+- **Proposition 4 (RQ3; theory, not pre-registered).** Limit for certifying a threshold decision when what the examiner
+  sees carries no information about which cells are blasts: no procedure that is valid for every specimen with
+  p <= theta, whatever its selection and stopping rules, certifies within n verified cells more often than the
+  randomised one-sided hypergeometric test of n uniformly drawn cells; the fixed-n test attains the bound. Proof in
+  `docs/part3_limit_proof.md` (and Supplement S2 of the JBHI text); numbers from `scripts/59_threshold_limit.py`
+  (exact computation, Monte Carlo checks with seed 20261119; `results/threshold_limit_v1`). Six tests were added
+  (`tests/test_limit.py`), so `pytest -q tests` is now the 56-check suite cited in the JBHI text (50 before).
+  - At M = 2,000 with alpha/2 per side, the limit's 80%-power ranges differ from those of the non-randomised exact
+    test of `scripts/52` by at most 0.6 percentage points (0.45 for n >= 200). At the off-threshold settings of
+    Table II the exact test reached 0.636-0.995 of the limit and sequential ALPHA 0.290-0.882.
+- **Leaving out each blast-positive patient (RQ1, RQ3; exploratory).** `scripts/58_leave_one_patient_out.py`
+  (`results/lopo_v1`; Part III with the seeds of `scripts/49`, family 20261101; Part I with the new family 20261120).
+  For each of the 11 patients with blasts, that patient's cells are removed from the specimens and the probe is
+  refitted by patient fold without them. Written before the run and run once (574 s). The run without exclusion
+  reproduces `results/baseline_reference_v1` exactly; refitting with every patient reproduces the stored probe
+  (correlation 0.99994).
+  - Part I (one critical field, N = 200, 500 specimens per field size): InfoDPP-PAC's miss rate changed by at most
+    0.032.
+  - Part III in distribution: classifier-driven betting needed 0.45-0.79 times the cells of uniform ALPHA (0.45-0.77
+    with every patient); the largest change at one setting was 0.19; false certification at p = theta at most 0.036.
+- **DinoBloom-S (encoder robustness check; pending).** `notebooks/57_dinobloom_embeddings_colab.ipynb` (embeddings
+  with the same preprocessing as the DINOv2 run) and `scripts/57_dinobloom_check.py` (probe; Part I with one critical
+  field, seed 20261119; Part III with the seeds of `scripts/49`) were written on 2026-11-19, before any DinoBloom
+  embedding existed. With `--encoder dinov2` the Part III code reproduces `results/baseline_reference_v1` exactly for
+  all three sources. Results will be reported as an exploratory check; it is the only encoder comparison in the
+  project.
+- **JBHI text.** Title: "Certified Adaptive Examination of Blood Smears: Why Information-Gain Stopping Cannot Certify
+  Rare Evidence, and What Can Be Guaranteed Instead" ("Peripheral" dropped because the real-specimen analyses use
+  marrow regions). Abstract: "Using simulations, partly pre-registered"; the first contribution marks the marrow-tile
+  analysis as exploratory. Encoder sentence corrected: a hematology-specific encoder (DinoBloom, MICCAI 2024) exists and
+  was not used (also in `main.tex`). The tie rule of the conventional count is stated in the Table II caption
+  ("above" only for more than theta*n blasts, as in `scripts/32`); with ties counted as "above", as in WHO 2022 and
+  ICC 2022, a 200-cell count was wrong in 15-25% of specimens within 0.02 of the threshold (exact calculation). New
+  pipeline figure (Fig. 1) and Algorithm 1; the absence curve, the robustness details, the classical score-based
+  designs, the reversed-source run and the hypothesis table moved to a 3-page supplement
+  (`paper/jbhi_supplement.tex`). References added: DinoBloom, sequential attention-based sampling (NeurIPS 2025), CLSI
+  H20 (3rd ed., 2026), Brown et al. 2010 (slidemakers), the EHA/ELN recommendations (Haematologica 2026) and Lehmann
+  and Romano (Proposition 4). `paper/audit_jbhi_numbers.py` reads both files: 217 checks.

@@ -94,6 +94,8 @@ version numbers some propositions and tables differently.
 | `alpha_prior` | X | M | ALPHA prior guess | `python scripts/39_alpha_prior.py --out results/alpha_prior_v1 --seed 20261030` |
 | `decisions` | X | M | Decisions at fixed budgets (table) | `python scripts/32_decision_level.py --out results/decision_level_v1 --seed 20261025` |
 | `resolvable_margin` | X | S | Range a fixed count cannot resolve (exact; review 2026-11-10) | `python scripts/52_resolvable_margin.py --out results/resolvable_margin_v1` |
+| `threshold_limit` | X | S | Proposition 4: limit for threshold certification; Supplement S2, Tables S1-S2 (review 2026-11-19) | `python scripts/59_threshold_limit.py --out results/threshold_limit_v1` |
+| `lopo` | X | M | Leaving out each blast-positive patient (Part I and Part III); Supplement S3, Table S3 (review 2026-11-19) | `python scripts/58_leave_one_patient_out.py --out results/lopo_v1` |
 | `confusable` | X | M | Confusable backgrounds | `python scripts/33_confusable_background.py --out results/confusable_bg_v1 --seed 20261026` |
 | `leukocyte` | X | M | Leukocyte-only background | `python scripts/41_leukocyte_background.py --out results/leukocyte_bg_v1 --seed 20261032` |
 | `detrule` | X | M | Impact of the rule missing from the frozen ALPHA | `python scripts/45_alpha_deterministic_rule.py --out results/alpha_detrule_v1 --seed 20261036` |
@@ -114,20 +116,23 @@ version numbers some propositions and tables differently.
 | `shift_robust` | X | M | Classical uses of the scores: control variate, score strata (review 2026-11-10) | `python scripts/53_shift_robust_designs.py --source ku --out results/shift_robust_v1`<br>`python scripts/53_shift_robust_designs.py --source mll23 --out results/shift_robust_v1`<br>`python scripts/53_shift_robust_designs.py --source rvpbs --out results/shift_robust_v1` |
 | `cv_validity` | X | M | Validity checks of the control-variate test and the stratified sampler (review 2026-11-10) | `python scripts/54_cv_validity_checks.py --out results/cv_validity_v1` |
 | `reverse_direction` | X | S | Reverse direction: probe trained on MLL23, applied to KU-Optofil (review 2026-11-10) | `python scripts/55_reverse_direction.py --out results/reverse_direction_v1` |
+| `dinobloom_embed` | D | GPU | DinoBloom-S embeddings for the encoder robustness check (exploratory; not yet in the paper) | Colab: `notebooks/57_dinobloom_embeddings_colab.ipynb` |
+| `dinobloom_check` | X | M | Encoder robustness check with DinoBloom-S (exploratory; not yet in the paper) | `python scripts/57_dinobloom_check.py --part classifier --out results/dinobloom_check_v1`<br>`python scripts/57_dinobloom_check.py --part part1 --encoder dinov2 --out results/dinobloom_check_v1`<br>`python scripts/57_dinobloom_check.py --part part1 --encoder dinobloom --out results/dinobloom_check_v1`<br>`python scripts/57_dinobloom_check.py --part part3 --encoder dinobloom --source ku --out results/dinobloom_check_v1`<br>`python scripts/57_dinobloom_check.py --part part3 --encoder dinobloom --source mll23 --out results/dinobloom_check_v1`<br>`python scripts/57_dinobloom_check.py --part part3 --encoder dinobloom --source rvpbs --out results/dinobloom_check_v1` |
 | `icc_diagnostics` | X | M | Null bias of the pooled ICC, null-centred ICC, low-blast regions (audit 2026-10-22) | `python scripts/51_icc_diagnostics.py` |
 | `sessions_download` | D | GPU | Reader labels (no GPU needed) | Colab: `notebooks/42_bmwsi_sessions_colab.ipynb` |
 | `verifier` | X | M | Imperfect verification; Remark 2 | `python scripts/43_verifier_error.py --sessions data/bmwsi_sessions/annotations_sessions.csv.gz --out results/verifier_error_v1 --seed 20261034` |
 | `benchmark` | X | S | Benchmark table across conditions (main Table 3, compact Table IV) | `python scripts/46_benchmark_table.py --out results/benchmark_v1` |
 | `figures` | C | S | Figs. 1-4 (copy figures/*.pdf to paper/figures/) | `python scripts/25_figures.py` |
-| `audit_jbhi` | C | S | Numbers of the JBHI article checked against results/ (paper/audit_jbhi_numbers.md) | `python paper/audit_jbhi_numbers.py` |
+| `audit_jbhi` | C | S | Numbers of the JBHI article and its supplement checked against results/ (paper/audit_jbhi_numbers.md) | `python paper/audit_jbhi_numbers.py` |
 
 
 Figures: `python scripts/25_figures.py` writes `figures/fig1_partI.pdf` ... `fig4_rq4.pdf`; copy them to
-`paper/figures/`. Papers: `cd paper`, then `latexmk -pdf main.tex` and `latexmk -pdf jbhi_compact.tex`
-(the latter needs the IEEEtran class, included in TeX Live as `texlive-publishers`).
-Numbers in the JBHI article: `python paper/audit_jbhi_numbers.py` recomputes the numbers of `paper/jbhi_compact.tex`
-(abstract, text, tables and captions) from `results/` and writes `paper/audit_jbhi_numbers.md`; it exits non-zero on
-any mismatch.
+`paper/figures/`. Papers: `cd paper`, then `latexmk -pdf main.tex`, `latexmk -pdf jbhi_compact.tex` and
+`latexmk -pdf jbhi_supplement.tex` (the last two need the IEEEtran class, included in TeX Live as
+`texlive-publishers`). Numbers in the JBHI article: `python paper/audit_jbhi_numbers.py` recomputes the numbers of
+`paper/jbhi_compact.tex` and `paper/jbhi_supplement.tex` (abstract, text, tables and captions) from `results/` and
+writes `paper/audit_jbhi_numbers.md`; it exits non-zero on any mismatch. Proposition 4 of the JBHI article is proved in
+`docs/part3_limit_proof.md` (also Supplement S2).
 
 ## 5. What is frozen
 

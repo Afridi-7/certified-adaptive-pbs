@@ -530,7 +530,7 @@ Only the third is a guarantee about what was not examined, and it held in every 
 \item Costs are counts of expert-verified cells. We did not measure imaging, classification or computing time.
 \item The analyses of population size, unequal fields, the field-level teacher, other saturation rules, real tiles, the second external source, verifier error, real arrangements, fixed budgets, confusable backgrounds, the prior guess, the cost comparison against uniform ALPHA on external cells, hedged bets and the ICC diagnostics were added after the pre-registered analyses and are exploratory. The pre-registration tags are timestamped by the hosting service only.
 \item InfoDPP-PAC's unreported hyperparameters were calibrated to a reported cost, and no code was available, so our reimplementation may differ from the authors' configuration. The two other saturation rules, which have no such free parameters beyond their stopping thresholds, gave the same result. Varying $\rho$, the kernel length-scale, the noise variance and the seed size did not change the result either (Section~\ref{sec:partI}).
-\item We used a single frozen encoder.
+\item We used a single general-purpose frozen encoder.
 \item We did not implement prediction-powered e-values \cite{csillag2025ppe}.
 \end{itemize}
 
@@ -562,7 +562,7 @@ For a deterministic policy, $A$ is a single set with $|A|\le n\le N-k$. Placing 
 
 \section{Deviations from the protocol and from the reimplemented method}\label{app:dev}
 \begin{itemize}
-\item \textbf{InfoDPP-PAC.} We used DINOv2 ViT-S/14 instead of the paper's Phikon (H\&E) encoder, because there is no established open Wright--Giemsa encoder. $\tau$ was calibrated to the reported operating point, and $\rho=1$. A field is the mean of its cells' embeddings. The ``fixed-order'' baseline is not a spatial raster. The seed set has $m_0=5$ fields (the original $m_0\approx0.01n$ would give two of 200); seed fields fit the Gaussian process and are not counted as examined, and counting them changed no conclusion at the 2.4\% operating point (Section~\ref{sec:partI}).
+\item \textbf{InfoDPP-PAC.} We used the general-purpose DINOv2 ViT-S/14 instead of the paper's Phikon (H\&E) encoder; a hematology-specific encoder (DinoBloom \cite{koch2024dinobloom}) was not used. Validity does not depend on the encoder; costs and the selector's behavior may. $\tau$ was calibrated to the reported operating point, and $\rho=1$. A field is the mean of its cells' embeddings. The ``fixed-order'' baseline is not a spatial raster. The seed set has $m_0=5$ fields (the original $m_0\approx0.01n$ would give two of 200); seed fields fit the Gaussian process and are not counted as examined, and counting them changed no conclusion at the 2.4\% operating point (Section~\ref{sec:partI}).
 \item \textbf{Part III.} An early exploratory construction fed importance-weighted draws into ALPHA's unweighted null-mean update, which is not a valid supermartingale. It was withdrawn before the confirmatory protocol and replaced by the construction of Shekhar et al.\ \cite{shekhar2023rlfa}.
 \item \textbf{Part I analysis.} An exploratory batch-overwrite bug, found before the protocol was frozen, had caused early estimates to use three of five folds. It was corrected.
 \item \textbf{Real-smear spatial analysis.} The analyses were run with byte-identical frozen scripts, in a different compute environment because of time limits (SHA-256 hashes recorded). The bias of the ICC estimator was noticed after the run and is reported as exploratory.

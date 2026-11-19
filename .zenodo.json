@@ -1,0 +1,16 @@
+{
+  "title": "Certified adaptive examination of blood smears: code, pre-registration and results",
+  "upload_type": "software",
+  "description": "Code, pre-registration (git tags prereg-v1 to prereg-v4) and stored results for the study 'Certified Adaptive Examination of Blood Smears: Why Information-Gain Stopping Cannot Certify Rare Evidence, and What Can Be Guaranteed Instead'. This is a methodological and empirical study, not a clinical tool. The datasets are not redistributed; see REPRODUCE.md for their sources and licences.",
+  "creators": [
+    {"name": "Ullah, Qudrat", "affiliation": "University of Debrecen"},
+    {"name": "Harangi, Balázs", "affiliation": "University of Debrecen"}
+  ],
+  "license": "MIT",
+  "keywords": ["anytime-valid inference", "risk-limiting audits", "adaptive sampling", "blast count", "blood smear"],
+  "related_identifiers": [
+    {"identifier": "10.5281/zenodo.17333317", "relation": "references", "resource_type": "dataset"},
+    {"identifier": "10.5281/zenodo.14277609", "relation": "references", "resource_type": "dataset"},
+    {"identifier": "10.5281/zenodo.14933087", "relation": "references", "resource_type": "dataset"}
+  ]
+}

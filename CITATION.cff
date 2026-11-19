@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use this code or its results, please cite it as below."
+title: "Certified adaptive examination of blood smears: code, pre-registration and results"
+type: software
+authors:
+  - family-names: Ullah
+    given-names: Qudrat
+    affiliation: "Faculty of Informatics, University of Debrecen"
+  - family-names: Harangi
+    given-names: Balázs
+    affiliation: "Faculty of Informatics, University of Debrecen"
+repository-code: "https://github.com/Afridi-7/certified-adaptive-pbs"
+license: MIT
+abstract: >-
+  Code, pre-registration and stored results for a methodological study of what an adaptive examination of a blood
+  smear can guarantee about unexamined material: a reimplemented information-saturation stopping rule, limits for
+  certifying the absence of rare evidence and for certifying a blast-proportion threshold, and design-based,
+  anytime-valid certification of blast-count decisions. Not a clinical tool.
+keywords:
+  - anytime-valid inference
+  - risk-limiting audits
+  - adaptive sampling
+  - blast count
+  - blood smear
