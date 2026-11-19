@@ -1,7 +1,0 @@
-Highlights
-
-- Saturation stopping's advantage over random sampling shrank as cells were pooled
-- Certifying absence of rare evidence needs near-census examination in the worst case
-- Anytime-valid tests kept false certification below 5% wherever assumptions held
-- Classifier-guided sampling saved cells in distribution but cost more under shift
-- Validity required the sampled unit, cell-count weights and bounded verifier error

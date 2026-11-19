@@ -33,10 +33,8 @@ checks for the exploratory control-variate test and the stratified sampler (`res
 
 ## Layout
 ```
-paper/        main.tex (full preprint); cmpb.tex (Computer Methods and Programs in Biomedicine article) with
-              cmpb_supplement.tex (built from main.tex by build_cmpb_supplement.py), title page, cover letter,
-              highlights and cmpb_submission/Figure_1-4; audit_cmpb_numbers.py (checks the article's numbers against
-              results/); jbhi_compact.tex (8-page IEEE version); refs.bib
+paper/        jbhi_compact.tex (10-page IEEE JBHI version) with audit_jbhi_numbers.py (checks its numbers against
+              results/); main.tex (full preprint); refs.bib
 src/cadpbs/   package code: samplers, stopping rules (InfoDPP-PAC re-implementation), ALPHA, weighted betting,
               hedged betting (hedged_betting.py, exploratory), control variate and score strata
               (cv_hedged_betting.py, exploratory)

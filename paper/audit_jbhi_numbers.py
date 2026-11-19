@@ -1,5 +1,5 @@
 """
-Recomputes every number stated in paper/jbhi_compact.tex from results/, with the rules of audit_cmpb_numbers.py.
+Recomputes every number stated in paper/jbhi_compact.tex from results/.
 Tables I-III and V are compared cell by cell. Writes paper/audit_jbhi_numbers.md; exits non-zero on any mismatch.
 
 Run from the repository root:  python paper/audit_jbhi_numbers.py

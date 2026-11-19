@@ -1,9 +1,7 @@
 # Reproducing the paper
 
 This file explains how to regenerate every number, table and figure of `paper/main.tex` (full preprint) and
-`paper/cmpb.tex` (Computer Methods and Programs in Biomedicine article; its supplement `paper/cmpb_supplement.tex`
-is generated from `main.tex` by `paper/build_cmpb_supplement.py`, so the two carry the same numbers) and
-`paper/jbhi_compact.tex` (8-page IEEE version).
+`paper/jbhi_compact.tex` (10-page IEEE JBHI version).
 `reproduce.py` wraps the same commands.
 
 ## 1. Three levels
@@ -121,15 +119,14 @@ version numbers some propositions and tables differently.
 | `verifier` | X | M | Imperfect verification; Remark 2 | `python scripts/43_verifier_error.py --sessions data/bmwsi_sessions/annotations_sessions.csv.gz --out results/verifier_error_v1 --seed 20261034` |
 | `benchmark` | X | S | Benchmark table across conditions (main Table 3, compact Table IV) | `python scripts/46_benchmark_table.py --out results/benchmark_v1` |
 | `figures` | C | S | Figs. 1-4 (copy figures/*.pdf to paper/figures/) | `python scripts/25_figures.py` |
-| `audit_cmpb` | C | S | Numbers of the CMPB article checked against results/ (paper/audit_cmpb_numbers.md) | `python paper/audit_cmpb_numbers.py` |
+| `audit_jbhi` | C | S | Numbers of the JBHI article checked against results/ (paper/audit_jbhi_numbers.md) | `python paper/audit_jbhi_numbers.py` |
 
 
 Figures: `python scripts/25_figures.py` writes `figures/fig1_partI.pdf` ... `fig4_rq4.pdf`; copy them to
-`paper/figures/`. Papers: `cd paper`, then `latexmk -pdf main.tex`, `latexmk -pdf cmpb.tex`, `python build_cmpb_supplement.py && latexmk -pdf cmpb_supplement.tex`
-(elsarticle class) and `latexmk -pdf jbhi_compact.tex`
+`paper/figures/`. Papers: `cd paper`, then `latexmk -pdf main.tex` and `latexmk -pdf jbhi_compact.tex`
 (the latter needs the IEEEtran class, included in TeX Live as `texlive-publishers`).
-Numbers in the CMPB article: `python paper/audit_cmpb_numbers.py` recomputes the numbers of `paper/cmpb.tex`
-(abstract, text, tables and captions) from `results/` and writes `paper/audit_cmpb_numbers.md`; it exits non-zero on
+Numbers in the JBHI article: `python paper/audit_jbhi_numbers.py` recomputes the numbers of `paper/jbhi_compact.tex`
+(abstract, text, tables and captions) from `results/` and writes `paper/audit_jbhi_numbers.md`; it exits non-zero on
 any mismatch.
 
 ## 5. What is frozen

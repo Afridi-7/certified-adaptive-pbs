@@ -1,5 +1,5 @@
 """
-Reproduce the results of the paper (paper/main.tex, paper/cmpb.tex and paper/jbhi_compact.tex).
+Reproduce the results of the paper (paper/main.tex and paper/jbhi_compact.tex).
 
     python reproduce.py list [--group G] [--markdown]   what exists, which paper item it feeds, what it needs
     python reproduce.py check [--shangrla DIR]           data-free checks: validity tests, Part II exact checks,
@@ -196,11 +196,12 @@ STEPS = [
                 "results/kt1_field_teacher/episodes.csv", "results/a4_bmwsi/icc_excess.json",
                 "results/baseline_reference_v1/episodes_ku.csv"],
          cmds=[S("scripts/25_figures.py")], out=None, compare=[]),
-    dict(id="audit_cmpb", group="paper", status="C", cost="S", paper="Numbers of the CMPB article checked against results/ (paper/audit_cmpb_numbers.md)",
-         needs=["results/confirm_v1/episodes.csv", "results/part3_decisions.json", "results/m_scaling_v1/summary.csv",
-                "results/decision_level_v1/summary.csv", "results/benchmark_v1", "results/a3_decisions.json",
-                "results/real_arrangements_v1/summary.json", "results/verifier_error_v1/summary.json"],
-         cmds=[S("paper/audit_cmpb_numbers.py")], out=None, compare=[]),
+    dict(id="audit_jbhi", group="paper", status="C", cost="S", paper="Numbers of the JBHI article checked against results/ (paper/audit_jbhi_numbers.md)",
+         needs=["results/confirm_v1", "results/part3_theta010", "results/part3_theta020", "results/decision_level_v1",
+                "results/m_scaling_v1", "results/benchmark_v1", "results/real_arrangements_v1", "results/verifier_error_v1",
+                "results/baseline_reference_v1", "results/shift_robust_v1", "results/resolvable_margin_v1",
+                "results/reverse_direction_v1"],
+         cmds=[S("paper/audit_jbhi_numbers.py")], out=None, compare=[]),
 ]
 BY_ID = {s["id"]: s for s in STEPS}
 
