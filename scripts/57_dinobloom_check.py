@@ -63,10 +63,25 @@ a = ap.parse_args(); os.makedirs(a.out, exist_ok=True); T0 = time.time()
 P = {k: os.path.join(ROOT, v) for k, v in PATHS[a.encoder].items()}
 
 
+# DinoBloom tables must list the same cells in the same order as the DINOv2 run, so that both encoders see the same
+# specimens (the specimens are drawn by row index with the same seeds).
+REF_ORDER = {"ku": ("results/embeddings_v1/cells_features.csv", "image_name"),
+             "mll23": ("data/mll23/mll23_cells.csv", "relpath"),
+             "rvpbs": ("results/external_v1/rvpbs_features.csv", "crop_id")}
+
+
+def check_order(df, source):
+    if a.encoder == "dinov2": return
+    path, col = REF_ORDER[source]; ref = pd.read_csv(os.path.join(ROOT, path))
+    assert len(ref) == len(df) and (ref[col].astype(str).values == df[col].astype(str).values).all(), \
+        f"{source}: cells are not in the order of the DINOv2 run ({path})"
+
+
 def load_ku():
     df = pd.read_csv(P["ku_csv"], dtype={"patient_id": str})
     E = np.load(P["ku_emb"]).astype(np.float32)
     assert len(df) == len(E), "embeddings and cell table differ in length"
+    check_order(df, "ku")
     return E, df
 
 
@@ -84,11 +99,13 @@ def threshold_95spec(df):   # as notebook 03 cell 7: 95th percentile of out-of-f
 def load_shift(source, Eku, ku):
     if source == "mll23":
         mm = pd.read_csv(P["mll_csv"]); Em = np.load(P["mll_emb"]).astype(np.float32)
+        assert len(mm) == len(Em); check_order(mm, "mll23")
         keep = ~mm.cls.str.contains("atypical|smudge|normoblast", case=False, regex=True)
         Em, mm = Em[keep.values], mm[keep].reset_index(drop=True)
         y = mm.cls.str.contains("myeloblast", case=False).values
         return y, probe().fit(Eku, ku.is_blast.values).predict_proba(Em)[:, 1]
     rv = pd.read_csv(P["rv_csv"]); Erv = np.load(P["rv_emb"]).astype(np.float32)
+    assert len(rv) == len(Erv); check_order(rv, "rvpbs")
     return rv.is_blast.values.astype(bool), probe().fit(Eku, ku.is_blast.values).predict_proba(Erv)[:, 1]
 
 
